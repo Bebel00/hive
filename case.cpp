@@ -1,56 +1,110 @@
 #include "case.h"
-#include "directions.h"
+#include "insecte.h"
 #include <iostream>
-#include <vector>
 
-Case::Case()
+Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
+{
+    switch(direction)
+    {
+    case Direction::HAUT_DROIT:
+        return Direction::BAS_GAUCHE;
+        break;
+    case Direction::DROITE:
+        return Direction::GAUCHE;
+        break;
+    case Direction::BAS_DROIT:
+        return Direction::HAUT_GAUCHE;
+        break;
+    case Direction::HAUT_GAUCHE:
+        return Direction::BAS_DROIT;
+        break;
+    case Direction::GAUCHE:
+        return Direction::DROITE;
+        break;
+    case Direction::BAS_GAUCHE:
+        return Direction::HAUT_DROIT;
+        break;
+    default:
+        return Direction::NONE;
+    }
+}
+
+Position Case::direction_to_position_increment(Direction direction)
+{
+    switch(direction)
+    {
+    case Direction::HAUT_DROIT:
+        return Position(1, 1);
+        break;
+    case Direction::DROITE:
+        return Position(2, 0);
+        break;
+    case Direction::BAS_DROIT:
+        return Position(1, -1);
+        break;
+    case Direction::HAUT_GAUCHE:
+        return Position(-1, 1);
+        break;
+    case Direction::GAUCHE:
+        return Position(-2, 0);
+        break;
+    case Direction::BAS_GAUCHE:
+        return Position(-1, -1);
+        break;
+    default:
+        return Position(0, 0);
+    }
+}
+
+Case::Case(Position position) : position(position)
 {
 
 }
 
-bool Case::creer_case(Directions direction)
+Case* Case::creer_case(Direction direction)
 {
     Case** case_a_creer = case_ptr_from_direction(direction);
     if (!case_a_creer)
     {
-        std::cout << "La case à créer n'existe pas." << std::endl;
-        return false;
+        std::cout << "Erreur dans la direction de la case à créer" << std::endl;
+        return nullptr;
     }
     if (*case_a_creer)
     {
         std::cout << "La case à créer existe déjà" << std::endl;
+        return nullptr;
     }
-    *case_a_creer = new Case;
+    *case_a_creer = new Case(position + direction_to_position_increment(direction));
     if (!*case_a_creer)
     {
         std::cout << "Impossible de créer une nouvelle case." << std::endl;
-        return false;
+        return nullptr;
     }
-    return true;
+    return *case_a_creer;
 }
 
-const Case* Case::case_from_direction(Directions direction) const
+const Case* Case::case_from_direction(Direction direction) const
 {
     Case* case_cherchee = nullptr;
 
     switch (direction)
     {
-    case Directions::HAUT_DROIT:
+    case Direction::HAUT_DROIT:
         case_cherchee = haut_droit;
         break;
-    case Directions::DROITE:
+    case Direction::DROITE:
         case_cherchee = droite;
         break;
-    case Directions::BAS_DROIT:
+    case Direction::BAS_DROIT:
         case_cherchee = bas_droit;
         break;
-    case Directions::HAUT_GAUCHE:
+    case Direction::HAUT_GAUCHE:
         case_cherchee = haut_gauche;
         break;
-    case Directions::GAUCHE:
+    case Direction::GAUCHE:
         case_cherchee = gauche;
         break;
-    case Directions::BAS_GAUCHE:
+    case Direction::BAS_GAUCHE:
         case_cherchee = bas_droit;
         break;
     default:
@@ -61,28 +115,28 @@ const Case* Case::case_from_direction(Directions direction) const
 
 }
 
-Case** Case::case_ptr_from_direction(Directions direction)
+Case** Case::case_ptr_from_direction(Direction direction)
 {
     Case** case_cherchee = nullptr;
 
     switch (direction)
     {
-    case Directions::HAUT_DROIT:
+    case Direction::HAUT_DROIT:
         case_cherchee = &haut_droit;
         break;
-    case Directions::DROITE:
+    case Direction::DROITE:
         case_cherchee = &droite;
         break;
-    case Directions::BAS_DROIT:
+    case Direction::BAS_DROIT:
         case_cherchee = &bas_droit;
         break;
-    case Directions::HAUT_GAUCHE:
+    case Direction::HAUT_GAUCHE:
         case_cherchee = &haut_gauche;
         break;
-    case Directions::GAUCHE:
+    case Direction::GAUCHE:
         case_cherchee = &gauche;
         break;
-    case Directions::BAS_GAUCHE:
+    case Direction::BAS_GAUCHE:
         case_cherchee = &bas_droit;
         break;
     default:
@@ -93,31 +147,12 @@ Case** Case::case_ptr_from_direction(Directions direction)
 
 }
 
-bool Case::creer_alentours()
+Team Case::get_team() const
 {
-    // On boucle sur toutes les directions
-    for (auto i_direction : DIRECTIONS_ALL)
-    {
-        // On regarde si la case peut bel et bien être trouvée
-        Case** const i_case = case_ptr_from_direction(i_direction);
-        if (!i_case)
-        {
-            std::cout << "Création alentours : impossible de créer une case." << std::endl;
-            return false;
-        }
-
-        // Ensuite, si la case est vide, on créer une case
-        if (!*i_case)
-        {
-            // On vérifie bien sûr que la création se passe bien
-            if (!creer_case(i_direction))
-                return false;
-        }
-    }
-    return true;
+    if (pion) return pion->get_team(); else return Team::NONE;
 }
 
-Case **Case::get_toutes_cases()
+/*Case **Case::get_toutes_cases()
 {
     std::vector<Case*> cases;
 
@@ -153,4 +188,6 @@ void Case::get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_vi
             }
         }
     }
-}
+}*/
+
+// Pour l'instant on aura sûrement pas besoin de ça en fait

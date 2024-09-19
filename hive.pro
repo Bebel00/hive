@@ -29,7 +29,6 @@ HEADERS += \
     araignee.h \
     case.h \
     coccinelle.h \
-    directions.h \
     fourmi.h \
     insecte.h \
     joueur.h \
