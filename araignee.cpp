@@ -1,6 +1,8 @@
 #include "araignee.h"
+#include "insecte.h"
+#include "teams.h"
 
-Araignee::Araignee()
+Araignee::Araignee(Team team) : Insecte(team)
 {
 
 }

@@ -15,8 +15,8 @@ public:
     /*
      * Fonctions qui définissent l'identité d'un pion
      */
-    virtual inline Type get_type() = 0;
-    virtual inline std::string get_chemin_icone() = 0;
+    virtual Type get_type() = 0;
+    virtual std::string get_chemin_icone() = 0;
 
     /*
      * Fonctions qui gèrent les véfifications et possibilités de mouvement
@@ -26,20 +26,22 @@ public:
     virtual std::vector<Case*> get_moves_possibles(bool start = false) = 0;
     virtual bool verifier_move(Case* const c) const = 0;
 
-    static Case** get_placements_possibles();
+    // Fonction qui met la liste des placements possibles dans "placements_possibles" (la valeur de retour)
+    void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team) const;
+
     static bool verifier_placement(Case* const c, const Team team);
 
     bool placer(Case* const c);
     bool bouger(Case* const c);
 
     // Getter pour la case
-    inline Case* getCase() { return position; }
+    const Case* get_case() { return position; }
+
+    Team get_team() { return team; }
 
 private:
     // BLANC ou NOIR
     Team team;
-
-    Case** get_placements_possibles_recursif(std::vector& );
 
     Case* position;
 };

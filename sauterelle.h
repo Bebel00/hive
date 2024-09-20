@@ -6,7 +6,7 @@
 class Sauterelle : public Insecte
 {
 public:
-    Sauterelle();
+    Sauterelle(Team team);
 };
 
 #endif // SAUTERELLE_H

@@ -1,6 +1,7 @@
 #include "sauterelle.h"
+#include "insecte.h"
 
-Sauterelle::Sauterelle()
+Sauterelle::Sauterelle(Team team) : Insecte(team)
 {
 
 }

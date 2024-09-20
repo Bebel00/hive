@@ -9,7 +9,8 @@ enum class Type
     FOURMI,
     MOUSTIQUE,
     SAUTERELLE,
-    SCARABE
+    SCARABE,
+    NONE
 };
 
 #endif // TYPES_H

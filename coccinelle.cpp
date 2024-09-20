@@ -1,6 +1,8 @@
 #include "coccinelle.h"
+#include "insecte.h"
+#include "teams.h"
 
-Coccinelle::Coccinelle()
+Coccinelle::Coccinelle(Team team) : Insecte(team)
 {
 
 }

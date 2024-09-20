@@ -6,7 +6,7 @@
 class Coccinelle : public Insecte
 {
 public:
-    Coccinelle();
+    Coccinelle(Team team);
 };
 
 #endif // COCCINELLE_H

@@ -6,7 +6,7 @@
 class Partie
 {
 public:
-    Partie(std::string joueur1, std::string joueur2);
+    Partie(std::string joueur1_pseudo, std::string joueur2_pseudo);
     ~Partie();
 
 private:

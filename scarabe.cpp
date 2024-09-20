@@ -1,6 +1,7 @@
 #include "scarabe.h"
+#include "insecte.h"
 
-Scarabe::Scarabe()
+Scarabe::Scarabe(Team team) : Insecte(team)
 {
 
 }

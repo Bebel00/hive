@@ -5,7 +5,7 @@ enum class Team
 {
     BLANC,
     NOIR,
-    NULL
+    NONE
 };
 
 #endif // TEAMS_H

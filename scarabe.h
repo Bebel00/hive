@@ -6,7 +6,7 @@
 class Scarabe : public Insecte
 {
 public:
-    Scarabe();
+    Scarabe(Team team);
 };
 
 #endif // SCARABE_H

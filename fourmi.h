@@ -6,7 +6,7 @@
 class Fourmi : public Insecte
 {
 public:
-    Fourmi();
+    Fourmi(Team team);
 };
 
 #endif // FOURMI_H
