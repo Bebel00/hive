@@ -1,15 +1,77 @@
 #ifndef CASE_H
 #define CASE_H
 
-#include "directions.h"
 #include "insecte.h"
 #include "teams.h"
-#include <vector>
+
+class Position
+{
+    /*
+     * Structure qui sert à compter la position d'un hexagone
+     * Utile pour retrouver un hexagone juste en connaissant sa position
+     *
+     * La première case devrait être en (0; 0)
+     * Aller à gauche fait bouger de -2 en x
+     * Aller en haut de 2 en y
+     * Enfin, aller en haut à gauche fait avancer de -1 en x, 1 en y
+     */
+
+public:
+    Position() { }
+    Position(int x, int y) : x(x), y(y) { }
+
+    int x = 0;
+    int y = 0;
+
+
+    // Fonctions qui permettent d'aditionner / de soustraire des positions entre elles
+
+    Position operator+(const Position& a)
+    {
+        return Position(x + a.x, y + a.y);
+    }
+
+    Position& operator+=(const Position& a)
+    {
+        x += a.x;
+        y += a.y;
+        return *this;
+    }
+
+    Position operator-(const Position& a)
+    {
+        return Position(x - a.x, y - a.y);
+    }
+};
 
 class Case
 {
+    friend class Plateau;
 public:
-    Case();
+    enum class Direction
+    {
+        HAUT_DROIT,
+        DROITE,
+        BAS_DROIT,
+        HAUT_GAUCHE,
+        GAUCHE,
+        BAS_GAUCHE,
+        NONE
+    };
+
+    static constexpr Direction DIRECTIONS_ALL[] =
+    { Direction::HAUT_DROIT, Direction::DROITE, Direction::BAS_DROIT, Direction::HAUT_GAUCHE, Direction::GAUCHE, Direction::BAS_GAUCHE };
+
+    // Fonction qui renvoie la direction opposée à une direction
+    static Direction DIRECTION_OPPOSE(Direction direction);
+
+    // Fonction qui renvoie un incrément de position pour une direction donnée
+    // Par exemple Direction::HAUT_DROIT renvoie (+1, +1)
+    // Direction::GAUCHE renvoie (-2, 0).
+    static Position direction_to_position_increment(Direction direction);
+
+public:
+    Case(Position position);
 
     /*
      *  Fonction qui sert à vérifier si une case est nulle
@@ -33,26 +95,29 @@ public:
      * Elle vérifie que la création de case se passe bien,
      * et qu'il n'y a pas déjà une case à l'endroit souhaité.
      *
-     * Renvoie true si tout s'est bien passé.
+     * Renvoie le pointeur si tout s'est bien passé.
      */
-    bool creer_case(Directions direction);
+    Case* creer_case(Direction direction);
 
     // Fonction qui renvoie le pointeur vers la case dans la direction en paramètre
-    const Case* case_from_direction(Directions direction) const;
+    const Case* case_from_direction(Direction direction) const;
 
-    /*
-     * Fonction qui crée les cases alentours à une case
-     * Renvoie true si tout s'est bien passé.
-     */
-    bool creer_alentours();
+    // getter pour l'équipe de la case
+    Team get_team() const;
 
-    inline bool get_team() { if (pion) return pion->team; else return Team::NULL; }
+    // Case** get_toutes_cases();
+    // Pour plus tard si y a besoin
 
-    Case** get_toutes_cases();
+    // getter pour si la case a un pion
+    bool possede_pion() const { return pion != nullptr; }
+
+    // getter pour la position de la case
+    Position get_position() const { return position; }
 
 private:
     // Fonction qui renvoie un pointeur le pointeur vers la case dans la direction en paramètre
-    class Case** case_ptr_from_direction(Directions direction);
+    // C'est un peu complexe mais c'est juste pour changer la valeur des variables juste en dessous
+    class Case** case_ptr_from_direction(Direction direction);
 
     /*
      * Les 6 côtés de l'hexagone
@@ -68,11 +133,12 @@ private:
     // Pion qui occupe la case
     Insecte* pion = nullptr;
 
-    // Variable qui sert à voir si une case est visitée ou non
-    bool visite = false;
-
     // Fonction récusrive qui renvoie la liste des cases créées en mémoire
-    void get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_visiter);
+    // void get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_visiter);
+    // Pour plus tard si on en a besoin
+
+    // Position (coordonnées) de la case
+    Position position;
 };
 
 #endif // CASE_H
