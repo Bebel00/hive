@@ -40,21 +40,68 @@ bool Plateau::verifier_suppression_case(Case *c) const
     return true;
 }
 
+/*
+ * Fonction qui crée les cases autour d'une autre case.
+ *
+ * Il faut bien comprendre que dans le jeu on crée toujours une nouvelle case DEPUIS une autre case.
+ * En fait le jeu doit fonctionner par création petit à petit de cases alentours.
+ *
+ * C'est-à-dire que quand on crée une nouvelle case, elle est par défaut vide.
+ * Puis quand un insecte arrive dessus, il faut créer les cases alentours,
+ * pour les rendre sélectionnables quand on veut bouger un insecte sur ces emplacements.
+ *
+ * Tout le jeu fonctionne comme ça : au fur et à mesure qu'on place des insectes sur le plateau,
+ * le nombre de cases que l'on peut sélectionner augmente, et ces cases sont créées par cette fonction creer_alentours().
+ *
+ * Comme le jeu fonctionne par une liste chaînée avec 6 maillons par case,
+ * Il faut faire attention à ce que quand on crée une case au dessus d'une autre par exemple,
+ * Il n'y en ait pas déjà une qui existe. Pour ça, on vérifie simplement si c->haut_droit ou c->haut_gauche est défini ou non.
+ *
+ * Mais pour que ça fonctionne il faut que les pointeurs soient bien définis. Sauf que y a des cas compliqués :
+ * Si je crée une case à droite, et qu'il y a une case à droite de la nouvelle case que je viens de créer,
+ * comment je lie le pointeur nouvelle_case->droite à cette case anciennement présente ?
+ *
+ * Pour ça il faut chercher s'il y a une case à droite de la nouvelle case.
+ * Du coup le système de Position (avec x, y) a été implémenté pour rechercher une case selon sa position.
+ *
+ * Et on utilise la fonction adjacence() pour obtenir la liste des cases dans un rayon de 2 pour que ce soit plus simple.
+ * La fonction est vraiment très simple : elle parcourt la liste des cases (stockée dans liste_cases),
+ * Et si d'après sa Position elle est dans un rayon de 2 on la met dans la valeur de retour,
+ * qui est une matrice 9x5 représentant une carte des alentours d'une case.
+ *
+ * Pourquoi 9x5 ? Parce qu'aller à droite fait bouger de 2 vers la droite en x (et gauche -2 en x)
+ * Et on peut pas aller en haut directement, donc on peut pas bouger de 2 vers le haut directement
+ * on est obligé d'aller en haut à droite puis en haut à gauche pour aller vers le haut.
+ * Donc un "rayon de 2" en fait c'est 9 cases possibles (en comptant le centre) en x,
+ * et 5 cases possibles (en comptant le centre) en y.
+ *
+ * Grâce à cette carte on peut tout simplement bien lier toutes les cases entre elles,
+ * et bel et bien crée les alentours d'une case pour qu'elle soit prête à être sélectionnée.
+ */
 bool Plateau::creer_alentours(Case* c)
 {
+    // On crée la carte des cases sur un rayon de 2
     std::array<std::array<Case*, 9>, 5> adjacence;
 
     explorer_adjacence_2(adjacence, c);
 
+    // Les incréments de position vont permettre de travailler sur des cases dont on calculera la position
+    // En ajoutant un incrément de position qui est équivalent à bouger dans une direction
     Position increment_position;
     Position increment_position_2;
+
+    // La position de la case depuis laquelle on crée les alentours est au centre de la matrice adjacence, donc (4, 2)
     Position case_base_pos(4, 2);
 
-    // On boucle sur toutes les directions
+    // On boucle sur toutes les directions pour créer une nouvelle case dans chaque direction
     for (auto i_direction : Case::DIRECTIONS_ALL)
     {
-        // On regarde si la case peut bel et bien être trouvée
+        // On récupère le pointeur vers le pointeur vers la case dans la direction actuelle
+        // Double pointeur pour pouvoir changer la valeur du pointeur case_droite par exemple,
+        // Sans double pointeur ça ferait juste une copie du pointeur et on travaillerait sur la copie
         Case** const i_case = c->case_ptr_from_direction(i_direction);
+
+        // Juste au cas où
         if (!i_case)
         {
             std::cout << "Création alentours : impossible de créer une case, problème de direction." << std::endl;
@@ -65,6 +112,7 @@ bool Plateau::creer_alentours(Case* c)
         if (!*i_case)
         {
             Case* nouvelle_case = c->creer_case(i_direction);
+
             // On vérifie bien sûr que la création se passe bien
             if (!nouvelle_case)
             {
@@ -74,18 +122,46 @@ bool Plateau::creer_alentours(Case* c)
             // Si la création s'est bien passée on ajoute la case à la liste des cases
             liste_cases.push_back(nouvelle_case);
 
+            // Et là c'est de la magie noire
+
+            // Maintenant qu'on a créé une nouvelle case dans une des directions
+            // On va regarder depuis cette nouvelle case toutes les cases qui sont autour
+            // Grâce à la matrice adjacence
+
+            // Et on s'occupe de bien mettre les pointeurs pour lier les cases entre elles.
+
+            // L'incrément de position pour aller à la nouvelle case depuis la case de base
             increment_position = Case::direction_to_position_increment(i_direction);
+
             for (auto j_direction : Case::DIRECTIONS_ALL)
             {
+                // L'incrément de position pour aller à la case observée depuis la nouvelle case
                 increment_position_2 = Case::direction_to_position_increment(j_direction);
+
+                // La position finale de la case observée
                 Position position_finale = case_base_pos + increment_position + increment_position_2;
-                (*(nouvelle_case->case_ptr_from_direction(j_direction))) = adjacence[position_finale.y][position_finale.x];
+
+                // Son pointeur
+                Case* const case_finale = adjacence[position_finale.y][position_finale.x];
+
+                // On initialise le pointeur dans la direction donnée et on le fait pointer vers la case finale observée
+                (*(nouvelle_case->case_ptr_from_direction(j_direction))) = case_finale;
+
+                // Et on s'assure que la case finale observée pointe vers la nouvelle case (le sens inverse)
+                (*(case_finale->case_ptr_from_direction(Case::DIRECTION_OPPOSE(j_direction)))) = nouvelle_case;
+
             }
         }
     }
     return true;
 }
 
+/*
+ * Parcourt la liste des cases et renvoie une matrice correspondant à une carte
+ * Des cases dans un rayon de 2 d'une case (case_base) passée en paramètre
+ *
+ * adjacence est sa valeur de retour
+ */
 void Plateau::explorer_adjacence_2(std::array<std::array<Case *, 9>, 5> &adjacence, Case *case_base)
 {
     for (int i{0}; i < 5; i++)
