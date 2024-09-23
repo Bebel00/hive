@@ -64,6 +64,7 @@ Case::Case(Position position) : position(position)
 Case* Case::creer_case(Direction direction)
 {
     Case** case_a_creer = case_ptr_from_direction(direction);
+
     if (!case_a_creer)
     {
         std::cout << "Erreur dans la direction de la case à créer" << std::endl;

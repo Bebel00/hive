@@ -1,7 +1,6 @@
 #ifndef CASE_H
 #define CASE_H
 
-#include "insecte.h"
 #include "teams.h"
 
 class Position
@@ -131,7 +130,7 @@ private:
     class Case* bas_gauche = nullptr;
 
     // Pion qui occupe la case
-    Insecte* pion = nullptr;
+    class Insecte* pion = nullptr;
 
     // Fonction récusrive qui renvoie la liste des cases créées en mémoire
     // void get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_visiter);
