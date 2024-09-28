@@ -14,6 +14,9 @@ private:
 
     Joueur joueur1;
     Joueur joueur2;
+
+    unsigned int nb_tours = 0;
+    Team tour;
 };
 
 #endif // PARTIE_H

@@ -23,7 +23,7 @@ public:
      * Et de placement du pion
      * Le placement est quand on met le pion sur le plateau pour la première fois
      */
-    virtual std::vector<Case*> get_moves_possibles(bool start = false) = 0;
+    virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const = 0;
     virtual bool verifier_move(Case* const c) const = 0;
 
     // Fonction qui met la liste des placements possibles dans "placements_possibles" (la valeur de retour)
