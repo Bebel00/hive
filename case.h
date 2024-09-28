@@ -99,7 +99,7 @@ public:
     Case* creer_case(Direction direction);
 
     // Fonction qui renvoie le pointeur vers la case dans la direction en paramètre
-    const Case* case_from_direction(Direction direction) const;
+    Case* case_from_direction(Direction direction) const;
 
     // getter pour l'équipe de la case
     Team get_team() const;

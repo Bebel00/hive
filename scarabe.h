@@ -8,10 +8,7 @@ class Scarabe : public Insecte
 public:
     Scarabe(Team team);
 
-    Insecte* get_en_dessous() const { return en_dessous; }
-
-private:
-    Insecte* en_dessous = nullptr;
+    virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const override;
 };
 
 #endif // SCARABE_H

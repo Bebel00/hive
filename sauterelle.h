@@ -7,9 +7,10 @@ class Sauterelle : public Insecte
 {
     public:
         Sauterelle(Team team);
-        std::vector<const Case*> get_moves_possibles();
+        virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const override;
+
     private :
-        const Case* get_moves_possibles_direction(Case::Direction direction);
+        Case* get_case_au_bout_direction(Case::Direction direction) const;
 };
 
 #endif // SAUTERELLE_H

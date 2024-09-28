@@ -7,41 +7,37 @@ Sauterelle::Sauterelle(Team team) : Insecte(team)
 
 }
 
-const Case* Sauterelle::get_moves_possibles_direction(Case::Direction direction){ // Fonction qui permet d'obtenir la dernière case se trouvant sur une ligne droite
-    const Case*  c =this->get_case() ;
-    c=c->case_from_direction(Case::Direction::HAUT_DROIT);
-    while (c->case_from_direction(Case::Direction::HAUT_DROIT)!=nullptr){
-        c=c->case_from_direction(Case::Direction::HAUT_DROIT);
+Case* Sauterelle::get_case_au_bout_direction(Case::Direction direction) const
+{
+    // Fonction qui permet d'obtenir la dernière case se trouvant sur une ligne droite
+    Case* c = get_case();
+
+    while (c->case_from_direction(direction) != nullptr)
+    {
+        c = c->case_from_direction(direction);
     }
+
     return c;
 }
 
 
-std::vector<const Case*> Sauterelle::get_moves_possibles(){
-    if(this->get_case()==nullptr){ // Est ce que la pièce est déjà positionné ?
+void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
+{
+    // Est ce que la pièce est déjà positionné ?
+    if (get_case()==nullptr)
+    {
         throw "L'Insecte n'est pas encore positionné";
     }
-    else{
-        std::vector<const Case* > d_possibles;
-        if (this->get_case()->case_from_direction(Case::Direction::HAUT_DROIT)!=nullptr){
-            d_possibles.push_back(this->get_moves_possibles_direction(Case::Direction::HAUT_DROIT));
+
+    else if (!move_casse_ruche(get_case()))
+    {
+        for (auto i_direction : Case::DIRECTIONS_ALL)
+        {
+            if (!Case::is_empty(get_case()->case_from_direction(i_direction)))
+            {
+                moves_possibles.push_back(get_case_au_bout_direction(i_direction));
+            }
         }
-        if (this->get_case()->case_from_direction(Case::Direction::HAUT_GAUCHE)!=nullptr){
-            d_possibles.push_back(this->get_moves_possibles_direction(Case::Direction::HAUT_DROIT));
-        }
-        if (this->get_case()->case_from_direction(Case::Direction::DROITE)!=nullptr){
-            d_possibles.push_back(this->get_moves_possibles_direction(Case::Direction::HAUT_DROIT));
-        }
-        if (this->get_case()->case_from_direction(Case::Direction::GAUCHE)!=nullptr){
-            d_possibles.push_back(this->get_moves_possibles_direction(Case::Direction::HAUT_DROIT));
-        }
-        if (this->get_case()->case_from_direction(Case::Direction::BAS_DROIT)!=nullptr){
-            d_possibles.push_back(this->get_moves_possibles_direction(Case::Direction::HAUT_DROIT));
-        }
-        if (this->get_case()->case_from_direction(Case::Direction::BAS_GAUCHE)!=nullptr){
-            d_possibles.push_back(this->get_moves_possibles_direction(Case::Direction::HAUT_DROIT));
-        }
-        return d_possibles;
     }
 
 }
