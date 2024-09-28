@@ -65,5 +65,9 @@ bool Insecte::placer(Case * const c)
 bool Insecte::bouger(Case* const c)
 {
     if (verifier_move(c))
+    {
         position = c;
+        return true;
+    }
+    return false;
 }
