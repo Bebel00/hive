@@ -24,7 +24,7 @@ bool Insecte::verifier_placement(const Case * const c, const Team team)
     {
 
         // La case pour la direction actuelle
-        const Case* c_direction = c->case_from_direction(i_direction);
+        const Case* c_direction = c->get_case_from_direction(i_direction);
 
         // Est-ce que la case est vide ?
         bool is_empty = Case::is_empty(c_direction);
@@ -56,16 +56,10 @@ bool Insecte::move_casse_ruche(const Case * const case_depart)
 
 bool Insecte::placer(Case * const c)
 {
-    // On vérifie le placement, s'il est bon, on place le pion
-    if (verifier_placement(c, team))
-    {
-        position = c;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    // La vérification du placement se fait au niveau du plateau
+    position = c;
+
+    return true;
 }
 
 bool Insecte::bouger(Case* const c)
@@ -73,7 +67,20 @@ bool Insecte::bouger(Case* const c)
     if (verifier_move(c))
     {
         position = c;
+
+        if (c->possede_pion())
+            en_dessous = c->get_pion();
+
         return true;
     }
     return false;
+}
+
+bool Insecte::est_cerne() const
+{
+    for (auto i_direction : Case::DIRECTIONS_ALL)
+        if (Case::is_empty(get_case()->get_case_from_direction(i_direction)))
+            return false;
+
+    return true;
 }
