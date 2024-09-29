@@ -8,17 +8,12 @@ class Joueur
 {
 public:
     Joueur(Team team, std::string pseudo);
+    Joueur() { }
 
     std::string pseudo;
 
     template<typename T>
-    void utiliser()
-    {
-        switch (typeid(T))
-        {
-
-        }
-    }
+    void utiliser();
 
 private:
     Team team;

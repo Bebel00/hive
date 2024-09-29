@@ -170,8 +170,8 @@ void Plateau::explorer_adjacence_2(std::array<std::array<Case *, 9>, 5> &adjacen
 
     for (auto i_case : liste_cases)
     {
-        if (abs(i_case->get_position().x - case_base->get_position().x) <= 2)
-            if (abs(i_case->get_position().y - case_base->get_position().y) <= 4)
+        if (abs(i_case->get_position().x - case_base->get_position().x) <= 4)
+            if (abs(i_case->get_position().y - case_base->get_position().y) <= 2)
             {
                 const int x = i_case->get_position().x - case_base->get_position().x + 4;
                 const int y = i_case->get_position().y - case_base->get_position().y + 2;

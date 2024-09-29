@@ -6,7 +6,7 @@
 class Araignee : public Insecte
 {
 public:
-    Araignee();
+    Araignee(Team team);
 };
 
 #endif // ARAIGNEE_H

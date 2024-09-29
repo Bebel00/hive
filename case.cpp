@@ -84,7 +84,7 @@ Case* Case::creer_case(Direction direction)
     return *case_a_creer;
 }
 
-const Case* Case::case_from_direction(Direction direction) const
+Case* Case::case_from_direction(Direction direction) const
 {
     Case* case_cherchee = nullptr;
 

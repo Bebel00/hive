@@ -1,6 +1,7 @@
 #include "moustique.h"
+#include "insecte.h"
 
-Moustique::Moustique()
+Moustique::Moustique(Team team) : Insecte(team)
 {
 
 }

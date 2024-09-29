@@ -6,7 +6,7 @@
 class Moustique : public Insecte
 {
 public:
-    Moustique();
+    Moustique(Team team);
 };
 
 #endif // MOUSTIQUE_H
