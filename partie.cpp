@@ -1,6 +1,6 @@
 #include "partie.h"
 
-#include "team.h"
+#include "teams.h"
 #include "plateau.h"
 
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
