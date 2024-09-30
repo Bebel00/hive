@@ -6,8 +6,9 @@
 #include <cstdlib>  // pour abs() la valeur absolue
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <QPainterPath>
+#include <QPainter>
 
-Plateau::Plateau()
+Plateau::Plateau(QWidget* parent) : QWidget(parent)
 {
     case_base = new Case(Position(0, 0), this);
     liste_cases.push_back(case_base);
@@ -253,11 +254,16 @@ bool Plateau::tenter_supprimer_case(Case *c)
     return false;
 }
 
-void Plateau::paintEvent(QPaintEvent *event)
+void Plateau::paintEvent(QPaintEvent *)
 {
+    QPainter painter(this);
+
     for (auto i_case : liste_cases)
     {
         Position pos = i_case->get_position();
+        pos.y = -pos.y;
+        pos = pos + Position(10, 10);
+
         QPainterPath path;
         path.moveTo(pos.x * echelle_plateau, (pos.y + 1) * echelle_plateau);
         path.lineTo((pos.x + 1) * echelle_plateau, (pos.y + 0.5) * echelle_plateau);
@@ -266,5 +272,19 @@ void Plateau::paintEvent(QPaintEvent *event)
         path.lineTo((pos.x - 1) * echelle_plateau, (pos.y - 0.5) * echelle_plateau);
         path.lineTo((pos.x - 1) * echelle_plateau, (pos.y + 0.5) * echelle_plateau);
         path.lineTo(pos.x * echelle_plateau, (pos.y + 1) * echelle_plateau);
+
+        painter.drawPath(path);
+
+        std::cout << pos.x << " " << pos.y << std::endl;
     }
+}
+
+QSize Plateau::sizeHint() const
+{
+    return QSize(1000, 1000);
+}
+
+QSize Plateau::minimumSizeHint() const
+{
+    return QSize(500, 500);
 }

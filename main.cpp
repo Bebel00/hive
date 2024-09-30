@@ -8,7 +8,8 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    Partie partie("Bebel", "Léo");
+    Partie partie("Bebel", "Léo", &w);
+    w.setPlateau(partie.get_plateau());
 
     return a.exec();
 }

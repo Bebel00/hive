@@ -5,11 +5,14 @@
 #include "teams.h"
 #include <vector>
 #include <array>
+#include "QWidget"
 
-class Plateau
+class Plateau : public QWidget
 {
+    Q_OBJECT
+
 public:
-    Plateau();
+    Plateau(QWidget* parent);
     ~Plateau();
 
     void deplacer_insecte(class Case* case_depart, class Case* case_fin);
@@ -44,10 +47,14 @@ private:
 
     bool tenter_supprimer_case(Case* c);
 
-    constexpr static float echelle_plateau = 10.0;
+    constexpr static float echelle_plateau = 20.0;
 
 protected:
-    void paintEvent(class QPaintEvent *event);
+    void paintEvent(class QPaintEvent *);
+
+    QSize sizeHint() const;
+
+    QSize minimumSizeHint() const;
 };
 
 #endif // PLATEAU_H

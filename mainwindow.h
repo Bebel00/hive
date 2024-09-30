@@ -15,7 +15,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void setPlateau(class Plateau* const plateau);
+
 private:
     Ui::MainWindow *ui;
+
+    class Plateau* plateau;
+
+    class QGridLayout* layout;
+
 };
 #endif // MAINWINDOW_H
