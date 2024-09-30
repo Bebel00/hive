@@ -36,11 +36,18 @@ public:
      */
     void explorer_adjacence_2(std::array<std::array<Case*, 9>, 5>& adjacence, Case* case_base);
 
+    Case* get_case_base() const { return case_base; }
+
 private:
     Case* case_base;
     std::vector<Case*> liste_cases;
 
     bool tenter_supprimer_case(Case* c);
+
+    constexpr static float echelle_plateau = 10.0;
+
+protected:
+    void paintEvent(class QPaintEvent *event);
 };
 
 #endif // PLATEAU_H

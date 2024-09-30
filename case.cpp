@@ -56,12 +56,12 @@ Position Case::direction_to_position_increment(Direction direction)
     }
 }
 
-Case::Case(Position position) : position(position)
+Case::Case(Position position, Plateau *plateau) : position(position), plateau(plateau)
 {
 
 }
 
-Case* Case::creer_case(Direction direction)
+Case* Case::creer_case(Direction direction, Plateau* const plateau)
 {
     Case** case_a_creer = case_ptr_from_direction(direction);
 
@@ -75,7 +75,7 @@ Case* Case::creer_case(Direction direction)
         std::cout << "La case à créer existe déjà" << std::endl;
         return nullptr;
     }
-    *case_a_creer = new Case(position + direction_to_position_increment(direction));
+    *case_a_creer = new Case(position + direction_to_position_increment(direction), plateau);
     if (!*case_a_creer)
     {
         std::cout << "Impossible de créer une nouvelle case." << std::endl;
@@ -84,7 +84,7 @@ Case* Case::creer_case(Direction direction)
     return *case_a_creer;
 }
 
-Case* Case::case_from_direction(Direction direction) const
+Case* Case::get_case_from_direction(Direction direction) const
 {
     Case* case_cherchee = nullptr;
 
