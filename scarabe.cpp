@@ -6,11 +6,6 @@ Scarabe::Scarabe(Team team) : Insecte(team)
 {
 
 }
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
 
 void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
 {
@@ -18,11 +13,7 @@ void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
     {
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {
-<<<<<<< Updated upstream
-            Case* c = get_case()->case_from_direction(i_direction);
-=======
             Case* c = get_case()->get_case_from_direction(i_direction);
->>>>>>> Stashed changes
 
             if (!Case::is_empty(c))
                 move_possibles.push_back(c);
@@ -34,11 +25,7 @@ void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
                 {
                     if (i_direction != Case::DIRECTION_OPPOSE(j_direction))
                     {
-<<<<<<< Updated upstream
-                        if (!Case::is_empty(c->case_from_direction(j_direction)))
-=======
                         if (!Case::is_empty(c->get_case_from_direction(j_direction)))
->>>>>>> Stashed changes
                         {
                             a_insecte_environnant = true;
                             break;
@@ -52,7 +39,3 @@ void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
         }
     }
 }
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes

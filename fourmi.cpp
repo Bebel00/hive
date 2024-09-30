@@ -1,6 +1,6 @@
 #include "fourmi.h"
 
-Fourmi::Fourmi()
+Fourmi::Fourmi(Team team) : Insecte(team)
 {
 
 }
