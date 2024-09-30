@@ -13,7 +13,7 @@ void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
     {
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {
-            Case* c = get_case()->case_from_direction(i_direction);
+            Case* c = get_case()->get_case_from_direction(i_direction);
 
             if (!Case::is_empty(c))
                 move_possibles.push_back(c);
@@ -25,7 +25,7 @@ void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
                 {
                     if (i_direction != Case::DIRECTION_OPPOSE(j_direction))
                     {
-                        if (!Case::is_empty(c->case_from_direction(j_direction)))
+                        if (!Case::is_empty(c->get_case_from_direction(j_direction)))
                         {
                             a_insecte_environnant = true;
                             break;

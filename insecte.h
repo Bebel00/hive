@@ -11,12 +11,13 @@ class Insecte
 {
 public:
     Insecte(Team team);
+    virtual ~Insecte() {}
 
     /*
      * Fonctions qui définissent l'identité d'un pion
      */
-    virtual Type get_type() = 0;
-    virtual std::string get_chemin_icone() = 0;
+    virtual Type get_type() const = 0;
+    virtual std::string get_chemin_icone() const = 0;
 
     /*
      * Fonctions qui gèrent les véfifications et possibilités de mouvement
@@ -43,6 +44,8 @@ public:
     Team get_team() const { return team; }
 
     Insecte* get_en_dessous() const { return en_dessous; }
+
+    bool est_cerne() const;
 
 private:
     // BLANC ou NOIR
