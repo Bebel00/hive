@@ -14,7 +14,7 @@ void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*
             placements_possibles.push_back(i_case);
 }
 
-bool Insecte::verifier_placement(Case * const c, const Team team)
+bool Insecte::verifier_placement(const Case * const c, const Team team)
 {
     // Est-ce qu'il existe un allié adjacent ?
     bool a_allie = false;
@@ -47,6 +47,12 @@ bool Insecte::verifier_placement(Case * const c, const Team team)
     return a_allie;
 }
 
+// To do
+bool Insecte::move_casse_ruche(const Case * const case_depart)
+{
+    return false;
+}
+
 
 bool Insecte::placer(Case * const c)
 {
@@ -65,5 +71,9 @@ bool Insecte::placer(Case * const c)
 bool Insecte::bouger(Case* const c)
 {
     if (verifier_move(c))
+    {
         position = c;
+        return true;
+    }
+    return false;
 }

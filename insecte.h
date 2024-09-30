@@ -23,27 +23,34 @@ public:
      * Et de placement du pion
      * Le placement est quand on met le pion sur le plateau pour la première fois
      */
-    virtual std::vector<Case*> get_moves_possibles(bool start = false) = 0;
-    virtual bool verifier_move(Case* const c) const = 0;
+    virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const = 0;
+    virtual bool verifier_move(const Case* const c) const = 0;
+
 
     // Fonction qui met la liste des placements possibles dans "placements_possibles" (la valeur de retour)
-    void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team) const;
+    static void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team);
 
-    static bool verifier_placement(Case* const c, const Team team);
+    static bool verifier_placement(const Case* const c, const Team team);
+
+    static bool move_casse_ruche(const Case* const case_depart);
 
     bool placer(Case* const c);
     bool bouger(Case* const c);
 
     // Getter pour la case
-    const Case* get_case() { return position; }
+    Case* get_case() const { return position; }
 
-    Team get_team() { return team; }
+    Team get_team() const { return team; }
+
+    Insecte* get_en_dessous() const { return en_dessous; }
 
 private:
     // BLANC ou NOIR
     Team team;
 
     Case* position;
+
+    Insecte* en_dessous;
 };
 
 #endif // INSECTE_H
