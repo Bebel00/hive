@@ -12,9 +12,10 @@ Case* Sauterelle::get_case_au_bout_direction(Case::Direction direction) const
     // Fonction qui permet d'obtenir la dernière case se trouvant sur une ligne droite
     Case* c = get_case();
 
-    while (c->case_from_direction(direction) != nullptr)
+
+    while (c->get_case_from_direction(direction) != nullptr)
     {
-        c = c->case_from_direction(direction);
+        c = c->get_case_from_direction(direction);
     }
 
     return c;
@@ -33,7 +34,7 @@ void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
     {
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {
-            if (!Case::is_empty(get_case()->case_from_direction(i_direction)))
+            if (!Case::is_empty(get_case()->get_case_from_direction(i_direction)))
             {
                 moves_possibles.push_back(get_case_au_bout_direction(i_direction));
             }
@@ -41,5 +42,3 @@ void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
     }
 
 }
-
-
