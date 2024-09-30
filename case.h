@@ -70,7 +70,7 @@ public:
     static Position direction_to_position_increment(Direction direction);
 
 public:
-    Case(Position position);
+    Case(Position position, class Plateau* plateau);
 
     /*
      *  Fonction qui sert à vérifier si une case est nulle
@@ -83,10 +83,10 @@ public:
         // Si la case n'est pas nullptr on regarde si son pion n'est pas nullptr
         if (c)
             // Pas de pion (pion nullptr) <=> case vide
-            return c->pion;
+            return !(c->pion);
 
         // Si la case est nullptr, on considère que c'est comme si c'était une case vide
-        return false;
+        return true;
     }
 
     /*
@@ -96,10 +96,10 @@ public:
      *
      * Renvoie le pointeur si tout s'est bien passé.
      */
-    Case* creer_case(Direction direction);
+    Case* creer_case(Direction direction, Plateau* const plateau);
 
     // Fonction qui renvoie le pointeur vers la case dans la direction en paramètre
-    Case* case_from_direction(Direction direction) const;
+    Case* get_case_from_direction(Direction direction) const;
 
     // getter pour l'équipe de la case
     Team get_team() const;
@@ -109,6 +109,7 @@ public:
 
     // getter pour si la case a un pion
     bool possede_pion() const { return pion != nullptr; }
+    class Insecte* get_pion() const { return pion; }
 
     // getter pour la position de la case
     Position get_position() const { return position; }
@@ -138,6 +139,9 @@ private:
 
     // Position (coordonnées) de la case
     Position position;
+
+    // Pointeur vers le plateau qui gère la case
+    class Plateau* const plateau;
 };
 
 #endif // CASE_H
