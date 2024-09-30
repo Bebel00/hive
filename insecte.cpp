@@ -54,26 +54,18 @@ bool Insecte::move_casse_ruche(const Case * const case_depart)
 }
 
 
-bool Insecte::placer(Case * const c)
+void Insecte::placer(Case * const c)
 {
-    // La vérification du placement se fait au niveau du plateau
+    // La vérification du placement se fera au niveau du plateau
     position = c;
-
-    return true;
 }
 
-bool Insecte::bouger(Case* const c)
+void Insecte::bouger(Case* const c)
 {
-    if (verifier_move(c))
-    {
-        position = c;
+    position = c;
 
-        if (c->possede_pion())
-            en_dessous = c->get_pion();
-
-        return true;
-    }
-    return false;
+    if (c->possede_pion())
+        en_dessous = c->get_pion();
 }
 
 bool Insecte::est_cerne() const

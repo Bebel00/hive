@@ -23,17 +23,14 @@ Plateau::~Plateau()
     }
 }
 
-bool Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
+void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
 {
     if (case_fin)
     {
         Insecte* pion = case_depart->pion;
-        if (pion->bouger(case_fin))
-        {
-            case_fin->pion = pion;
-        }
-        else
-            return false;
+
+        pion->bouger(case_fin);
+        case_fin->pion = pion;
 
         case_depart->pion = pion->get_en_dessous();
 
@@ -47,12 +44,11 @@ bool Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
             }
         }
     }
-    return true;
 }
 
-bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team)
+bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_check)
 {
-    if (Insecte::verifier_placement(c, team))
+    if (Insecte::verifier_placement(c, team) || bypass_check)
     {
         c->pion = insecte;
         creer_alentours(c);

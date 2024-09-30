@@ -25,18 +25,17 @@ public:
      * Le placement est quand on met le pion sur le plateau pour la première fois
      */
     virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const = 0;
-    virtual bool verifier_move(const Case* const c) const = 0;
-
 
     // Fonction qui met la liste des placements possibles dans "placements_possibles" (la valeur de retour)
     static void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team);
+
 
     static bool verifier_placement(const Case* const c, const Team team);
 
     static bool move_casse_ruche(const Case* const case_depart);
 
-    bool placer(Case* const c);
-    bool bouger(Case* const c);
+    void placer(Case* const c);
+    void bouger(Case* const c);
 
     // Getter pour la case
     Case* get_case() const { return position; }
