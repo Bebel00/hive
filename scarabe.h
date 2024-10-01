@@ -7,6 +7,8 @@ class Scarabe : public Insecte
 {
 public:
     Scarabe(Team team);
+
+    virtual void get_moves_possibles(std::vector<Case*>& move_possibles,Plateau* p) const override;
 };
 
 #endif // SCARABE_H
