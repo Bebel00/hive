@@ -49,12 +49,13 @@ bool Insecte::verifier_placement(const Case * const c, const Team team)
     return a_allie;
 }
 
-
+// Méthode récursive permettant d'obtenir le nombre de pions que l'on peut rejoindre à partir de la case de départ
 unsigned int Insecte::compter_nb_insecte_connecte( Case * const case_depart, const Case* supprime, unsigned int* nb_trouve ){
     case_depart->set_visite(true);
     if (case_depart->possede_pion()){
         *nb_trouve+=1;
     }
+    // Pour chaque direction on vérifie si la case n'st pas null, si la case n'est pas déjà visité et si la case n'est pas celle que l'on souhaite supprimé
     if (case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=supprime ){
         compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE), supprime, nb_trouve);
     }
