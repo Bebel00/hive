@@ -1,6 +1,8 @@
+
 #include "insecte.h"
 #include "case.h"
 #include <vector>
+#include "plateau.h"
 
 Insecte::Insecte(Team team) : team(team)
 {
@@ -47,32 +49,71 @@ bool Insecte::verifier_placement(const Case * const c, const Team team)
     return a_allie;
 }
 
+
+unsigned int Insecte::compter_nb_insecte_connecte( Case * const case_depart, const Case* supprime, unsigned int* nb_trouve ){
+    case_depart->set_visite(true);
+    if (case_depart->possede_pion()){
+        *nb_trouve+=1;
+    }
+    if (case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=supprime ){
+        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE), supprime, nb_trouve);
+    }
+    if (case_depart->get_case_from_direction(Case::Direction::HAUT_DROIT)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::HAUT_DROIT)->get_visite() && case_depart->get_case_from_direction(Case::Direction::HAUT_DROIT)!=supprime ){
+        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::HAUT_DROIT), supprime, nb_trouve);
+    }
+    if (case_depart->get_case_from_direction(Case::Direction::GAUCHE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::GAUCHE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::GAUCHE)!=supprime ){
+        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::GAUCHE), supprime, nb_trouve);
+    }
+    if (case_depart->get_case_from_direction(Case::Direction::DROITE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::DROITE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::DROITE)!=supprime ){
+        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::DROITE), supprime, nb_trouve);
+    }
+    if (case_depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)!=supprime ){
+        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::BAS_GAUCHE), supprime, nb_trouve);
+    }
+    if (case_depart->get_case_from_direction(Case::Direction::BAS_DROIT)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::BAS_DROIT)->get_visite() && case_depart->get_case_from_direction(Case::Direction::BAS_DROIT)!=supprime ){
+        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::BAS_DROIT), supprime, nb_trouve);
+    }
+
+}
+
+
+
 // To do
-bool Insecte::move_casse_ruche(const Case * const case_depart)
+bool Insecte::move_casse_ruche( Case * const case_depart, const Case* supprime,  Plateau * p )
 {
+    unsigned int nb_trouve=0;
+    unsigned int* pt_nb_trouve=&nb_trouve;
+    compter_nb_insecte_connecte(case_depart, supprime, pt_nb_trouve);
+    p->remettre_visite_faux();
+    if (nb_trouve==p->get_nb_pions() -1){ // Si on a trouvé tous les autres pions sur le plateau alors la ruche n'est pas cassé.
+        return true;
+    }
+
     return false;
 }
 
 
-void Insecte::placer(Case * const c)
+bool Insecte::placer(Case * const c, Plateau* p)
 {
-    // La vérification du placement se fera au niveau du plateau
-    position = c;
+    // On vérifie le placement, s'il est bon, on place le pion
+    if (verifier_placement(c, team))
+    {
+        position = c;
+        p->ajouter_pion();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
-void Insecte::bouger(Case* const c)
+bool Insecte::bouger(Case* const c)
 {
-    position = c;
-
-    if (c->possede_pion())
-        en_dessous = c->get_pion();
-}
-
-bool Insecte::est_cerne() const
-{
-    for (auto i_direction : Case::DIRECTIONS_ALL)
-        if (Case::is_empty(get_case()->get_case_from_direction(i_direction)))
-            return false;
-
-    return true;
+    if (verifier_move(c))
+    {
+        position = c;
+        return true;
+    }
+    return false;
 }

@@ -1,3 +1,4 @@
+
 #include "case.h"
 #include "insecte.h"
 #include <iostream>
@@ -56,12 +57,12 @@ Position Case::direction_to_position_increment(Direction direction)
     }
 }
 
-Case::Case(Position position, Plateau *plateau) : position(position), plateau(plateau)
+Case::Case(Position position) : position(position)
 {
 
 }
 
-Case* Case::creer_case(Direction direction, Plateau* const plateau)
+Case* Case::creer_case(Direction direction)
 {
     Case** case_a_creer = case_ptr_from_direction(direction);
 
@@ -75,7 +76,7 @@ Case* Case::creer_case(Direction direction, Plateau* const plateau)
         std::cout << "La case à créer existe déjà" << std::endl;
         return nullptr;
     }
-    *case_a_creer = new Case(position + direction_to_position_increment(direction), plateau);
+    *case_a_creer = new Case(position + direction_to_position_increment(direction));
     if (!*case_a_creer)
     {
         std::cout << "Impossible de créer une nouvelle case." << std::endl;
@@ -151,6 +152,14 @@ Case** Case::case_ptr_from_direction(Direction direction)
 Team Case::get_team() const
 {
     if (pion) return pion->get_team(); else return Team::NONE;
+}
+
+void Case::set_visite(bool v){
+    if (v){
+        visite=true;
+    } else{
+        visite=false;
+    }
 }
 
 /*Case **Case::get_toutes_cases()

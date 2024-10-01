@@ -22,7 +22,7 @@ Case* Sauterelle::get_case_au_bout_direction(Case::Direction direction) const
 }
 
 
-void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
+void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles,Plateau* p) const
 {
     // Est ce que la pièce est déjà positionné ?
     if (get_case()==nullptr)
@@ -30,7 +30,7 @@ void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
         throw "L'Insecte n'est pas encore positionné";
     }
 
-    else if (!move_casse_ruche(get_case()))
+    else if (!move_casse_ruche(p->get_case_base(),get_case(),p))
     {
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {
