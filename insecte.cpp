@@ -50,7 +50,7 @@ bool Insecte::verifier_placement(const Case * const c, const Team team)
 }
 
 // Méthode récursive permettant d'obtenir le nombre de pions que l'on peut rejoindre à partir de la case de départ
-unsigned int Insecte::compter_nb_insecte_connecte( Case * const case_depart, const Case* supprime, unsigned int* nb_trouve ){
+void Insecte::compter_nb_insecte_connecte( Case * const case_depart, const Case* supprime, unsigned int* nb_trouve ){
     case_depart->set_visite(true);
     if (case_depart->possede_pion()){
         *nb_trouve+=1;
@@ -85,7 +85,7 @@ bool Insecte::move_casse_ruche( Case * const case_depart, const Case* supprime, 
     unsigned int nb_trouve=0;
     unsigned int* pt_nb_trouve=&nb_trouve;
     compter_nb_insecte_connecte(case_depart, supprime, pt_nb_trouve);
-    p->remettre_visite_faux();
+    p->remettre_visite_faux(); // On remet pour toutes les cases l'attribut visite à false
     if (nb_trouve==p->get_nb_pions() -1){ // Si on a trouvé tous les autres pions sur le plateau alors la ruche n'est pas cassé.
         return true;
     }
