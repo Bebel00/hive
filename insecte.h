@@ -34,7 +34,7 @@ public:
     static bool verifier_placement(const Case* const c, const Team team);
 
     static bool move_casse_ruche( Case * const case_depart, const Case* supprime, Plateau * p);
-    static unsigned int compter_nb_insecte_connecte( Case * const case_depart, const Case* supprime, unsigned int* nb_trouve );
+    static void compter_nb_insecte_connecte( Case * const case_depart, const Case* supprime, unsigned int* nb_trouve );
 
     bool placer(Case* const c,Plateau* p);
     bool bouger(Case* const c);
