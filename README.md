@@ -4,7 +4,7 @@
 Sujet : https://moodle.utc.fr/pluginfile.php/260046/mod_resource/content/5/LO21_Projet_A24_Hive.pdf
 Règles : https://www.regledujeu.fr/hive/
 
-## by Abel B, Valentin C, Juliette C, Florian H et Léonard V
+## by Abel B, Valentin C, Léo L et Judith L
 
 ## Les classes
 
