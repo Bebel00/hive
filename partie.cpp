@@ -4,10 +4,11 @@
 #include "plateau.h"
 #include "insecte.h"
 #include "mainwindow.h"
+#include <QGraphicsView>
 
-Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo, MainWindow* const w)
+Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
 {
-    plateau = new Plateau(nullptr);
+    plateau = new Plateau();
 
     joueur1 = Joueur(Team::BLANC, joueur1_pseudo);
     joueur2 = Joueur(Team::NOIR, joueur2_pseudo);
@@ -15,7 +16,8 @@ Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo, MainWindo
     ajouter_insecte<Abeille>(Team::NOIR, plateau->get_case_base());
     ajouter_insecte<Abeille>(Team::BLANC, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT));
 
-    plateau->update();
+    view = new QGraphicsView(plateau->get_scene());
+    view->setBackgroundBrush(QBrush(Qt::black));
 }
 
 Partie::~Partie()
@@ -33,5 +35,5 @@ void Partie::ajouter_insecte(Team team, Case* c)
     static_assert(std::is_base_of<Insecte, T_Insecte>::value);
 
     T_Insecte* insecte = new T_Insecte(team);
-    plateau->placer_insecte(c, insecte, team);
+    plateau->placer_insecte(c, insecte, team, true);
 }

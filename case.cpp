@@ -1,6 +1,7 @@
 #include "case.h"
 #include "insecte.h"
 #include <iostream>
+#include <QGraphicsPolygonItem>
 
 Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
 {
@@ -56,9 +57,20 @@ Position Case::direction_to_position_increment(Direction direction)
     }
 }
 
-Case::Case(Position position, Plateau *plateau) : position(position), plateau(plateau)
+Case::Case(Position position, Plateau *plateau, QGraphicsItem* parent) : QGraphicsPolygonItem(parent), position(position), plateau(plateau)
 {
+    QVector<QPoint> points;
 
+    points << QPoint(0, 4) * SCALE << QPoint(4, 2) *  SCALE << QPoint(4, -2) *  SCALE << QPoint(0, -4) * SCALE
+           << QPoint(0, -4) * SCALE << QPoint(-4, -2) * SCALE << QPoint(-4, 2) * SCALE;
+
+    setPolygon(QPolygonF(points));
+
+}
+
+void Case::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    std::cout << "Clicked !" << std::endl;
 }
 
 Case* Case::creer_case(Direction direction, Plateau* const plateau)
@@ -106,7 +118,7 @@ Case* Case::get_case_from_direction(Direction direction) const
         case_cherchee = gauche;
         break;
     case Direction::BAS_GAUCHE:
-        case_cherchee = bas_droit;
+        case_cherchee = bas_gauche;
         break;
     default:
         case_cherchee = nullptr;
@@ -138,7 +150,7 @@ Case** Case::case_ptr_from_direction(Direction direction)
         case_cherchee = &gauche;
         break;
     case Direction::BAS_GAUCHE:
-        case_cherchee = &bas_droit;
+        case_cherchee = &bas_gauche;
         break;
     default:
         case_cherchee = nullptr;
@@ -152,6 +164,7 @@ Team Case::get_team() const
 {
     if (pion) return pion->get_team(); else return Team::NONE;
 }
+
 
 /*Case **Case::get_toutes_cases()
 {

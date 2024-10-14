@@ -7,12 +7,17 @@
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <QPainterPath>
 #include <QPainter>
+#include <QGraphicsScene>
 
-Plateau::Plateau(QWidget* parent) : QWidget(parent)
+Plateau::Plateau()
 {
+    scene = new QGraphicsScene();
     case_base = new Case(Position(0, 0), this);
+
     liste_cases.push_back(case_base);
     creer_alentours(case_base);
+
+    add_polygon(case_base);
 }
 
 Plateau::~Plateau()
@@ -22,6 +27,7 @@ Plateau::~Plateau()
     {
         delete c;
     }
+
 }
 
 void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
@@ -132,6 +138,8 @@ bool Plateau::creer_alentours(Case* c)
     // On boucle sur toutes les directions pour créer une nouvelle case dans chaque direction
     for (auto i_direction : Case::DIRECTIONS_ALL)
     {
+        increment_position = Case::direction_to_position_increment(i_direction);
+
         // On récupère le pointeur vers le pointeur vers la case dans la direction actuelle
         // Double pointeur pour pouvoir changer la valeur du pointeur case_droite par exemple,
         // Sans double pointeur ça ferait juste une copie du pointeur et on travaillerait sur la copie
@@ -157,6 +165,7 @@ bool Plateau::creer_alentours(Case* c)
 
             // Si la création s'est bien passée on ajoute la case à la liste des cases
             liste_cases.push_back(nouvelle_case);
+            add_polygon(nouvelle_case);
 
             // Et là c'est de la magie noire
 
@@ -254,37 +263,47 @@ bool Plateau::tenter_supprimer_case(Case *c)
     return false;
 }
 
-void Plateau::paintEvent(QPaintEvent *)
+void Plateau::add_polygon(Case *c)
 {
-    QPainter painter(this);
+    c->setPolygon(c->polygon().translated(c->get_position().x * 4 * Case::SCALE, c->get_position().y * 6 * Case::SCALE));
+    // scene->addPolygon(c->polygon());
 
-    for (auto i_case : liste_cases)
-    {
-        Position pos = i_case->get_position();
-        pos.y = -pos.y;
-        pos = pos + Position(10, 10);
-
-        QPainterPath path;
-        path.moveTo(pos.x * echelle_plateau, (pos.y + 1) * echelle_plateau);
-        path.lineTo((pos.x + 1) * echelle_plateau, (pos.y + 0.5) * echelle_plateau);
-        path.lineTo((pos.x + 1) * echelle_plateau, (pos.y - 0.5) * echelle_plateau);
-        path.lineTo(pos.x * echelle_plateau, (pos.y - 1) * echelle_plateau);
-        path.lineTo((pos.x - 1) * echelle_plateau, (pos.y - 0.5) * echelle_plateau);
-        path.lineTo((pos.x - 1) * echelle_plateau, (pos.y + 0.5) * echelle_plateau);
-        path.lineTo(pos.x * echelle_plateau, (pos.y + 1) * echelle_plateau);
-
-        painter.drawPath(path);
-
-        std::cout << pos.x << " " << pos.y << std::endl;
-    }
+    QBrush brush;
+    brush.setColor(Qt::darkCyan);
+    brush.setStyle(Qt::SolidPattern);
+    scene->addPolygon(c->polygon(), QPen(Qt::red), brush);
 }
 
-QSize Plateau::sizeHint() const
-{
-    return QSize(1000, 1000);
-}
+//void Plateau::paintEvent(QPaintEvent *)
+//{
+//    QPainter painter(this);
 
-QSize Plateau::minimumSizeHint() const
-{
-    return QSize(500, 500);
-}
+//    for (auto i_case : liste_cases)
+//    {
+//        Position pos = i_case->get_position();
+
+//        pos.y = -pos.y;
+//        pos = pos + Position(10, 10);
+
+//        QPainterPath path;
+//        path.moveTo(pos.x * echelle_plateau, ((pos.y * 1.5) + 1) * echelle_plateau);
+//        path.lineTo((pos.x + 1) * echelle_plateau, ((pos.y * 1.5) + 0.5) * echelle_plateau);
+//        path.lineTo((pos.x + 1) * echelle_plateau, ((pos.y * 1.5) - 0.5) * echelle_plateau);
+//        path.lineTo(pos.x * echelle_plateau, ((pos.y * 1.5) - 1) * echelle_plateau);
+//        path.lineTo((pos.x - 1) * echelle_plateau, ((pos.y * 1.5) - 0.5) * echelle_plateau);
+//        path.lineTo((pos.x - 1) * echelle_plateau, ((pos.y * 1.5) + 0.5) * echelle_plateau);
+//        path.lineTo(pos.x * echelle_plateau, ((pos.y * 1.5) + 1) * echelle_plateau);
+
+//        painter.drawPath(path);
+//    }
+//}
+
+//QSize Plateau::sizeHint() const
+//{
+//    return QSize(1000, 1000);
+//}
+
+//QSize Plateau::minimumSizeHint() const
+//{
+//    return QSize(500, 500);
+//}

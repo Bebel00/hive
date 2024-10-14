@@ -6,13 +6,14 @@
 #include <vector>
 #include <array>
 #include "QWidget"
+#include "QGridLayout"
 
 class Plateau : public QWidget
 {
     Q_OBJECT
 
 public:
-    Plateau(QWidget* parent);
+    Plateau();
     ~Plateau();
 
     void deplacer_insecte(class Case* case_depart, class Case* case_fin);
@@ -41,6 +42,8 @@ public:
 
     Case* get_case_base() const { return case_base; }
 
+    class QGraphicsScene* get_scene() { return scene; }
+
 private:
     Case* case_base;
     std::vector<Case*> liste_cases;
@@ -49,12 +52,18 @@ private:
 
     constexpr static float echelle_plateau = 20.0;
 
+    class QGraphicsScene* scene;
+
+    void add_polygon(Case* c);
+
 protected:
-    void paintEvent(class QPaintEvent *);
+//    void paintEvent(class QPaintEvent *);
 
-    QSize sizeHint() const;
+//    QSize sizeHint() const;
 
-    QSize minimumSizeHint() const;
+//    QSize minimumSizeHint() const;
+
+
 };
 
 #endif // PLATEAU_H
