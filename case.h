@@ -46,6 +46,8 @@ public:
 class Case
 {
     friend class Plateau;
+    friend class Insecte;
+
 public:
     enum class Direction
     {
@@ -104,17 +106,11 @@ public:
     // getter pour l'équipe de la case
     Team get_team() const;
 
-    // Case** get_toutes_cases();
-    // Pour plus tard si y a besoin
-
     // getter pour si la case a un pion
     bool possede_pion() const { return pion != nullptr; }
 
     // getter pour la position de la case
     Position get_position() const { return position; }
-
-    void set_visite(bool v);
-    bool get_visite(){return visite;}
 
 private:
     // Fonction qui renvoie un pointeur le pointeur vers la case dans la direction en paramètre
@@ -141,6 +137,7 @@ private:
 
     // Position (coordonnées) de la case
     Position position;
+
     bool visite = false;
 };
 

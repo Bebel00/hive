@@ -2,6 +2,7 @@
 #include "insecte.h"
 #include "case.h"
 #include <vector>
+#include <stdexcept>
 #include "plateau.h"
 
 Insecte::Insecte(Team team) : team(team)
@@ -50,55 +51,95 @@ bool Insecte::verifier_placement(const Case * const c, const Team team)
 }
 
 // Méthode récursive permettant d'obtenir le nombre de pions que l'on peut rejoindre à partir de la case de départ
-void Insecte::compter_nb_insecte_connecte( Case * const case_depart, const Case* supprime, unsigned int* nb_trouve ){
-    case_depart->set_visite(true);
-    if (case_depart->possede_pion()){
-        *nb_trouve+=1;
-        Insecte* en_dessous=case_depart->get_pion()->get_en_dessous();
-        while(en_dessous!=nullptr){ // On compte le nombre de pièces étant en dessous de celle du dessus
-            en_dessous=en_dessous->get_en_dessous();
-            *nb_trouve+=1;
+void Insecte::compter_nb_insecte_connecte(Case * const case_depart, unsigned int& nb_trouve)
+{
+    case_depart->visite = true;
+    nb_trouve += 1;
+
+    // Pour chaque direction on vérifie si la case n'est pas vide,
+    // et si la case n'est pas déjà visitée
+
+    for (auto i_direction : Case::DIRECTIONS_ALL)
+    {
+        auto i_case = case_depart->get_case_from_direction(i_direction);
+        if (!Case::is_empty(i_case) && !i_case->visite)
+            compter_nb_insecte_connecte(i_case, nb_trouve);
+    }
+}
+
+/*
+ * Fonction qui vérifie si le fait de bouger un pion ne casse pas la ruche.
+ * Pour ça on vérifie qu'en enlevant le pion de la case passée en paramètre,
+ * on peut toujours atteindre tous les pions de la ruche.
+ */
+bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case *> &liste_cases)
+{
+    if (Case::is_empty(case_depart))
+        throw std::invalid_argument("Move casse ruche : impossible de bouger une case vide.");
+
+    // On enlève le pion pour voir ce qu'il se passe
+    Insecte* insecte = case_depart->pion;
+    case_depart->pion = nullptr;
+
+    unsigned int nb_trouve = 0;
+    unsigned int nb_pions = 0;
+
+    // On part d'un pion voisin au hasard, le premier trouvé,
+    // pour tenter d'atteindre tous les pions.
+    for (auto i_direction : Case::DIRECTIONS_ALL)
+        if (!Case::is_empty(case_depart->get_case_from_direction(i_direction)))
+        {
+            compter_nb_insecte_connecte(case_depart->get_case_from_direction(i_direction), nb_trouve);
+            break;
         }
 
-    }
-    // Pour chaque direction on vérifie si la case n'st pas null, si la case n'est pas déjà visité et si la case n'est pas celle que l'on souhaite supprimé
-    if (case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=supprime ){
-        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE), supprime, nb_trouve);
-    }
-    if (case_depart->get_case_from_direction(Case::Direction::HAUT_DROIT)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::HAUT_DROIT)->get_visite() && case_depart->get_case_from_direction(Case::Direction::HAUT_DROIT)!=supprime ){
-        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::HAUT_DROIT), supprime, nb_trouve);
-    }
-    if (case_depart->get_case_from_direction(Case::Direction::GAUCHE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::GAUCHE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::GAUCHE)!=supprime ){
-        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::GAUCHE), supprime, nb_trouve);
-    }
-    if (case_depart->get_case_from_direction(Case::Direction::DROITE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::DROITE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::DROITE)!=supprime ){
-        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::DROITE), supprime, nb_trouve);
-    }
-    if (case_depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)->get_visite() && case_depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)!=supprime ){
-        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::BAS_GAUCHE), supprime, nb_trouve);
-    }
-    if (case_depart->get_case_from_direction(Case::Direction::BAS_DROIT)!=nullptr && !case_depart->get_case_from_direction(Case::Direction::BAS_DROIT)->get_visite() && case_depart->get_case_from_direction(Case::Direction::BAS_DROIT)!=supprime ){
-        compter_nb_insecte_connecte(case_depart->get_case_from_direction(Case::Direction::BAS_DROIT), supprime, nb_trouve);
+    // On remet pour toutes les cases l'attribut visite à false
+    for (auto i_case : liste_cases)
+    {
+        if (!i_case->possede_pion())
+            nb_pions++;
+
+        i_case->visite = false;
     }
 
+    // On remet le pion à sa place
+    case_depart->pion = insecte;
+
+    // Si on a trouvé tous les autres pions sur le plateau alors la ruche n'est pas cassé.
+    if (nb_trouve == nb_pions)
+    {
+        return false;
+    }
+
+    return true;
 }
 
-
-
-// To do
-bool Insecte::move_casse_ruche( Case * const case_depart, const Case* supprime,  Plateau * p )
+bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
 {
-    unsigned int nb_trouve=0;
-    unsigned int* pt_nb_trouve=&nb_trouve;
-    compter_nb_insecte_connecte(case_depart, supprime, pt_nb_trouve);
-    p->remettre_visite_faux(); // On remet pour toutes les cases l'attribut visite à false
-    if (nb_trouve==p->get_nb_pions() -1){ // Si on a trouvé tous les autres pions sur le plateau alors la ruche n'est pas cassé.
-        return true;
+    switch (d)
+    {
+    case(Case::Direction::HAUT_DROIT):
+            return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE))
+                && !Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE));
+    case(Case::Direction::DROITE):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT))
+               && !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_DROIT));
+    case(Case::Direction::BAS_DROIT):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE))
+               && !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_GAUCHE));
+    case(Case::Direction::BAS_GAUCHE):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_DROIT))
+               && !Case::is_empty(depart->get_case_from_direction(Case::Direction::GAUCHE));
+    case(Case::Direction::GAUCHE):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE))
+               && !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_GAUCHE));
+    case(Case::Direction::HAUT_GAUCHE):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT))
+               && !Case::is_empty(depart->get_case_from_direction(Case::Direction::GAUCHE));
+    default:
+        return false;
     }
-
-    return false;
 }
-
 
 bool Insecte::placer(Case * const c, Plateau* p)
 {

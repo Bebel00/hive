@@ -40,6 +40,8 @@ public:
     void ajouter_pion() {nb_pions++;}
     Case* get_case_base  () const  {return case_base;}
 
+    const std::vector<Case*>& get_cases() { return liste_cases; }
+
 private:
     Case* case_base;
     std::vector<Case*> liste_cases;
