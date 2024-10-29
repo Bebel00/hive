@@ -4,6 +4,7 @@
 #include <array>    // pour std::array une liste
 #include <cstdlib>  // pour abs() la valeur absolue
 #include <algorithm> // pour std::find trouver un élément dans une liste
+#include <stdexcept>
 
 Plateau::Plateau()
 {
@@ -208,7 +209,7 @@ bool Plateau::tenter_supprimer_case(Case *c)
         }
         else
         {
-            std::cout << "Suppression d'une case pas dans la liste de cases, pas normal." << std::endl;
+            throw std::logic_error("Suppression d'une case pas dans la liste de cases, pas normal.");
         }
 
         delete c;
@@ -217,8 +218,3 @@ bool Plateau::tenter_supprimer_case(Case *c)
     return false;
 }
 
-void Plateau::remettre_visite_faux(){
-    for (unsigned int i= 0;i<liste_cases.size();i++){
-        liste_cases[i]->set_visite(false);
-    }
-}
