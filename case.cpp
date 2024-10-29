@@ -1,4 +1,3 @@
-
 #include "case.h"
 #include "insecte.h"
 #include <iostream>
@@ -57,12 +56,12 @@ Position Case::direction_to_position_increment(Direction direction)
     }
 }
 
-Case::Case(Position position) : position(position)
+Case::Case(Position position, Plateau *plateau) : position(position), plateau(plateau)
 {
 
 }
 
-Case* Case::creer_case(Direction direction)
+Case* Case::creer_case(Direction direction, Plateau* const plateau)
 {
     Case** case_a_creer = case_ptr_from_direction(direction);
 
@@ -76,7 +75,7 @@ Case* Case::creer_case(Direction direction)
         std::cout << "La case à créer existe déjà" << std::endl;
         return nullptr;
     }
-    *case_a_creer = new Case(position + direction_to_position_increment(direction));
+    *case_a_creer = new Case(position + direction_to_position_increment(direction), plateau);
     if (!*case_a_creer)
     {
         std::cout << "Impossible de créer une nouvelle case." << std::endl;
@@ -153,3 +152,43 @@ Team Case::get_team() const
 {
     if (pion) return pion->get_team(); else return Team::NONE;
 }
+
+/*Case **Case::get_toutes_cases()
+{
+    std::vector<Case*> cases;
+
+
+
+    // On remet le flag de visite à 0
+    for (auto& i_case : cases)
+        cases->visite = false;
+
+    return cases.data();
+}
+
+void Case::get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_visiter)
+{
+    if (case_a_visiter)
+    {
+        case_a_visiter->visite = true;
+        cases.push_back(case_a_visiter);
+    }
+    else
+    {
+        std::cout << "Une case nullptr a été visitée. (Ca ne devrait pas arriver)" << std::endl;
+    }
+    if (!Case::is_empty(case_a_visiter))
+    {
+        for (auto i_direction : DIRECTIONS_ALL)
+        {
+            Case* i_case = case_a_visiter->case_from_direction(i_direction);
+            if (i_case != nullptr)
+            {
+                if (i_case->visite == false)
+                    get_toutes_cases_recursif(cases, i_case);
+            }
+        }
+    }
+}*/
+
+// Pour l'instant on aura sûrement pas besoin de ça en fait
