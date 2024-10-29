@@ -7,8 +7,9 @@
 #include <array>
 #include "QWidget"
 #include "QGridLayout"
+#include <QGraphicsScene>
 
-class Plateau : public QWidget
+class Plateau : public QGraphicsScene
 {
     Q_OBJECT
 
@@ -42,7 +43,7 @@ public:
 
     Case* get_case_base() const { return case_base; }
 
-    class QGraphicsScene* get_scene() { return scene; }
+    QGraphicsScene* get_scene() { return this; }
 
 private:
     Case* case_base;
@@ -52,9 +53,11 @@ private:
 
     constexpr static float echelle_plateau = 20.0;
 
-    class QGraphicsScene* scene;
+    void add_case(Case* c);
 
-    void add_polygon(Case* c);
+    Case* case_selectionnee = nullptr;
+
+    void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
 
 protected:
 //    void paintEvent(class QPaintEvent *);
@@ -63,6 +66,7 @@ protected:
 
 //    QSize minimumSizeHint() const;
 
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 
 };
 

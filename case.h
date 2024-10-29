@@ -114,6 +114,17 @@ public:
     // getter pour la position de la case
     Position get_position() const { return position; }
 
+
+    // https://doc.qt.io/qt-6/qgraphicsitem.html#type
+    // Pour utiliser qgraphicsitem_cast
+    enum { Type = UserType + 1 };
+
+    int type() const override
+    {
+        // Enable the use of qgraphicsitem_cast with this item.
+        return Type;
+    }
+
 private:
     // Fonction qui renvoie un pointeur le pointeur vers la case dans la direction en paramètre
     // C'est un peu complexe mais c'est juste pour changer la valeur des variables juste en dessous
@@ -145,6 +156,8 @@ private:
 
     // Constructeur en privé car seul plateau peut créer une case
     Case(Position position, class Plateau* plateau, QGraphicsItem* parent = nullptr);
+
+    QGraphicsTextItem* textItem;
 
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

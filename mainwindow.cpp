@@ -25,10 +25,10 @@ void MainWindow::setPartie(Partie* const partie)
     layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),0,0);
     layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),2,2);
     layout->setColumnStretch(0, 1);
-    layout->setColumnStretch(1, 3);
+    layout->setColumnStretch(1, 16);
     layout->setColumnStretch(2, 1);
     layout->setRowStretch(0, 1);
     layout->setRowStretch(2, 1);
-    layout->setRowStretch(1, 3);
+    layout->setRowStretch(1, 9);
 }
 

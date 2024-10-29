@@ -4,7 +4,9 @@
 #include "plateau.h"
 #include "insecte.h"
 #include "mainwindow.h"
+#include "scarabe.h"
 #include <QGraphicsView>
+#include <QScrollBar>
 
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
 {
@@ -18,6 +20,12 @@ Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
 
     view = new QGraphicsView(plateau->get_scene());
     view->setBackgroundBrush(QBrush(Qt::black));
+
+    view->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
+    view->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
+
+    ajouter_insecte<Scarabe>(Team::BLANC, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_GAUCHE));
+
 }
 
 Partie::~Partie()

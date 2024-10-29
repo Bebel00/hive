@@ -2,6 +2,8 @@
 #include "insecte.h"
 #include <iostream>
 #include <QGraphicsPolygonItem>
+#include <QGraphicsTextItem>
+#include <QFont>
 
 Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
 {
@@ -65,6 +67,16 @@ Case::Case(Position position, Plateau *plateau, QGraphicsItem* parent) : QGraphi
            << QPoint(0, -4) * SCALE << QPoint(-4, -2) * SCALE << QPoint(-4, 2) * SCALE;
 
     setPolygon(QPolygonF(points));
+    setPolygon(polygon().translated(get_position().x * 4 * Case::SCALE, get_position().y * 6 * Case::SCALE));
+
+    // Create and configure the text item
+    textItem = new QGraphicsTextItem("", this);
+    textItem->setDefaultTextColor(Qt::white);  // Set text color
+    textItem->setFont(QFont("Arial", 30));     // Set font and size
+
+    // Position text in the center of the hexagon
+    QRectF bounds = boundingRect();
+    textItem->setPos(bounds.center() - textItem->boundingRect().center());
 
 }
 
