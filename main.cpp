@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-
+#include "partie.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -7,5 +7,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
+
+    Partie partie("Bebel", "Léo");
+
     return a.exec();
 }

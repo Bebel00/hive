@@ -2,6 +2,7 @@
 #define PARTIE_H
 
 #include "joueur.h"
+#include <vector>
 
 class Partie
 {
@@ -14,6 +15,14 @@ private:
 
     Joueur joueur1;
     Joueur joueur2;
+
+    unsigned int nb_tours = 0;
+    Team tour;
+
+    std::vector<class Insecte*> insectes;
+
+    template<typename T_Insecte>
+    void ajouter_insecte(Team team, class Case* c);
 };
 
 #endif // PARTIE_H
