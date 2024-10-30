@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
     w.show();
 
     Partie partie("Bebel", "Léo");
+    w.setPartie(&partie);
 
     return a.exec();
 }

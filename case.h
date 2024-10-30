@@ -2,6 +2,7 @@
 #define CASE_H
 
 #include "teams.h"
+#include <QGraphicsPolygonItem>
 
 class Position
 {
@@ -43,8 +44,9 @@ public:
     }
 };
 
-class Case
+class Case : public QGraphicsPolygonItem
 {
+
     friend class Plateau;
     friend class Insecte;
 
@@ -72,8 +74,6 @@ public:
     static Position direction_to_position_increment(Direction direction);
 
 public:
-    Case(Position position, class Plateau* plateau);
-
     /*
      *  Fonction qui sert à vérifier si une case est nulle
      *  On utilise une fonction statique pour l'utiliser même on a une case nullptr
@@ -98,7 +98,7 @@ public:
      *
      * Renvoie le pointeur si tout s'est bien passé.
      */
-    Case* creer_case(Direction direction, Plateau* const plateau);
+    Case* creer_case(Direction direction, class Plateau* const plateau);
 
     // Fonction qui renvoie le pointeur vers la case dans la direction en paramètre
     Case* get_case_from_direction(Direction direction) const;
@@ -115,6 +115,16 @@ public:
 
     // getter plateau
     const class Plateau* get_plateau() const { return plateau; }
+
+    // https://doc.qt.io/qt-6/qgraphicsitem.html#type
+    // Pour utiliser qgraphicsitem_cast
+    enum { Type = UserType + 1 };
+
+    int type() const override
+    {
+        // Enable the use of qgraphicsitem_cast with this item.
+        return Type;
+    }
 
 private:
     // Fonction qui renvoie un pointeur le pointeur vers la case dans la direction en paramètre
@@ -146,6 +156,17 @@ private:
     class Plateau* const plateau;
 
     bool visite = false;
+
+    // Constructeur en privé car seul plateau peut créer une case
+    Case(Position position, class Plateau* plateau, QGraphicsItem* parent = nullptr);
+
+    QGraphicsTextItem* textItem;
+
+protected:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+private:
+    static constexpr float SCALE = 20.0;
 };
 
 #endif // CASE_H

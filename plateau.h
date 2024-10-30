@@ -5,9 +5,14 @@
 #include "teams.h"
 #include <vector>
 #include <array>
+#include "QWidget"
+#include "QGridLayout"
+#include <QGraphicsScene>
 
-class Plateau
+class Plateau : public QGraphicsScene
 {
+    Q_OBJECT
+
 public:
     Plateau();
     ~Plateau();
@@ -40,16 +45,31 @@ public:
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
 
+    QGraphicsScene* get_scene() { return this; }
+
 private:
     Case* case_base;
     std::vector<Case*> liste_cases;
 
     bool tenter_supprimer_case(Case* c);
 
-    constexpr static float echelle_plateau = 10.0;
+    constexpr static float echelle_plateau = 20.0;
+
+    void add_case(Case* c);
+
+    Case* case_selectionnee = nullptr;
+
+    void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
 
 protected:
-    void paintEvent(class QPaintEvent *event);
+//    void paintEvent(class QPaintEvent *);
+
+//    QSize sizeHint() const;
+
+//    QSize minimumSizeHint() const;
+
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+
 };
 
 #endif // PLATEAU_H

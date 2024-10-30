@@ -6,11 +6,16 @@
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <stdexcept>
 #include <QPainterPath>
+#include <QPainter>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 
-Plateau::Plateau()
+Plateau::Plateau() : QGraphicsScene()
 {
     case_base = new Case(Position(0, 0), this);
-    liste_cases.push_back(case_base);
+
+    add_case(case_base);
+
     creer_alentours(case_base);
 }
 
@@ -21,6 +26,7 @@ Plateau::~Plateau()
     {
         delete c;
     }
+
 }
 
 void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
@@ -50,6 +56,13 @@ bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_c
         c->pion = insecte;
         creer_alentours(c);
         insecte->placer(c);
+
+        QBrush brush;
+        brush.setColor(Qt::darkCyan);
+        brush.setStyle(Qt::SolidPattern);
+        c->setBrush(brush);
+
+        c->textItem->setPlainText(QString(type_to_str(insecte->get_type())[0]));
         return true;
     }
     return false;
@@ -129,6 +142,11 @@ bool Plateau::creer_alentours(Case* c)
     // On boucle sur toutes les directions pour créer une nouvelle case dans chaque direction
     for (auto i_direction : Case::DIRECTIONS_ALL)
     {
+        increment_position = Case::direction_to_position_increment(i_direction);
+
+        *(c->case_ptr_from_direction(i_direction)) =
+                adjacence[case_base_pos.y + increment_position.y][case_base_pos.x + increment_position.x];
+
         // On récupère le pointeur vers le pointeur vers la case dans la direction actuelle
         // Double pointeur pour pouvoir changer la valeur du pointeur case_droite par exemple,
         // Sans double pointeur ça ferait juste une copie du pointeur et on travaillerait sur la copie
@@ -153,7 +171,7 @@ bool Plateau::creer_alentours(Case* c)
             }
 
             // Si la création s'est bien passée on ajoute la case à la liste des cases
-            liste_cases.push_back(nouvelle_case);
+            add_case(nouvelle_case);
 
             // Et là c'est de la magie noire
 
@@ -249,19 +267,54 @@ bool Plateau::tenter_supprimer_case(Case *c)
     return false;
 }
 
-void Plateau::paintEvent(QPaintEvent *event)
+void Plateau::add_case(Case *c)
 {
-    for (auto i_case : liste_cases)
+    liste_cases.push_back(c);
+
+    QBrush brush;
+    brush.setStyle(Qt::NoBrush);
+    c->setBrush(brush);
+    c->setPen(QPen(Qt::red));
+    addItem(c);
+}
+
+void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    if (mouseEvent->button() == Qt::LeftButton)
     {
-        Position pos = i_case->get_position();
-        QPainterPath path;
-        path.moveTo(pos.x * echelle_plateau, (pos.y + 1) * echelle_plateau);
-        path.lineTo((pos.x + 1) * echelle_plateau, (pos.y + 0.5) * echelle_plateau);
-        path.lineTo((pos.x + 1) * echelle_plateau, (pos.y - 0.5) * echelle_plateau);
-        path.lineTo(pos.x * echelle_plateau, (pos.y - 1) * echelle_plateau);
-        path.lineTo((pos.x - 1) * echelle_plateau, (pos.y - 0.5) * echelle_plateau);
-        path.lineTo((pos.x - 1) * echelle_plateau, (pos.y + 0.5) * echelle_plateau);
-        path.lineTo(pos.x * echelle_plateau, (pos.y + 1) * echelle_plateau);
+        QGraphicsItem *item = itemAt(mouseEvent->scenePos(), QTransform());
+        Case* case_cliquee = qgraphicsitem_cast<Case*>(item);
+
+
+        if (case_cliquee)
+        {
+
+            if (case_cliquee != case_selectionnee)
+            {
+
+                // Reset la surbrillance
+                surbriller_cases(liste_cases, Qt::red, 0);
+
+                case_selectionnee = case_cliquee;
+                case_selectionnee->setPen(QPen(Qt::cyan));
+                case_selectionnee->setZValue(1);
+
+                if (case_selectionnee->possede_pion())
+                {
+                    std::vector<Case*> move_possibles;
+                    case_selectionnee->get_pion()->get_moves_possibles(move_possibles);
+                    surbriller_cases(move_possibles, Qt::yellow, 0.5);
+                }
+            }
+        }
     }
 }
 
+void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue)
+{
+    for (auto i_case : cases)
+    {
+        i_case->setPen(QPen(color));
+        i_case->setZValue(zvalue);
+    }
+}

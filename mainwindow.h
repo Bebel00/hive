@@ -15,7 +15,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void setPartie(class Partie* const partie);
+
 private:
     Ui::MainWindow *ui;
+
+    class Partie* partie;
+
+    class QGridLayout* layout;
+
 };
 #endif // MAINWINDOW_H
