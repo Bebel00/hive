@@ -76,6 +76,9 @@ bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case 
     if (Case::is_empty(case_depart))
         throw std::invalid_argument("Move casse ruche : impossible de bouger une case vide.");
 
+    if (case_depart->get_pion()->get_en_dessous())
+        return false;
+
     // On enlève le pion pour voir ce qu'il se passe
     Insecte* insecte = case_depart->pion;
     case_depart->pion = nullptr;
@@ -95,7 +98,7 @@ bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case 
     // On remet pour toutes les cases l'attribut visite à false
     for (auto i_case : liste_cases)
     {
-        if (!i_case->possede_pion())
+        if (i_case->possede_pion())
             nb_pions++;
 
         i_case->visite = false;
@@ -140,7 +143,7 @@ bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
     }
 }
 
-bool Insecte::placer(Case * const c)
+void Insecte::placer(Case * const c)
 {
     // La vérification du placement se fera au niveau du plateau
     position = c;
