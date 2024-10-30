@@ -5,10 +5,11 @@
 #include <cstdlib>  // pour abs() la valeur absolue
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <stdexcept>
+#include <QPainterPath>
 
 Plateau::Plateau()
 {
-    case_base = new Case(Position(0, 0));
+    case_base = new Case(Position(0, 0), this);
     liste_cases.push_back(case_base);
     creer_alentours(case_base);
 }
@@ -22,6 +23,37 @@ Plateau::~Plateau()
     }
 }
 
+void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
+{
+    if (case_fin)
+    {
+        Insecte* pion = case_depart->pion;
+        pion->bouger(case_fin);
+        case_fin->pion = pion;
+
+        case_depart->pion = pion->get_en_dessous();
+        case_fin->pion = pion;
+        if (case_depart->pion == nullptr)
+        {
+            for (auto i_direction : Case::DIRECTIONS_ALL)
+            {
+                tenter_supprimer_case(*(case_depart->case_ptr_from_direction(i_direction)));
+            }
+        }
+    }
+}
+
+bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_check)
+{
+    if (Insecte::verifier_placement(c, team) || bypass_check)
+    {
+        c->pion = insecte;
+        creer_alentours(c);
+        insecte->placer(c);
+        return true;
+    }
+    return false;
+}
 
 
 bool Plateau::verifier_suppression_case(Case *c) const
@@ -112,7 +144,7 @@ bool Plateau::creer_alentours(Case* c)
         // Ensuite, si la case est vide, on créer une case
         if (!*i_case)
         {
-            Case* nouvelle_case = c->creer_case(i_direction);
+            Case* nouvelle_case = c->creer_case(i_direction, this);
 
             // On vérifie bien sûr que la création se passe bien
             if (!nouvelle_case)
@@ -148,9 +180,8 @@ bool Plateau::creer_alentours(Case* c)
                 // On initialise le pointeur dans la direction donnée et on le fait pointer vers la case finale observée
                 (*(nouvelle_case->case_ptr_from_direction(j_direction))) = case_finale;
 
-                // Et on s'assure que la case finale observée pointe vers la nouvelle case (le sens inverse)
-                (*(case_finale->case_ptr_from_direction(Case::DIRECTION_OPPOSE(j_direction)))) = nouvelle_case;
-
+                if (case_finale)
+                    (*(case_finale->case_ptr_from_direction(Case::DIRECTION_OPPOSE(j_direction)))) = nouvelle_case;
             }
         }
     }
@@ -171,8 +202,8 @@ void Plateau::explorer_adjacence_2(std::array<std::array<Case *, 9>, 5> &adjacen
 
     for (auto i_case : liste_cases)
     {
-        if (abs(i_case->get_position().x - case_base->get_position().x) <= 2)
-            if (abs(i_case->get_position().y - case_base->get_position().y) <= 4)
+        if (abs(i_case->get_position().x - case_base->get_position().x) <= 4)
+            if (abs(i_case->get_position().y - case_base->get_position().y) <= 2)
             {
                 const int x = i_case->get_position().x - case_base->get_position().x + 4;
                 const int y = i_case->get_position().y - case_base->get_position().y + 2;
@@ -216,5 +247,21 @@ bool Plateau::tenter_supprimer_case(Case *c)
         return true;
     }
     return false;
+}
+
+void Plateau::paintEvent(QPaintEvent *event)
+{
+    for (auto i_case : liste_cases)
+    {
+        Position pos = i_case->get_position();
+        QPainterPath path;
+        path.moveTo(pos.x * echelle_plateau, (pos.y + 1) * echelle_plateau);
+        path.lineTo((pos.x + 1) * echelle_plateau, (pos.y + 0.5) * echelle_plateau);
+        path.lineTo((pos.x + 1) * echelle_plateau, (pos.y - 0.5) * echelle_plateau);
+        path.lineTo(pos.x * echelle_plateau, (pos.y - 1) * echelle_plateau);
+        path.lineTo((pos.x - 1) * echelle_plateau, (pos.y - 0.5) * echelle_plateau);
+        path.lineTo((pos.x - 1) * echelle_plateau, (pos.y + 0.5) * echelle_plateau);
+        path.lineTo(pos.x * echelle_plateau, (pos.y + 1) * echelle_plateau);
+    }
 }
 

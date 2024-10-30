@@ -1,4 +1,3 @@
-
 #include "insecte.h"
 #include "case.h"
 #include <vector>
@@ -141,27 +140,23 @@ bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
     }
 }
 
-bool Insecte::placer(Case * const c, Plateau* p)
+bool Insecte::placer(Case * const c)
 {
-    // On vérifie le placement, s'il est bon, on place le pion
-    if (verifier_placement(c, team))
-    {
-        position = c;
-        p->ajouter_pion();
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    // La vérification du placement se fera au niveau du plateau
+    position = c;
 }
 
-bool Insecte::bouger(Case* const c)
+void Insecte::bouger(Case* const c)
 {
-    if (verifier_move(c))
-    {
-        position = c;
-        return true;
-    }
-    return false;
+    position = c;
+    if (c->possede_pion())
+        en_dessous = c->get_pion();
+}
+
+bool Insecte::est_cerne() const
+{
+    for (auto i_direction : Case::DIRECTIONS_ALL)
+        if (Case::is_empty(get_case()->get_case_from_direction(i_direction)))
+            return false;
+    return true;
 }
