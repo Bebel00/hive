@@ -14,7 +14,6 @@ void Abeille::get_moves_possibles(std::vector<Case *> &move_possibles) const
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {
             Case* c = get_case()->get_case_from_direction(i_direction);
-
             if (Case::is_empty(c))
             {
                 bool a_insecte_environnant = false;
@@ -29,7 +28,6 @@ void Abeille::get_moves_possibles(std::vector<Case *> &move_possibles) const
                         }
                     }
                 }
-
                 if (a_insecte_environnant)
                     move_possibles.push_back(c);
             }

@@ -36,7 +36,9 @@ public:
      */
     void explorer_adjacence_2(std::array<std::array<Case*, 9>, 5>& adjacence, Case* case_base);
 
-    Case* get_case_base() const { return case_base; }
+    Case* get_case_base  () const  { return case_base; }
+
+    const std::vector<Case*>& get_cases() const { return liste_cases; }
 
 private:
     Case* case_base;
