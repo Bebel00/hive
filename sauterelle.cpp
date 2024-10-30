@@ -1,6 +1,7 @@
 #include "sauterelle.h"
 #include "insecte.h"
 #include <vector>
+#include <stdexcept>
 
 Sauterelle::Sauterelle(Team team) : Insecte(team)
 {
@@ -27,10 +28,10 @@ void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
     // Est ce que la pièce est déjà positionné ?
     if (get_case()==nullptr)
     {
-        throw "L'Insecte n'est pas encore positionné";
+        throw std::logic_error("L'Insecte n'est pas encore positionné");
     }
 
-    else if (!move_casse_ruche(get_case()))
+    else if (!move_casse_ruche(get_case(), get_case()->get_plateau()->get_cases()))
     {
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {

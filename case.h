@@ -48,6 +48,8 @@ class Case : public QGraphicsPolygonItem
 {
 
     friend class Plateau;
+    friend class Insecte;
+
 public:
     enum class Direction
     {
@@ -104,9 +106,6 @@ public:
     // getter pour l'équipe de la case
     Team get_team() const;
 
-    // Case** get_toutes_cases();
-    // Pour plus tard si y a besoin
-
     // getter pour si la case a un pion
     bool possede_pion() const { return pion != nullptr; }
     class Insecte* get_pion() const { return pion; }
@@ -114,6 +113,8 @@ public:
     // getter pour la position de la case
     Position get_position() const { return position; }
 
+    // getter plateau
+    const class Plateau* get_plateau() const { return plateau; }
 
     // https://doc.qt.io/qt-6/qgraphicsitem.html#type
     // Pour utiliser qgraphicsitem_cast
@@ -153,6 +154,8 @@ private:
 
     // Pointeur vers le plateau qui gère la case
     class Plateau* const plateau;
+
+    bool visite = false;
 
     // Constructeur en privé car seul plateau peut créer une case
     Case(Position position, class Plateau* plateau, QGraphicsItem* parent = nullptr);

@@ -6,6 +6,7 @@
 #include "case.h"
 #include "teams.h"
 #include "types.h"
+#include"plateau.h"
 
 class Insecte
 {
@@ -29,10 +30,8 @@ public:
     // Fonction qui met la liste des placements possibles dans "placements_possibles" (la valeur de retour)
     static void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team);
 
-
     static bool verifier_placement(const Case* const c, const Team team);
 
-    static bool move_casse_ruche(const Case* const case_depart);
 
     void placer(Case* const c);
     void bouger(Case* const c);
@@ -53,6 +52,12 @@ private:
     Case* position;
 
     Insecte* en_dessous;
+
+protected:
+    static bool move_casse_ruche(Case* const case_depart, const std::vector<Case*>& liste_cases);
+    static void compter_nb_insecte_connecte(Case* const case_depart, unsigned int& nb_trouve);
+
+    static bool move_trop_serre(Case* depart, Case::Direction d);
 };
 
 #endif // INSECTE_H

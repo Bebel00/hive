@@ -8,6 +8,7 @@
 #include <QGraphicsView>
 #include <QScrollBar>
 
+
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
 {
     plateau = new Plateau();

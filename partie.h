@@ -2,6 +2,7 @@
 #define PARTIE_H
 
 #include "joueur.h"
+#include "partie.h"
 #include <vector>
 #include "mainwindow.h"
 

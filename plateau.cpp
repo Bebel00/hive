@@ -1,10 +1,10 @@
 #include "plateau.h"
 #include "case.h"
-#include "insecte.h"
 #include <iostream>
 #include <array>    // pour std::array une liste
 #include <cstdlib>  // pour abs() la valeur absolue
 #include <algorithm> // pour std::find trouver un élément dans une liste
+#include <stdexcept>
 #include <QPainterPath>
 #include <QPainter>
 #include <QGraphicsScene>
@@ -34,14 +34,11 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
     if (case_fin)
     {
         Insecte* pion = case_depart->pion;
-
         pion->bouger(case_fin);
         case_fin->pion = pion;
 
         case_depart->pion = pion->get_en_dessous();
-
         case_fin->pion = pion;
-
         if (case_depart->pion == nullptr)
         {
             for (auto i_direction : Case::DIRECTIONS_ALL)
@@ -70,6 +67,7 @@ bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_c
     }
     return false;
 }
+
 
 bool Plateau::verifier_suppression_case(Case *c) const
 {
@@ -200,10 +198,8 @@ bool Plateau::creer_alentours(Case* c)
                 // On initialise le pointeur dans la direction donnée et on le fait pointer vers la case finale observée
                 (*(nouvelle_case->case_ptr_from_direction(j_direction))) = case_finale;
 
-                // Et on s'assure que la case finale observée pointe vers la nouvelle case (le sens inverse)
                 if (case_finale)
                     (*(case_finale->case_ptr_from_direction(Case::DIRECTION_OPPOSE(j_direction)))) = nouvelle_case;
-
             }
         }
     }
@@ -262,7 +258,7 @@ bool Plateau::tenter_supprimer_case(Case *c)
         }
         else
         {
-            std::cout << "Suppression d'une case pas dans la liste de cases, pas normal." << std::endl;
+            throw std::logic_error("Suppression d'une case pas dans la liste de cases, pas normal.");
         }
 
         delete c;
@@ -322,37 +318,3 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
         i_case->setZValue(zvalue);
     }
 }
-
-//void Plateau::paintEvent(QPaintEvent *)
-//{
-//    QPainter painter(this);
-
-//    for (auto i_case : liste_cases)
-//    {
-//        Position pos = i_case->get_position();
-
-//        pos.y = -pos.y;
-//        pos = pos + Position(10, 10);
-
-//        QPainterPath path;
-//        path.moveTo(pos.x * echelle_plateau, ((pos.y * 1.5) + 1) * echelle_plateau);
-//        path.lineTo((pos.x + 1) * echelle_plateau, ((pos.y * 1.5) + 0.5) * echelle_plateau);
-//        path.lineTo((pos.x + 1) * echelle_plateau, ((pos.y * 1.5) - 0.5) * echelle_plateau);
-//        path.lineTo(pos.x * echelle_plateau, ((pos.y * 1.5) - 1) * echelle_plateau);
-//        path.lineTo((pos.x - 1) * echelle_plateau, ((pos.y * 1.5) - 0.5) * echelle_plateau);
-//        path.lineTo((pos.x - 1) * echelle_plateau, ((pos.y * 1.5) + 0.5) * echelle_plateau);
-//        path.lineTo(pos.x * echelle_plateau, ((pos.y * 1.5) + 1) * echelle_plateau);
-
-//        painter.drawPath(path);
-//    }
-//}
-
-//QSize Plateau::sizeHint() const
-//{
-//    return QSize(1000, 1000);
-//}
-
-//QSize Plateau::minimumSizeHint() const
-//{
-//    return QSize(500, 500);
-//}
