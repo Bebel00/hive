@@ -1,5 +1,6 @@
 #include "plateau.h"
 #include "case.h"
+#include "insecte.h"
 #include <iostream>
 #include <array>    // pour std::array une liste
 #include <cstdlib>  // pour abs() la valeur absolue
