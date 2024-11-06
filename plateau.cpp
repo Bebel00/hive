@@ -39,7 +39,7 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
         case_fin->pion = pion;
 
         case_depart->pion = pion->get_en_dessous();
-        case_fin->pion = pion;
+
         if (case_depart->pion == nullptr)
         {
             for (auto i_direction : Case::DIRECTIONS_ALL)
@@ -64,6 +64,13 @@ bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_c
         c->setBrush(brush);
 
         c->textItem->setPlainText(QString(type_to_str(insecte->get_type())[0]));
+
+        if (team == Team::BLANC)
+            c->textItem->setDefaultTextColor(Qt::white);
+
+        else
+            c->textItem->setDefaultTextColor(Qt::black);
+
         return true;
     }
     return false;
@@ -289,7 +296,6 @@ void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
         if (case_cliquee)
         {
-
             if (case_cliquee != case_selectionnee)
             {
 
