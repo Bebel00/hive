@@ -2,8 +2,10 @@
 #define PARTIE_H
 
 #include "joueur.h"
-#include "partie.h"
+#include "plateau.h"
+#include "insecte.h"
 #include <vector>
+#include <string>
 #include "mainwindow.h"
 
 class Partie
@@ -14,6 +16,7 @@ public:
 
     class Plateau* get_plateau() const { return plateau; }
     class QGraphicsView* get_view() const { return view; }
+    bool verifier_victoire();
 
 private:
     class Plateau* plateau;
@@ -29,8 +32,9 @@ private:
     template<typename T_Insecte>
     void ajouter_insecte(Team team, class Case* c);
 
-    class QGraphicsView* view;
+    bool verifier_victoire_joueur(const Joueur& joueur);
 
+    class QGraphicsView* view;
 };
 
 #endif // PARTIE_H
