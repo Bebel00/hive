@@ -41,5 +41,8 @@ void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
             }
         }
     }
-
 }
+
+bool Sauterelle::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::SAUTERELLE, [](Team team) {
+    return std::make_unique<Sauterelle>(team);
+});

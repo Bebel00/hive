@@ -16,8 +16,6 @@ Plateau::Plateau() : QGraphicsScene()
     case_base = new Case(Position(0, 0), this);
 
     add_case(case_base);
-
-    creer_alentours(case_base);
 }
 
 Plateau::~Plateau()
@@ -34,11 +32,11 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
 {
     if (case_fin)
     {
-        Insecte* pion = case_depart->pion;
-        pion->bouger(case_fin);
-        case_fin->pion = pion;
+        std::unique_ptr<Insecte> pion = std::move(case_depart->pion);
 
-        case_depart->pion = pion->get_en_dessous();
+        pion->bouger(case_fin);
+        case_fin->pion = std::move(pion);
+        creer_alentours(case_fin);
 
         if (case_depart->pion == nullptr)
         {
@@ -50,20 +48,21 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
     }
 }
 
-bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_check)
+bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Team team, bool bypass_check)
 {
     if (Insecte::verifier_placement(c, team) || bypass_check)
     {
-        c->pion = insecte;
+        c->pion = std::move(insecte);
         creer_alentours(c);
-        insecte->placer(c);
+        c->pion->placer(c);
 
         QBrush brush;
         brush.setColor(Qt::darkCyan);
         brush.setStyle(Qt::SolidPattern);
         c->setBrush(brush);
 
-        c->textItem->setPlainText(QString(type_to_str(insecte->get_type())[0]));
+        // La première lettre du type
+        c->textItem->setPlainText(QString(type_to_str(c->pion->get_type())[0]));
 
         if (team == Team::BLANC)
             c->textItem->setDefaultTextColor(Qt::white);
@@ -255,7 +254,7 @@ bool Plateau::tenter_supprimer_case(Case *c)
             // Elle remplace le pointeur qui pointe vers la case actuelle par nullptr comme on va la supprimer
             // On utilise la direction opposé pour revenir à la case actuelle du coup
 
-            if (case_adjacente)
+            if (*case_adjacente)
                 *((*(case_adjacente))->case_ptr_from_direction(Case::DIRECTION_OPPOSE(i_direction))) = nullptr;
         }
 

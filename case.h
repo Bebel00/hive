@@ -4,6 +4,8 @@
 #include "teams.h"
 #include <QGraphicsPolygonItem>
 
+class Insecte;
+
 class Position
 {
     /*
@@ -41,6 +43,11 @@ public:
     Position operator-(const Position& a)
     {
         return Position(x - a.x, y - a.y);
+    }
+
+    bool operator==(const Position& a)
+    {
+        return (x == a.x && y == a.y);
     }
 };
 
@@ -108,7 +115,7 @@ public:
 
     // getter pour si la case a un pion
     bool possede_pion() const { return pion != nullptr; }
-    class Insecte* get_pion() const { return pion; }
+    class Insecte* get_pion() const { return pion.get(); }
 
     // getter pour la position de la case
     Position get_position() const { return position; }
@@ -125,6 +132,8 @@ public:
         // Enable the use of qgraphicsitem_cast with this item.
         return Type;
     }
+
+    ~Case();
 
 private:
     // Fonction qui renvoie un pointeur le pointeur vers la case dans la direction en paramètre
@@ -143,7 +152,7 @@ private:
     class Case* bas_gauche = nullptr;
 
     // Pion qui occupe la case
-    class Insecte* pion = nullptr;
+    std::unique_ptr<class Insecte> pion;
 
     // Fonction récusrive qui renvoie la liste des cases créées en mémoire
     // void get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_visiter);

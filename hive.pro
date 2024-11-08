@@ -39,7 +39,8 @@ HEADERS += \
     sauterelle.h \
     scarabe.h \
     teams.h \
-    types.h
+    types.h \
+    usineinsecte.h
 
 FORMS += \
     mainwindow.ui

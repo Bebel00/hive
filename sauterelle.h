@@ -2,6 +2,7 @@
 #define SAUTERELLE_H
 
 #include "insecte.h"
+#include "usineinsecte.h"
 
 class Sauterelle : public Insecte
 {
@@ -9,11 +10,13 @@ public:
     Sauterelle(Team team);
     virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const override;
 
-    virtual Type get_type() const override { return Type::SAUTERELLE; }
+    virtual Type::Type get_type() const override { return Type::Type::SAUTERELLE; }
     virtual std::string get_chemin_icone() const override { return ""; }
 
 private:
     Case* get_case_au_bout_direction(Case::Direction direction) const;
+
+    static bool enregistre;
 };
 
 #endif // SAUTERELLE_H

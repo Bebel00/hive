@@ -6,7 +6,7 @@
 #include "case.h"
 #include "teams.h"
 #include "types.h"
-#include"plateau.h"
+#include "plateau.h"
 
 class Insecte
 {
@@ -17,7 +17,7 @@ public:
     /*
      * Fonctions qui définissent l'identité d'un pion
      */
-    virtual Type get_type() const = 0;
+    virtual Type::Type get_type() const = 0;
     virtual std::string get_chemin_icone() const = 0;
 
     /*
@@ -41,7 +41,7 @@ public:
 
     Team get_team() const { return team; }
 
-    Insecte* get_en_dessous() const { return en_dessous; }
+    const std::unique_ptr<Insecte>& get_en_dessous() const { return en_dessous; }
 
     bool est_cerne() const;
 
@@ -51,7 +51,7 @@ private:
 
     Case* position;
 
-    Insecte* en_dessous;
+    std::unique_ptr<Insecte> en_dessous;
 
 protected:
     static bool move_casse_ruche(Case* const case_depart, const std::vector<Case*>& liste_cases);

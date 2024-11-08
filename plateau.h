@@ -19,7 +19,7 @@ public:
 
     void deplacer_insecte(class Case* case_depart, class Case* case_fin);
 
-    bool placer_insecte(class Case* c, class Insecte* insecte, Team team, bool bypass_check = false);
+    bool placer_insecte(class Case* c, std::unique_ptr<Insecte> insecte, Team team, bool bypass_check = false);
 
     /*
      * Fonction qui potentiellement supprime une case si elle n'a plus aucun voisin avec un insecte.
@@ -41,7 +41,8 @@ public:
      */
     void explorer_adjacence_2(std::array<std::array<Case*, 9>, 5>& adjacence, Case* case_base);
 
-    Case* get_case_base  () const  { return case_base; }
+    Case* get_case_base() const  { return case_base; }
+    Case* get_case(Position p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
 
