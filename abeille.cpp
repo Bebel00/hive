@@ -1,6 +1,7 @@
 #include "abeille.h"
 #include "insecte.h"
 #include "teams.h"
+#include "usineinsecte.h"
 
 Abeille::Abeille(Team team) : Insecte(team)
 {
@@ -34,3 +35,7 @@ void Abeille::get_moves_possibles(std::vector<Case *> &move_possibles) const
         }
     }
 }
+
+bool Abeille::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::ABEILLE, [](Team team) {
+    return std::make_unique<Abeille>(team);
+});

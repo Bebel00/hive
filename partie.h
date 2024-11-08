@@ -1,10 +1,10 @@
 #ifndef PARTIE_H
 #define PARTIE_H
 
-#include "joueur.h"
-#include "partie.h"
 #include <vector>
 #include "mainwindow.h"
+#include "types.h"
+#include "joueur.h"
 
 class Partie
 {
@@ -15,6 +15,8 @@ public:
     class Plateau* get_plateau() const { return plateau; }
     class QGraphicsView* get_view() const { return view; }
 
+    std::string jouer_tour_cli(std::string cmd);
+
 private:
     class Plateau* plateau;
 
@@ -22,15 +24,19 @@ private:
     Joueur joueur2;
 
     unsigned int nb_tours = 0;
-    Team tour;
+    Team tour = Team::BLANC;
 
     std::vector<class Insecte*> insectes;
 
-    template<typename T_Insecte>
-    void ajouter_insecte(Team team, class Case* c);
+    bool ajouter_insecte(Team team, class Case* c, Type::Type type, bool bypass = false);
+
+    std::string get_display_plateau() const;
 
     class QGraphicsView* view;
 
+    void lire_prochain_token(std::string& cmd, std::string& token);
+
+    void setup_test();
 };
 
 #endif // PARTIE_H

@@ -15,7 +15,7 @@ void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
         {
             Case* c = get_case()->get_case_from_direction(i_direction);
 
-            if (!Case::is_empty(c))
+            if (get_en_dessous() || !Case::is_empty(c))
                 move_possibles.push_back(c);
 
             else
@@ -39,3 +39,7 @@ void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
         }
     }
 }
+
+bool Scarabe::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::SCARABE, [](Team team) {
+    return std::make_unique<Scarabe>(team);
+});
