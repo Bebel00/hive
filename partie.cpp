@@ -3,6 +3,7 @@
 #include "teams.h"
 #include "plateau.h"
 #include "insecte.h"
+#include "araignee.h"
 #include "mainwindow.h"
 #include "scarabe.h"
 #include <QGraphicsView>
