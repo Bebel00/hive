@@ -28,9 +28,11 @@ Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
 
     ajouter_insecte<Scarabe>(Team::BLANC, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_GAUCHE));
 
-     ajouter_insecte<Araignee>(Team::NOIR, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_DROIT));
+    ajouter_insecte<Araignee>(Team::NOIR, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_DROIT));
     ajouter_insecte<Araignee>(Team::BLANC, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_GAUCHE)); 
 
+    ajouter_insecte<Coccinelle>(Team::NOIR, plateau->get_case_base()->get_case_from_direction(Case::Direction::GAUCHE));
+    ajouter_insecte<Coccinelle>(Team::BLANC, plateau->get_case_base()->get_case_from_direction(Case::Direction::DROITE));
 }
 
 Partie::~Partie()
