@@ -4,6 +4,8 @@
 #include "joueur.h"
 #include "plateau.h"
 #include "insecte.h"
+#include "coccinelle.h"
+#include "araignee.h"
 #include <vector>
 #include <string>
 #include "mainwindow.h"
