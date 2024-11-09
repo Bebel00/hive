@@ -5,6 +5,9 @@
 Coccinelle::Coccinelle(Team team) : Insecte(team)
 {
 
+Type Coccinelle::get_type() const {
+    return Type::COCCINELLE;
+}
 
 void Coccinelle::get_moves_possibles(std::vector<Case*> &move_possibles) const
 {
