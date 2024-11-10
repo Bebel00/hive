@@ -14,6 +14,7 @@ SOURCES += \
     case.cpp \
     coccinelle.cpp \
     fourmi.cpp \
+    ia.cpp \
     insecte.cpp \
     joueur.cpp \
     main.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     case.h \
     coccinelle.h \
     fourmi.h \
+    ia.h \
     insecte.h \
     joueur.h \
     mainwindow.h \

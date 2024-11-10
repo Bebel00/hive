@@ -14,6 +14,7 @@ public:
 
     class Plateau* get_plateau() const { return plateau; }
     class QGraphicsView* get_view() const { return view; }
+    inline const Team get_tour() {return tour;}
 
     std::string jouer_tour_cli(std::string cmd);
 
