@@ -2,9 +2,9 @@
 #define ABEILLE_H
 
 #include "insecte.h"
-#include <vector>
-#include <memory>
 #include "types.h"
+
+#include <vector>
 
 class Abeille : public Insecte
 {

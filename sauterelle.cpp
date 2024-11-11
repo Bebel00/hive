@@ -1,5 +1,7 @@
 #include "sauterelle.h"
 #include "insecte.h"
+#include "usineinsecte.h"
+
 #include <vector>
 #include <stdexcept>
 

@@ -2,7 +2,6 @@
 #define SCARABE_H
 
 #include "insecte.h"
-#include "usineinsecte.h"
 
 class Scarabe : public Insecte
 {
