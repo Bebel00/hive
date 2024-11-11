@@ -3,6 +3,8 @@
 
 #include "teams.h"
 #include <string>
+#include <unordered_map>
+#include "types.h"
 
 class Joueur
 {
@@ -12,8 +14,13 @@ public:
 
     std::string pseudo;
 
-    template<typename T>
-    void utiliser();
+    bool a_place_abeille = false;
+
+    // Renvoie -1 s'il n'y a plus d
+    int placer(Type::Type type)
+    {
+        return -1;
+    }
 
 private:
     Team team;

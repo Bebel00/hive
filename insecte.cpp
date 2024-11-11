@@ -18,6 +18,12 @@ void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*
 
 bool Insecte::verifier_placement(const Case * const c, const Team team)
 {
+    if (c->get_plateau()->get_cases().size() == 1 && c == c->get_plateau()->get_case_base())
+        return true;
+
+    if (c->get_plateau()->get_cases().size() == 7 && c != c->get_plateau()->get_case_base())
+        return true;
+
     // Est-ce qu'il existe un allié adjacent ?
     bool a_allie = false;
 
@@ -80,7 +86,7 @@ bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case 
         return false;
 
     // On enlève le pion pour voir ce qu'il se passe
-    Insecte* insecte = case_depart->pion;
+    std::unique_ptr<Insecte> insecte = std::move(case_depart->pion);
     case_depart->pion = nullptr;
 
     unsigned int nb_trouve = 0;
@@ -105,7 +111,7 @@ bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case 
     }
 
     // On remet le pion à sa place
-    case_depart->pion = insecte;
+    case_depart->pion = std::move(insecte);
 
     // Si on a trouvé tous les autres pions sur le plateau alors la ruche n'est pas cassé.
     if (nb_trouve == nb_pions)
@@ -151,9 +157,11 @@ void Insecte::placer(Case * const c)
 
 void Insecte::bouger(Case* const c)
 {
+    position->pion = std::move(en_dessous);
+
     position = c;
     if (c->possede_pion())
-        en_dessous = c->get_pion();
+        en_dessous = std::move(c->pion);
 }
 
 bool Insecte::est_cerne() const
