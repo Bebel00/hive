@@ -2,7 +2,6 @@
 #define SAUTERELLE_H
 
 #include "insecte.h"
-#include "usineinsecte.h"
 
 class Sauterelle : public Insecte
 {
