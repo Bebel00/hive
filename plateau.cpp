@@ -56,6 +56,10 @@ bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Team tea
         creer_alentours(c);
         c->pion->placer(c);
 
+        if(c->pion->get_type()==Type::Type::ABEILLE){
+            abeilles.push_back(c->pion);
+        }
+
         QBrush brush;
         brush.setColor(Qt::darkCyan);
         brush.setStyle(Qt::SolidPattern);
@@ -323,4 +327,16 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
         i_case->setPen(QPen(color));
         i_case->setZValue(zvalue);
     }
+}
+
+void annuler_placement_insecte(Case* c)
+{
+    std::unique_ptr<Insecte> i = std::move(c->pion);
+    c->pion = nullptr;
+    for (auto i_direction : Case::DIRECTIONS_ALL)
+    {
+        tenter_supprimer_case(i->get_case()->get_case_from_direction(i_direction));
+    }
+    tenter_supprimer_case(i->get_case());
+    delete i;
 }

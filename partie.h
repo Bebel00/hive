@@ -17,6 +17,7 @@ public:
     inline const Team get_tour() {return tour;}
 
     std::string jouer_tour_cli(std::string cmd);
+    bool ajouter_insecte(Team team, class Case* c, Type::Type type, bool bypass = false);
 
 private:
     class Plateau* plateau;
@@ -26,10 +27,6 @@ private:
 
     unsigned int nb_tours = 0;
     Team tour = Team::BLANC;
-
-    std::vector<class Insecte*> insectes;
-
-    bool ajouter_insecte(Team team, class Case* c, Type::Type type, bool bypass = false);
 
     std::string get_display_plateau() const;
 

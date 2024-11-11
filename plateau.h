@@ -21,6 +21,8 @@ public:
 
     bool placer_insecte(class Case* c, std::unique_ptr<Insecte> insecte, Team team, bool bypass_check = false);
 
+    void annuler_placement_insecte(Case* c);
+
     /*
      * Fonction qui potentiellement supprime une case si elle n'a plus aucun voisin avec un insecte.
      */
@@ -43,6 +45,7 @@ public:
 
     Case* get_case_base() const  { return case_base; }
     Case* get_case(Position p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
+    std::vector<class Insecte*> get_abeilles() const {return abeilles;}
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
 
@@ -55,6 +58,8 @@ private:
     bool tenter_supprimer_case(Case* c);
 
     constexpr static float echelle_plateau = 20.0;
+
+    std::vector<class Insecte*> abeilles;
 
     void add_case(Case* c);
 

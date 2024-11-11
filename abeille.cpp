@@ -29,8 +29,7 @@ void Abeille::get_moves_possibles(std::vector<Case *> &move_possibles) const
                         }
                     }
                 }
-                if (a_insecte_environnant)
-                    move_possibles.push_back(c);
+                if (a_insecte_environnant) move_possibles.push_back(c);
             }
         }
     }

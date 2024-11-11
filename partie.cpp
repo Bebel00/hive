@@ -27,9 +27,6 @@ Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
 
 Partie::~Partie()
 {
-    for (auto& i_insecte : insectes)
-        delete i_insecte;
-
     delete plateau;
 }
 
