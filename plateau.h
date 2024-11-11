@@ -2,12 +2,13 @@
 #define PLATEAU_H
 
 #include "case.h"
-#include "teams.h"
+
 #include <vector>
 #include <array>
-#include "QWidget"
-#include "QGridLayout"
+
 #include <QGraphicsScene>
+#include <QWidget>
+#include <QGridLayout>
 
 class Plateau : public QGraphicsScene
 {
@@ -19,7 +20,7 @@ public:
 
     void deplacer_insecte(class Case* case_depart, class Case* case_fin);
 
-    bool placer_insecte(class Case* c, std::unique_ptr<Insecte> insecte, Team team, bool bypass_check = false);
+    bool placer_insecte(class Case* c, std::unique_ptr<Insecte> insecte, class Joueur& joueur, bool bypass_check = false);
 
     /*
      * Fonction qui potentiellement supprime une case si elle n'a plus aucun voisin avec un insecte.

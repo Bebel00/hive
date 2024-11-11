@@ -1,12 +1,12 @@
 #ifndef PARTIE_H
 #define PARTIE_H
 
-#include <vector>
-#include <string>
-
 #include "mainwindow.h"
 #include "types.h"
 #include "joueur.h"
+
+#include <vector>
+#include <string>
 
 class Partie
 {
@@ -27,11 +27,11 @@ private:
     Joueur joueur2;
 
     unsigned int nb_tours = 0;
-    Team tour = Team::BLANC;
+    Joueur* tour = &joueur1;
 
     std::vector<class Insecte*> insectes;
 
-    bool ajouter_insecte(Team team, class Case* c, Type::Type type, bool bypass = false);
+    bool ajouter_insecte(Joueur& joueur, class Case* c, Type::Type type, bool bypass = false);
 
     std::string get_display_plateau() const;
 

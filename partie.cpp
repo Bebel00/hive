@@ -11,11 +11,9 @@
 
 
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
+    : joueur1(Team::BLANC, joueur1_pseudo), joueur2(Team::NOIR, joueur2_pseudo)
 {
     plateau = new Plateau();
-
-    joueur1 = Joueur(Team::BLANC, joueur1_pseudo);
-    joueur2 = Joueur(Team::NOIR, joueur2_pseudo);
 
     view = new QGraphicsView(plateau->get_scene());
     view->setBackgroundBrush(QBrush(Qt::black));
@@ -26,9 +24,6 @@ Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
 
 Partie::~Partie()
 {
-    for (auto& i_insecte : insectes)
-        delete i_insecte;
-
     delete plateau;
 }
 
@@ -63,7 +58,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                     Case* c = plateau->get_case(p);
                     if (c)
                     {
-                        if (!ajouter_insecte(tour, c, type))
+                        if (!ajouter_insecte(*tour, c, type))
                         {
                             return "Placement invalide";
                         }
@@ -120,7 +115,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                             Case* c2 = plateau->get_case(p2);
                             if (c2)
                             {
-                                if (c->get_pion()->get_team() == tour)
+                                if (c->get_pion()->get_team() == tour->get_team())
                                 {
                                     std::vector<Case*> move_possibles;
                                     c->get_pion()->get_moves_possibles(move_possibles);
@@ -172,20 +167,21 @@ std::string Partie::jouer_tour_cli(std::string cmd)
     else
         return "Commande inconnue";
 
-    if (tour == Team::BLANC)
-        tour = Team::NOIR;
+    if (tour == &joueur1)
+        tour = &joueur2;
     else
-        tour = Team::BLANC;
+        tour = &joueur1;
 
     nb_tours++;
 
     return get_display_plateau();
 }
 
-bool Partie::ajouter_insecte(Team team, Case* c, Type::Type type, bool bypass)
+bool Partie::ajouter_insecte(Joueur& joueur, Case* c, Type::Type type, bool bypass)
 {
-    std::unique_ptr<Insecte> insecte = UsineInsecte::get_usine().fabriquer(type, team);
-    return plateau->placer_insecte(c, std::move(insecte), team, bypass);
+    std::unique_ptr<Insecte> insecte = UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
+
+    return bypass || (joueur.peut_utiliser(type) && plateau->placer_insecte(c, std::move(insecte), joueur, bypass));
 }
 
 void Partie::lire_prochain_token(std::string &cmd, std::string &token)
@@ -198,10 +194,10 @@ void Partie::lire_prochain_token(std::string &cmd, std::string &token)
 
 void Partie::setup_test()
 {
-    ajouter_insecte(Team::NOIR, plateau->get_case_base(), Type::Type::ABEILLE);
-    ajouter_insecte(Team::BLANC, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT), Type::Type::ABEILLE);
-    ajouter_insecte(Team::BLANC, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_GAUCHE), Type::Type::SAUTERELLE);
-    ajouter_insecte(Team::NOIR, plateau->get_case_base()->get_case_from_direction(Case::Direction::DROITE), Type::Type::COCCINELLE);
+    ajouter_insecte(joueur1, plateau->get_case_base(), Type::Type::ABEILLE);
+    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT), Type::Type::ABEILLE);
+    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_GAUCHE), Type::Type::SAUTERELLE);
+    ajouter_insecte(joueur1, plateau->get_case_base()->get_case_from_direction(Case::Direction::DROITE), Type::Type::COCCINELLE);
 }
 
 std::string Partie::get_display_plateau() const
