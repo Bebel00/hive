@@ -1,7 +1,6 @@
 #include "partie.h"
 #include "teams.h"
 #include "plateau.h"
-
 #include "mainwindow.h"
 
 #include "insecte.h"
@@ -242,4 +241,49 @@ std::string Partie::get_display_plateau() const
         plateau_str += ligne + "\n";
 
     return plateau_str;
+}
+bool Partie::verifier_victoire()
+{
+    bool victoire_joueur1 = verifier_victoire_joueur(joueur1);
+    bool victoire_joueur2 = verifier_victoire_joueur(joueur2);
+
+    if (victoire_joueur1)
+    {
+        return true;
+    }
+    else if (victoire_joueur2)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool Partie::verifier_victoire_joueur(const Joueur& joueur)
+{
+    Abeille* abeille_joueur = nullptr;
+    for (auto insecte : plateau->get_insectes())
+    {
+        if (insecte->get_type() == Insecte::Type::ABEILLE && insecte->get_team() == joueur.get_team())
+        {
+            abeille_joueur = dynamic_cast<Abeille*>(insecte);
+            break;
+        }
+    }
+
+    if (abeille_joueur == nullptr)
+    {
+        return false;
+    }
+
+    for (auto direction : Case::DIRECTIONS_ALL)
+    {
+        Case* case_voisine = abeille_joueur->get_case()->get_case_from_direction(direction);
+        if (case_voisine != nullptr && Case::is_empty(case_voisine))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

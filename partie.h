@@ -6,6 +6,7 @@
 #include "joueur.h"
 
 #include <vector>
+#include <string>
 
 class Partie
 {
@@ -15,6 +16,7 @@ public:
 
     class Plateau* get_plateau() const { return plateau; }
     class QGraphicsView* get_view() const { return view; }
+    bool verifier_victoire();
 
     std::string jouer_tour_cli(std::string cmd);
 
@@ -33,11 +35,14 @@ private:
 
     std::string get_display_plateau() const;
 
-    class QGraphicsView* view;
+    bool verifier_victoire_joueur(const Joueur& joueur);
 
     void lire_prochain_token(std::string& cmd, std::string& token);
 
     void setup_test();
+
+    class QGraphicsView* view;
+
 };
 
 #endif // PARTIE_H
