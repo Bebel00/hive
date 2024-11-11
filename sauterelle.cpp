@@ -33,7 +33,7 @@ void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
         throw std::logic_error("L'Insecte n'est pas encore positionné");
     }
 
-    else if (!move_casse_ruche(get_case(), get_case()->get_plateau()->get_cases()))
+    else if (!move_casse_ruche(get_case()))
     {
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {

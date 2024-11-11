@@ -5,7 +5,6 @@
 #include "types.h"
 #include "joueur.h"
 
-#include <vector>
 #include <string>
 
 class Partie
@@ -28,8 +27,6 @@ private:
 
     unsigned int nb_tours = 0;
     Joueur* tour = &joueur1;
-
-    std::vector<class Insecte*> insectes;
 
     bool ajouter_insecte(Joueur& joueur, class Case* c, Type::Type type, bool bypass = false);
 
