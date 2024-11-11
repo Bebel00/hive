@@ -265,12 +265,12 @@ bool Partie::verifier_victoire()
 
 bool Partie::verifier_victoire_joueur(const Joueur& joueur)
 {
-    Abeille* abeille_joueur = nullptr;
-    for (auto insecte : plateau->get_insectes())
+    Case* abeille_joueur = nullptr;
+    for (auto c : plateau->get_cases())
     {
-        if (insecte->get_type() == Insecte::Type::ABEILLE && insecte->get_team() == joueur.get_team())
+        if (c->get_pion()->get_type() == Type::Type::ABEILLE && c->get_pion()->get_team() == joueur.get_team())
         {
-            abeille_joueur = dynamic_cast<Abeille*>(insecte);
+            abeille_joueur = c;
             break;
         }
     }
@@ -282,8 +282,8 @@ bool Partie::verifier_victoire_joueur(const Joueur& joueur)
 
     for (auto direction : Case::DIRECTIONS_ALL)
     {
-        Case* case_voisine = abeille_joueur->get_case()->get_case_from_direction(direction);
-        if (case_voisine != nullptr && Case::is_empty(case_voisine))
+        Case* case_voisine = abeille_joueur->get_case_from_direction(direction);
+        if (Case::is_empty(case_voisine))
         {
             return false;
         }
