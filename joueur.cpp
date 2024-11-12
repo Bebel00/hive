@@ -23,3 +23,14 @@ void Joueur::utiliser(Type::Type type)
         jetons[type]--;
     }
 }
+
+void Joueur::remettre(Type::Type type)
+{
+    if (type != Type::Type::NONE)
+    {
+        if (type == Type::Type::ABEILLE)
+            a_place_abeille = false;
+
+        jetons[type]++;
+    }
+}

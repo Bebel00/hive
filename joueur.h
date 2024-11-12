@@ -12,8 +12,9 @@ class Joueur
 public:
     Joueur(Team team, std::string pseudo);
 
-    // Renvoie -1 s'il n'y a plus de pions
     void utiliser(Type::Type type);
+    void remettre(Type::Type type);
+
     bool peut_utiliser(Type::Type type) const { return (type == Type::Type::NONE) ? false : (jetons.find(type) != jetons.end()) && (jetons.find(type)->second > 0); }
 
     const std::string& get_pseudo() const { return pseudo; }
