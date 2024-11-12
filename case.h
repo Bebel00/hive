@@ -1,10 +1,9 @@
+
 #ifndef CASE_H
 #define CASE_H
 
 #include "teams.h"
 #include <QGraphicsPolygonItem>
-
-class Insecte;
 
 class Position
 {
@@ -44,11 +43,6 @@ public:
     {
         return Position(x - a.x, y - a.y);
     }
-
-    bool operator==(const Position& a)
-    {
-        return (x == a.x && y == a.y);
-    }
 };
 
 class Case : public QGraphicsPolygonItem
@@ -56,6 +50,7 @@ class Case : public QGraphicsPolygonItem
 
     friend class Plateau;
     friend class Insecte;
+    friend class Araignee;
 
 public:
     enum class Direction
@@ -70,7 +65,7 @@ public:
     };
 
     static constexpr Direction DIRECTIONS_ALL[] =
-    { Direction::HAUT_DROIT, Direction::DROITE, Direction::BAS_DROIT, Direction::HAUT_GAUCHE, Direction::GAUCHE, Direction::BAS_GAUCHE };
+        { Direction::HAUT_DROIT, Direction::DROITE, Direction::BAS_DROIT, Direction::HAUT_GAUCHE, Direction::GAUCHE, Direction::BAS_GAUCHE };
 
     // Fonction qui renvoie la direction opposée à une direction
     static Direction DIRECTION_OPPOSE(Direction direction);
@@ -115,7 +110,7 @@ public:
 
     // getter pour si la case a un pion
     bool possede_pion() const { return pion != nullptr; }
-    class Insecte* get_pion() const { return pion.get(); }
+    class Insecte* get_pion() const { return pion; }
 
     // getter pour la position de la case
     Position get_position() const { return position; }
@@ -132,8 +127,6 @@ public:
         // Enable the use of qgraphicsitem_cast with this item.
         return Type;
     }
-
-    ~Case();
 
 private:
     // Fonction qui renvoie un pointeur le pointeur vers la case dans la direction en paramètre
@@ -152,7 +145,7 @@ private:
     class Case* bas_gauche = nullptr;
 
     // Pion qui occupe la case
-    std::unique_ptr<class Insecte> pion;
+    class Insecte* pion = nullptr;
 
     // Fonction récusrive qui renvoie la liste des cases créées en mémoire
     // void get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_visiter);

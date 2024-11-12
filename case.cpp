@@ -1,3 +1,4 @@
+
 #include "case.h"
 #include "insecte.h"
 #include <iostream>
@@ -61,8 +62,6 @@ Position Case::direction_to_position_increment(Direction direction)
 
 Case::Case(Position position, Plateau *plateau, QGraphicsItem* parent) : QGraphicsPolygonItem(parent), position(position), plateau(plateau)
 {
-    pion = nullptr;
-
     QVector<QPoint> points;
 
     points << QPoint(0, 4) * SCALE << QPoint(4, 2) *  SCALE << QPoint(4, -2) *  SCALE << QPoint(0, -4) * SCALE
@@ -179,5 +178,3 @@ Team Case::get_team() const
 {
     if (pion) return pion->get_team(); else return Team::NONE;
 }
-
-Case::~Case() = default;

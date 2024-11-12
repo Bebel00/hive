@@ -1,14 +1,11 @@
 #include "plateau.h"
 #include "case.h"
 #include "insecte.h"
-#include "joueur.h"
-
 #include <iostream>
 #include <array>    // pour std::array une liste
 #include <cstdlib>  // pour abs() la valeur absolue
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <stdexcept>
-
 #include <QPainterPath>
 #include <QPainter>
 #include <QGraphicsScene>
@@ -19,6 +16,8 @@ Plateau::Plateau() : QGraphicsScene()
     case_base = new Case(Position(0, 0), this);
 
     add_case(case_base);
+
+    creer_alentours(case_base);
 }
 
 Plateau::~Plateau()
@@ -35,12 +34,12 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
 {
     if (case_fin)
     {
-        std::unique_ptr<Insecte> pion = std::move(case_depart->pion);
-
+        Insecte* pion = case_depart->pion;
         pion->bouger(case_fin);
-        case_fin->pion = std::move(pion);
-        creer_alentours(case_fin);
+        case_fin->pion = pion;
 
+        case_depart->pion = pion->get_en_dessous();
+        case_fin->pion = pion;
         if (case_depart->pion == nullptr)
         {
             for (auto i_direction : Case::DIRECTIONS_ALL)
@@ -51,30 +50,20 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
     }
 }
 
-bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& joueur, bool bypass_check)
+bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_check)
 {
-    if (Insecte::verifier_placement(c, joueur.get_team()) || bypass_check)
+    if (Insecte::verifier_placement(c, team) || bypass_check)
     {
-        c->pion = std::move(insecte);
+        c->pion = insecte;
         creer_alentours(c);
-        c->pion->placer(c);
-
-        joueur.utiliser(c->pion->get_type());
+        insecte->placer(c);
 
         QBrush brush;
         brush.setColor(Qt::darkCyan);
         brush.setStyle(Qt::SolidPattern);
         c->setBrush(brush);
 
-        // La première lettre du type
-        c->textItem->setPlainText(QString(type_to_str(c->pion->get_type())[0]));
-
-        if (joueur.get_team() == Team::BLANC)
-            c->textItem->setDefaultTextColor(Qt::white);
-
-        else
-            c->textItem->setDefaultTextColor(Qt::black);
-
+        c->textItem->setPlainText(QString(type_to_str(insecte->get_type())[0]));
         return true;
     }
     return false;
@@ -157,7 +146,7 @@ bool Plateau::creer_alentours(Case* c)
         increment_position = Case::direction_to_position_increment(i_direction);
 
         *(c->case_ptr_from_direction(i_direction)) =
-                adjacence[case_base_pos.y + increment_position.y][case_base_pos.x + increment_position.x];
+            adjacence[case_base_pos.y + increment_position.y][case_base_pos.x + increment_position.x];
 
         // On récupère le pointeur vers le pointeur vers la case dans la direction actuelle
         // Double pointeur pour pouvoir changer la valeur du pointeur case_droite par exemple,
@@ -259,7 +248,7 @@ bool Plateau::tenter_supprimer_case(Case *c)
             // Elle remplace le pointeur qui pointe vers la case actuelle par nullptr comme on va la supprimer
             // On utilise la direction opposé pour revenir à la case actuelle du coup
 
-            if (*case_adjacente)
+            if (case_adjacente)
                 *((*(case_adjacente))->case_ptr_from_direction(Case::DIRECTION_OPPOSE(i_direction))) = nullptr;
         }
 
@@ -300,6 +289,7 @@ void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
         if (case_cliquee)
         {
+
             if (case_cliquee != case_selectionnee)
             {
 
