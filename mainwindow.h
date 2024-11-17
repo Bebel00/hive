@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGridLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +24,12 @@ private:
     class Partie* partie;
 
     class QGridLayout* layout;
+
+    void afficherMenu();
+    void fermerMenu();
+
+signals:
+    void menuFerme()
 
 };
 #endif // MAINWINDOW_H
