@@ -11,6 +11,10 @@ class MainMenu : public QGraphicsView {
 public:
     MainMenu(QWidget* parent = nullptr);
 
+signals:
+   
+    void nouvellePartieDemandee();
+
 private:
     QGraphicsScene* mainMenuScene;
     QGraphicsScene* newGameScene;
@@ -24,3 +28,4 @@ private slots:
 };
 
 #endif 
+
