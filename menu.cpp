@@ -47,7 +47,9 @@ void MainMenu::setupNewGameScene() {
 }
 
 void MainMenu::goToNewGame() {
-    setScene(newGameScene);
+    emit nouvellePartieDemandee(); // Émet le signal pour lancer une nouvelle partie.
+}
+
 }
 
 void MainMenu::quitApplication() {
