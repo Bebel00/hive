@@ -32,13 +32,20 @@ class NoeudIA
 
 public:
     inline const int get_poids() const {return poids;}
-    inline const std::vector<NoeudIA*> get_liste_fils() const {return liste_fils;}
+    inline const int get_type_action() const {return type_action;}
+    inline const int get_type_insecte() const {return type_insecte;}
+    inline const int get_case_debut() const {return case_debut;}
+    inline const int get_case_fin() const {return case_fin;}
+    inline std::vector<NoeudIA*> get_liste_fils() {return liste_fils;}
     inline NoeudIA* get_pere() {return pere;}
+
     inline void ajouter_fils(NoeudIA* fils) {if(fils != nullptr) {liste_fils.push_back(fils);} else {std::cout << "le fils est vide";}}
     inline void set_poids(int n_poids) {poids = n_poids;}
     inline void set_pere(NoeudIA* n_pere) {pere = n_pere;}
+
     int appliquer_move(Partie* partie);
     int appliquer_move_inverse(Partie* partie);
+    ~NoeudIA() {for(NoeudIA* i_noeud : liste_fils){delete *i_noeud;}}
 };
 
 class IA : Joueur
@@ -46,8 +53,6 @@ class IA : Joueur
     Team team;
     int profondeur;
     class NoeudIA* racine_Arbre=nullptr;
-    ;
-    ;
 
 public:
     IA(int profondeur, Team team): profondeur(profondeur), team(team){}

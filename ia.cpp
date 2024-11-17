@@ -164,13 +164,44 @@ NoeudIA* IA::constituer_arbre(Partie* partie,int etage=0, NoeudIA* pere=nullptr,
 }
 
 
-void IA::jouer_tour(Partie* partie, TypeAction type_action_precedente = TypeAction::NONE, Type::Type type_insecte_precedent = Type::Type::NONE,
-                    Case* case_debut_precedente = nullptr, Case* case_fin_precedente = nullptr){
+NoeudIA* IA::reconstituer_arbre(Partie* partie, TypeAction type_action_humain = TypeAction::NONE, Type::Type type_insecte_humain = Type::Type::NONE,
+                    Case* case_debut_humain = nullptr, Case* case_fin_humain = nullptr){
+
+    NoeudIA* choixIAPrecedent;
+    NoeudIA* choixHumainPrecedent;
+    for(NoeudIA * i_noeud : racine_Arbre->get_liste_fils()){
+        if(i_noeud->get_poids()==racine_Arbre->get_poids()){
+            choixIAPrecedent = i_noeud;
+        }
+    }
+    for(NoeudIA * i_noeud : choixIAPrecedent->get_liste_fils()){
+        if(i_noeud->get_type_action()==type_action_humain &&  i_noeud->get_type_insecte()==type_insecte_humain && i_noeud->get_case_debut()==case_debut_humain && i_noeud->get_case_fin()==case_fin_humain){
+            choixHumainPrecedent = i_noeud;
+        }
+    }
+    int max = -2_000_000;
+    auto i = choixHumainPrecedent->get_liste_fils().begin();
+    for(it = choixHumainPrecedent->get_liste_fils().begin(); it != choixHumainPrecedent->get_liste_fils().end(); it++ ){
+        if(choixHumainPrecedent->get_liste_fils()[it]->get_poids()>max){
+            max = choixHumainPrecedent->get_liste_fils()[it]->get_poids()->get_poids();
+            i = it;
+        }
+    }
+    NoeudIA* nouvelleRacine = choixHumainPrecedent->get_liste_fils()[i];
+    choixHumainPrecedent->get_liste_fils().erase(i);
+    nouvelleRacine->pere=nullptr;
+    delete *racine_Arbre;
+    /* à finir*/
+    return nouvelleRacine;
+}
+
+void IA::jouer_tour(Partie* partie, TypeAction type_action_humain = TypeAction::NONE, Type::Type type_insecte_humain = Type::Type::NONE,
+                    Case* case_debut_humain = nullptr, Case* case_fin_humain = nullptr){
     if(racine_Arbre==nullptr){
         racine_Arbre = constituer_arbre(partie);
     }
     else{
-        racine_Arbre = reconstituer_arbre(partie, type_action_precedente, type_insecte_precedent, case_debut_precedente, case_fin_precedente);
+        racine_Arbre = reconstituer_arbre(partie, type_action_humain, type_insecte_humain, case_debut_humain, case_fin_humain);
     }
     for(NoeudIA* i_noeud: racine_Arbre->get_liste_fils()){
         if(i_noeud->get_poids()== racine_Arbre->get_poids()){
