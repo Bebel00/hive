@@ -15,9 +15,13 @@ public:
     class Plateau* get_plateau() const { return plateau; }
     class QGraphicsView* get_view() const { return view; }
     inline const Team get_tour() {return tour;}
+    inline void set_tour_suivant() {if(tour == Team::BLANC){tour=Team::NOIR;} else if(tour == Team::NOIR){tour = Team::BLANC;} else {tour = Team::NONE;}}
 
     std::string jouer_tour_cli(std::string cmd);
     bool ajouter_insecte(Team team, class Case* c, Type::Type type, bool bypass = false);
+
+    Joueur* get_joueur1() {return &joueur1;}
+    Joueur* get_joueur2() {return &joueur2;}
 
 private:
     class Plateau* plateau;

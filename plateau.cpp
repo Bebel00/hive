@@ -1,5 +1,7 @@
 #include "plateau.h"
 #include "case.h"
+#include "joueur.h"
+#include "partie.h"
 #include "insecte.h"
 #include <iostream>
 #include <array>    // pour std::array une liste
@@ -329,14 +331,20 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
     }
 }
 
-void annuler_placement_insecte(Case* c)
+void annuler_placement_insecte(Case* c, Partie* p)
 {
     std::unique_ptr<Insecte> i = std::move(c->pion);
     c->pion = nullptr;
+    if(i->get_team() == p->get_joueur1()->get_team()){
+        p->get_joueur1()->remettre(i->get_type());
+    }
+    else{
+        p->get_joueur2()->remettre(i->get_type());
+    }
     for (auto i_direction : Case::DIRECTIONS_ALL)
     {
-        tenter_supprimer_case(i->get_case()->get_case_from_direction(i_direction));
+        Plateau::tenter_supprimer_case(i->get_case()->get_case_from_direction(i_direction));
     }
-    tenter_supprimer_case(i->get_case());
+    Plateau::tenter_supprimer_case(i->get_case());
     delete i;
 }

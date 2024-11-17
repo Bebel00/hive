@@ -3,6 +3,7 @@
 
 #include "case.h"
 #include "teams.h"
+#include "partie.h"
 #include <vector>
 #include <array>
 #include "QWidget"
@@ -21,7 +22,7 @@ public:
 
     bool placer_insecte(class Case* c, std::unique_ptr<Insecte> insecte, Team team, bool bypass_check = false);
 
-    void annuler_placement_insecte(Case* c);
+    void annuler_placement_insecte(Case* c, Partie* p);
 
     /*
      * Fonction qui potentiellement supprime une case si elle n'a plus aucun voisin avec un insecte.
