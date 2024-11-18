@@ -46,7 +46,8 @@ public:
 
     Case* get_case_base() const  { return case_base; }
     Case* get_case(Position p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
-    std::vector<class Insecte*> get_abeilles() const {return abeilles;}
+    // std::unique_ptr<class Insecte> get_abeille_blanche() const {return abeille_blanche;}
+    // std::unique_ptr<class Insecte> get_abeille_blanche() const {return abeille_noire;}
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
 
@@ -60,8 +61,8 @@ private:
 
     constexpr static float echelle_plateau = 20.0;
 
-    std::vector<class Insecte*> abeilles;
-
+    // std::unique_ptr<class Insecte> abeille_blanche;
+    // std::unique_ptr<class Insecte> abeille_noire;
     void add_case(Case* c);
 
     Case* case_selectionnee = nullptr;

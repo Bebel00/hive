@@ -1,7 +1,7 @@
 #include "partie.h"
 #include "teams.h"
 #include "plateau.h"
-
+#include "joueur.h"
 #include "mainwindow.h"
 
 #include "insecte.h"

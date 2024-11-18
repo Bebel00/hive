@@ -62,7 +62,7 @@ int NoeudIA::appliquer_move_inverse(Partie* partie){
 }
 
 
-//on estime qu'une bonne situation est une situation où on a beaucoup de choix de déplacements et peu d'insectes autour de notre reine
+//on estime qu'une bonne situation est une situation où on a beaucoup de choix de déplacements et peu d'insectes autour de notre reine. Le but de l'IA est de maximiser le poids
 int IA::evaluation_poids(Plateau* plateau){
     int somme_points=0;
     std::vector<Case *> moves_possibles;
@@ -80,19 +80,19 @@ int IA::evaluation_poids(Plateau* plateau){
     }
     //prise en compte du nombre d'insectes autour de notre reine
 
-    for(auto i_abeille : plateau->get_abeilles()){
+    for(auto i_abeille : plateau->get_abeilles()){ // toujours ta merde abel on est pas ensemble
         int nb_insectes_autour = 0;
         for(auto i_direction : Case::DIRECTIONS_ALL){
             if(i_abeille->get_case()->get_case_from_direction(i_direction)!=nullptr){
                 nb_insectes_autour++;
             }
         }
-        if(nb_insectes_autour = 6){
+        if(nb_insectes_autour == 6){
             if(i_abeille->get_team() == team){
-                somme_points -= 1_000_000;
+                somme_points -= 1000000;
             }
             else{
-                somme_points += 1_000_000;
+                somme_points += 1000000;
             }
         }
         else{
@@ -108,11 +108,11 @@ int IA::evaluation_poids(Plateau* plateau){
 }
 
 
-NoeudIA* IA::constituer_arbre(Partie* partie,int etage=0, NoeudIA* pere=nullptr, TypeAction type_action=TypeAction::NONE, Type::Type type_insecte = Type::Type::NONE, Case* case_debut = nullptr, Case* case_fin = nullptr){
-    NoeudIA* racine = &NoeudIA(pere, type_action, type_insecte, case_debut, case_fin);
+NoeudIA* IA::constituer_arbre(Partie* partie, NoeudIA* racine,int etage /*=1*/){
     racine->appliquer_move(partie);
-    if (etage==profondeur){
-        racine->set_poids(evaluationPoids(partie->get_plateau()));
+    if (etage>=profondeur){
+        racine->set_poids(evaluation_poids(partie->get_plateau()));
+        racine->set_enfants_testes(false);
     }
     else {
         Joueur * joueur;
@@ -122,12 +122,13 @@ NoeudIA* IA::constituer_arbre(Partie* partie,int etage=0, NoeudIA* pere=nullptr,
         else{
             joueur = partie->get_joueur2();
         }
-        for(auto i_case : partie->get_plateau()->get_cases()){
+        for(Case* i_case : partie->get_plateau()->get_cases()){
             if(i_case->get_pion()==nullptr){
                 if(Insecte::verifier_placement(i_case,partie->get_tour())){
-                    for(auto i_type: joueur->get_jetons()){
-                        if(joueur->get_jetons()[i_type]>0){
-                            racine->ajouter_fils(constituer_arbre(partie,etage+1, racine, TypeAction::PLACE, i_type,nullptr,i_case));
+                    for(auto i_umap: joueur->get_jetons()){
+                        if(i_umap.second > 0){ //
+                            NoeudIA* fils = new NoeudIA(racine, TypeAction::PLACE, i_umap.first,nullptr,i_case);
+                            racine->ajouter_fils(constituer_arbre(partie,fils,etage+1));
                         }
                     }
                 }
@@ -136,12 +137,13 @@ NoeudIA* IA::constituer_arbre(Partie* partie,int etage=0, NoeudIA* pere=nullptr,
                 std::vector<Case*> move_possibles;
                 i_case->get_pion()->get_moves_possibles(move_possibles);
                 for(Case * i_case_move : move_possibles){
-                    racine->ajouter_fils(constituer_arbre(partie,etage+1, racine, TypeAction::MOVE, Type::Type::NONE,i_case,i_case_move));
+                    NoeudIA* fils = new NoeudIA(racine, TypeAction::MOVE, Type::Type::NONE,i_case,i_case_move);
+                    racine->ajouter_fils(constituer_arbre(partie,fils,etage+1));
                 }
             }
         }
         if(team != partie->get_tour()){ //dans le cas ou c'est à l'IA de choisir, on prend le meilleur coup
-            int max = -2_000_000;
+            int max = -2000000;
             for(NoeudIA* i_noeud: racine->get_liste_fils()){
                 if(i_noeud->get_poids()>max){
                     max=i_noeud->get_poids();
@@ -150,7 +152,7 @@ NoeudIA* IA::constituer_arbre(Partie* partie,int etage=0, NoeudIA* pere=nullptr,
             racine->set_poids(max);
         }
         else{ //dans le cas ou c'est au joeur de choisir, on estime qu'il va choisir le meilleur coup pour lui et donc le pire pour nous
-            int min = 2_000_000;
+            int min = 2000000;
             for(NoeudIA* i_noeud: racine->get_liste_fils()){
                 if(i_noeud->get_poids()<min){
                     min=i_noeud->get_poids();
@@ -164,8 +166,8 @@ NoeudIA* IA::constituer_arbre(Partie* partie,int etage=0, NoeudIA* pere=nullptr,
 }
 
 
-NoeudIA* IA::reconstituer_arbre(Partie* partie, TypeAction type_action_humain = TypeAction::NONE, Type::Type type_insecte_humain = Type::Type::NONE,
-                    Case* case_debut_humain = nullptr, Case* case_fin_humain = nullptr){
+NoeudIA* IA::reconstituer_arbre(Partie* partie, TypeAction type_action_humain /*= TypeAction::NONE*/, Type::Type type_insecte_humain /*= Type::Type::NONE*/,
+                    Case* case_debut_humain /*= nullptr*/, Case* case_fin_humain /*= nullptr*/){
 
     NoeudIA* choixIAPrecedent;
     NoeudIA* choixHumainPrecedent;
@@ -179,32 +181,68 @@ NoeudIA* IA::reconstituer_arbre(Partie* partie, TypeAction type_action_humain = 
             choixHumainPrecedent = i_noeud;
         }
     }
-    int max = -2_000_000;
-    auto i = choixHumainPrecedent->get_liste_fils().begin();
-    for(it = choixHumainPrecedent->get_liste_fils().begin(); it != choixHumainPrecedent->get_liste_fils().end(); it++ ){
-        if(choixHumainPrecedent->get_liste_fils()[it]->get_poids()>max){
-            max = choixHumainPrecedent->get_liste_fils()[it]->get_poids()->get_poids();
-            i = it;
+    int max = -2000000;
+    NoeudIA* nouvelleRacine=nullptr;
+    auto it_max = choixHumainPrecedent->get_liste_fils().begin();
+    auto it = choixHumainPrecedent->get_liste_fils().begin();
+    for(size_t i=0; i<choixHumainPrecedent->get_liste_fils().size(); ++i){
+        ++it;
+        if(choixHumainPrecedent->get_liste_fils()[i]->get_poids()>max){
+            max = choixHumainPrecedent->get_liste_fils()[i]->get_poids();
+            nouvelleRacine = choixHumainPrecedent->get_liste_fils()[i];
+            it_max=it;
         }
     }
-    NoeudIA* nouvelleRacine = choixHumainPrecedent->get_liste_fils()[i];
-    choixHumainPrecedent->get_liste_fils().erase(i);
-    nouvelleRacine->pere=nullptr;
-    delete *racine_Arbre;
-    /* à finir*/
-    return nouvelleRacine;
+
+    choixHumainPrecedent->get_liste_fils().erase(it_max);
+    nouvelleRacine->set_pere(nullptr);
+    delete racine_Arbre;
+    return redevelopper_arbre(partie, nouvelleRacine);
 }
 
-void IA::jouer_tour(Partie* partie, TypeAction type_action_humain = TypeAction::NONE, Type::Type type_insecte_humain = Type::Type::NONE,
-                    Case* case_debut_humain = nullptr, Case* case_fin_humain = nullptr){
+NoeudIA* IA::redevelopper_arbre(Partie* partie, NoeudIA* racine, int etage /*=1*/){
+    if(racine->get_enfants_testes()){
+        racine->appliquer_move(partie);
+        for(NoeudIA* i_fils : racine->get_liste_fils()){
+            redevelopper_arbre(partie, i_fils, etage+1);
+        }
+        if(team != partie->get_tour()){ //dans le cas ou c'est à l'IA de choisir, on prend le meilleur coup
+            int max = -2000000;
+            for(NoeudIA* i_noeud: racine->get_liste_fils()){
+                if(i_noeud->get_poids()>max){
+                    max=i_noeud->get_poids();
+                }
+            }
+            racine->set_poids(max);
+        }
+        else{ //dans le cas ou c'est au joeur de choisir, on estime qu'il va choisir le meilleur coup pour lui et donc le pire pour nous
+            int min = 2000000;
+            for(NoeudIA* i_noeud: racine->get_liste_fils()){
+                if(i_noeud->get_poids()<min){
+                    min=i_noeud->get_poids();
+                }
+            }
+            racine->set_poids(min);
+        }
+        racine->appliquer_move_inverse(partie);
+    }
+    else{
+        constituer_arbre(partie,racine,etage);
+    }
+    return racine;
+}
+
+void IA::jouer_tour(Partie* partie, TypeAction type_action_humain /*= TypeAction::NONE*/, Type::Type type_insecte_humain /*= Type::Type::NONE*/,
+                    Case* case_debut_humain /*= nullptr*/, Case* case_fin_humain /*= nullptr*/){
     if(racine_Arbre==nullptr){
-        racine_Arbre = constituer_arbre(partie);
+        NoeudIA* racine = new NoeudIA();
+        racine_Arbre = constituer_arbre(partie,racine);
     }
     else{
         racine_Arbre = reconstituer_arbre(partie, type_action_humain, type_insecte_humain, case_debut_humain, case_fin_humain);
     }
     for(NoeudIA* i_noeud: racine_Arbre->get_liste_fils()){
-        if(i_noeud->get_poids()== racine_Arbre->get_poids()){
+        if(i_noeud->get_poids() == racine_Arbre->get_poids()){
             i_noeud->appliquer_move(partie);
             break;
         }

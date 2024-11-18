@@ -22,46 +22,57 @@ enum class TypeAction
 
 class NoeudIA
 {
-    int poids=NULL;
+
     NoeudIA* pere = nullptr;
-    std::vector<NoeudIA*> liste_fils;
+
     TypeAction type_action = TypeAction::NONE;
     Type::Type type_insecte = Type::Type::NONE;
     Case* case_debut = nullptr;
     Case* case_fin = nullptr;
+    bool enfants_testes = true;
+    int poids=NULL;
+    std::vector<NoeudIA*> liste_fils;
 
 public:
-    inline const int get_poids() const {return poids;}
-    inline const int get_type_action() const {return type_action;}
-    inline const int get_type_insecte() const {return type_insecte;}
-    inline const int get_case_debut() const {return case_debut;}
-    inline const int get_case_fin() const {return case_fin;}
+    NoeudIA(NoeudIA* pere, TypeAction type_action, Type::Type type_insecte, Case* case_debut, Case* case_fin) : pere(pere), type_action(type_action),
+        type_insecte(type_insecte), case_debut(case_debut), case_fin(case_fin){}
+
+    NoeudIA()= default;
+
+    inline int get_poids() const {return poids;}
+    inline TypeAction get_type_action() const {return type_action;}
+    inline Type::Type get_type_insecte() const {return type_insecte;}
+    inline Case* get_case_debut() const {return case_debut;}
+    inline Case* get_case_fin() const {return case_fin;}
+    inline bool get_enfants_testes() const {return enfants_testes;}
     inline std::vector<NoeudIA*> get_liste_fils() {return liste_fils;}
     inline NoeudIA* get_pere() {return pere;}
 
     inline void ajouter_fils(NoeudIA* fils) {if(fils != nullptr) {liste_fils.push_back(fils);} else {std::cout << "le fils est vide";}}
     inline void set_poids(int n_poids) {poids = n_poids;}
     inline void set_pere(NoeudIA* n_pere) {pere = n_pere;}
+    inline void set_enfants_testes(bool b) {enfants_testes = b;}
 
     int appliquer_move(Partie* partie);
     int appliquer_move_inverse(Partie* partie);
-    ~NoeudIA() {for(NoeudIA* i_noeud : liste_fils){delete *i_noeud;}}
+    ~NoeudIA() {for(NoeudIA* i_noeud : liste_fils){delete i_noeud;}}
 };
 
-class IA : Joueur
+class IA
 {
     Team team;
-    int profondeur;
+    int profondeur=4;
     class NoeudIA* racine_Arbre=nullptr;
 
 public:
-    IA(int profondeur, Team team): profondeur(profondeur), team(team){}
+    IA( Team team, int profondeur): team(team), profondeur(profondeur){}
     int evaluation_poids(Plateau* plateau);
-    NoeudIA* constituer_arbre(Partie* partie,int etage=1, NoeudIA* pere=nullptr, TypeAction type_action=TypeAction::NONE, Type::Type type_insecte = Type::Type::NONE, Case* case_debut = nullptr, Case* case_fin = nullptr);
-    NoeudIA* reconstituer_arbre(Partie* partie, TypeAction type_action_precedente = TypeAction::NONE, Type::Type type_insecte_precedent = Type::Type::NONE,
-                                Case* case_debut_precedente = nullptr, Case* case_fin_precedente = nullptr);
-    void jouer_tour(Partie* partie, TypeAction type_action_precedente = TypeAction::NONE, Type::Type type_insecte_precedent = Type::Type::NONE,
-                    Case* case_debut_precedente = nullptr, Case* case_fin_precedente = nullptr);
+    NoeudIA* constituer_arbre(Partie* partie, NoeudIA* racine,int etage=1);
+    NoeudIA* redevelopper_arbre(Partie* partie, NoeudIA* racine,int etage=1);
+    NoeudIA* reconstituer_arbre(Partie* partie, TypeAction type_action_humain = TypeAction::NONE, Type::Type type_insecte_humain = Type::Type::NONE,
+                                Case* case_debut_humain = nullptr, Case* case_fin_humain = nullptr);
+    void jouer_tour(Partie* partie, TypeAction type_action_humain = TypeAction::NONE, Type::Type type_insecte_humain = Type::Type::NONE,
+                    Case* case_debut_humain = nullptr, Case* case_fin_humain = nullptr);
 };
 
 

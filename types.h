@@ -18,6 +18,9 @@ namespace Type
         NONE
     };
 
+static constexpr Type Type_ALL[] =
+    {Type::ABEILLE, Type::ARAIGNEE, Type::COCCINELLE, Type::FOURMI, Type::MOUSTIQUE, Type::SAUTERELLE, Type::SCARABE, Type::NONE};
+
     inline std::string type_to_str(Type type)
     {
         switch (type)

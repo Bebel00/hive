@@ -60,6 +60,7 @@ bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Team tea
 
         if(c->pion->get_type()==Type::Type::ABEILLE){
             abeilles.push_back(c->pion);
+            // les unique pointers vont causer ma mort donc c'est ta merde abel
         }
 
         QBrush brush;
@@ -331,20 +332,21 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
     }
 }
 
-void annuler_placement_insecte(Case* c, Partie* p)
-{
-    std::unique_ptr<Insecte> i = std::move(c->pion);
-    c->pion = nullptr;
-    if(i->get_team() == p->get_joueur1()->get_team()){
-        p->get_joueur1()->remettre(i->get_type());
-    }
-    else{
-        p->get_joueur2()->remettre(i->get_type());
-    }
-    for (auto i_direction : Case::DIRECTIONS_ALL)
-    {
-        Plateau::tenter_supprimer_case(i->get_case()->get_case_from_direction(i_direction));
-    }
-    Plateau::tenter_supprimer_case(i->get_case());
-    delete i;
-}
+// meme merde ma fin est proche
+// void annuler_placement_insecte(Case* c, Partie* p)
+// {
+//     std::unique_ptr<Insecte> i = std::move(c->get_pion());
+//     c->set_pion() = nullptr;
+//     if(i->get_team() == p->get_joueur1()->get_team()){
+//         p->get_joueur1()->remettre(i->get_type());
+//     }
+//     else{
+//         p->get_joueur2()->remettre(i->get_type());
+//     }
+//     for (auto i_direction : Case::DIRECTIONS_ALL)
+//     {
+//         p->get_plateau()->tenter_supprimer_case(i->get_case()->get_case_from_direction(i_direction));
+//     }
+//     p->get_plateau()->tenter_supprimer_case(i->get_case());
+//     delete i;
+// }
