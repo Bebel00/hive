@@ -27,6 +27,7 @@ Partie::~Partie()
     delete plateau;
 }
 
+
 std::string Partie::jouer_tour_cli(std::string cmd)
 {
     std::string token;
@@ -40,6 +41,10 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         Type::Type type = Type::str_to_type(token);
         if (type != Type::Type::NONE)
         {
+            //On vérifier que l'abeille de chaque joueur est placé avant leu 5 ème tour
+            if ((nb_tours==6 || nb_tours==7)&& !tour->get_a_place_abeille() && type!=Type::Type::ABEILLE){
+                return " L'abeille doit être placé";
+            }
             Position p;
 
             lire_prochain_token(cmd, token);
@@ -62,6 +67,9 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                         {
                             return "Placement invalide";
                         }
+                        if (type==Type::Type::ABEILLE){
+                            tour->placer_abeille();
+                        }
                     }
                     else
                     {
@@ -81,7 +89,9 @@ std::string Partie::jouer_tour_cli(std::string cmd)
     }
     else if (token == "move")
     {
-
+        if ((nb_tours==6 || nb_tours==7)&& !tour->get_a_place_abeille()){
+            return " L'abeille doit être placé";
+        }
         Position p;
 
         lire_prochain_token(cmd, token);
@@ -105,6 +115,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                     try
                     {
                         p2.x = std::stoi(token);
+
 
                         lire_prochain_token(cmd, token);
                         try
@@ -215,7 +226,7 @@ std::string Partie::get_display_plateau() const
             x_max = i_case->get_position().x;
 
         else if (i_case->get_position().x < x_min)
-                x_min = i_case->get_position().x;
+            x_min = i_case->get_position().x;
 
         if (i_case->get_position().y > y_max)
             y_max = i_case->get_position().y;

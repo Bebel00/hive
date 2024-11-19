@@ -2,7 +2,6 @@
 #define PLATEAU_H
 
 #include "case.h"
-
 #include <vector>
 #include <array>
 
@@ -63,12 +62,15 @@ private:
 
     void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
 
+
+
+
 protected:
-//    void paintEvent(class QPaintEvent *);
+    //    void paintEvent(class QPaintEvent *);
 
-//    QSize sizeHint() const;
+    //    QSize sizeHint() const;
 
-//    QSize minimumSizeHint() const;
+    //    QSize minimumSizeHint() const;
 
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 

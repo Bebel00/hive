@@ -41,6 +41,9 @@ private:
 
     void setup_test();
 
+    bool abeille_place(Joueur* joueur);
+
+
     class QGraphicsView* view;
 
 };

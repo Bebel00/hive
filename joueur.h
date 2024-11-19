@@ -19,6 +19,7 @@ public:
 
     const std::string& get_pseudo() const { return pseudo; }
     const bool& get_a_place_abeille() const { return a_place_abeille; }
+    void placer_abeille() {a_place_abeille=true;}
     const Team& get_team() const { return team; }
 
 private:
