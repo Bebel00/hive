@@ -41,6 +41,7 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
         case_fin->pion = std::move(pion);
         creer_alentours(case_fin);
 
+
         if (case_depart->pion == nullptr)
         {
             for (auto i_direction : Case::DIRECTIONS_ALL)
@@ -48,6 +49,7 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
                 tenter_supprimer_case(*(case_depart->case_ptr_from_direction(i_direction)));
             }
         }
+        dernier_deplacement=std::move(pion);
     }
 }
 
@@ -157,7 +159,7 @@ bool Plateau::creer_alentours(Case* c)
         increment_position = Case::direction_to_position_increment(i_direction);
 
         *(c->case_ptr_from_direction(i_direction)) =
-                adjacence[case_base_pos.y + increment_position.y][case_base_pos.x + increment_position.x];
+            adjacence[case_base_pos.y + increment_position.y][case_base_pos.x + increment_position.x];
 
         // On récupère le pointeur vers le pointeur vers la case dans la direction actuelle
         // Double pointeur pour pouvoir changer la valeur du pointeur case_droite par exemple,

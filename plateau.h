@@ -2,7 +2,6 @@
 #define PLATEAU_H
 
 #include "case.h"
-
 #include <vector>
 #include <array>
 
@@ -46,8 +45,10 @@ public:
     Case* get_case(Position p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
+    Insecte* get_dernier_deplacement() const {return dernier_deplacement.get();}
 
     QGraphicsScene* get_scene() { return this; }
+
 
 private:
     Case* case_base;
@@ -62,13 +63,17 @@ private:
     Case* case_selectionnee = nullptr;
 
     void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
+    std::unique_ptr<Insecte> dernier_deplacement;
+
+
+
 
 protected:
-//    void paintEvent(class QPaintEvent *);
+    //    void paintEvent(class QPaintEvent *);
 
-//    QSize sizeHint() const;
+    //    QSize sizeHint() const;
 
-//    QSize minimumSizeHint() const;
+    //    QSize minimumSizeHint() const;
 
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 

@@ -7,8 +7,9 @@
 #include "teams.h"
 #include "types.h"
 #include "plateau.h"
+#include <set>
 
-class Insecte
+    class Insecte
 {
 public:
     Insecte(Team team);
@@ -44,6 +45,8 @@ public:
     const std::unique_ptr<Insecte>& get_en_dessous() const { return en_dessous; }
 
     bool est_cerne() const;
+    void get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite);
+    void get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite);
 
 private:
     // BLANC ou NOIR
