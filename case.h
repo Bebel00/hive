@@ -13,9 +13,12 @@ class Position
      * Utile pour retrouver un hexagone juste en connaissant sa position
      *
      * La première case devrait être en (0; 0)
-     * Aller à gauche fait bouger de -2 en x
-     * Aller en haut de 2 en y
-     * Enfin, aller en haut à gauche fait avancer de -1 en x, 1 en y
+     * Aller en Haut Droit fait bouger de 1 en x et en y
+     * Aller en Haut Gauche fait avancer de -1 en x, 1 en y
+     * Aller à Droite fait avancer de 2 en x
+     * Aller à Gauche fait bouger de -2 en x
+     * Aller en Bas Droit fait avancer de 1 en x et -1 en y
+     * Enfin, aller en Bas Gauche
      */
 
 public:
@@ -70,7 +73,7 @@ public:
     };
 
     static constexpr Direction DIRECTIONS_ALL[] =
-    { Direction::HAUT_DROIT, Direction::DROITE, Direction::BAS_DROIT, Direction::HAUT_GAUCHE, Direction::GAUCHE, Direction::BAS_GAUCHE };
+        { Direction::HAUT_DROIT, Direction::DROITE, Direction::BAS_DROIT, Direction::HAUT_GAUCHE, Direction::GAUCHE, Direction::BAS_GAUCHE };
 
     // Fonction qui renvoie la direction opposée à une direction
     static Direction DIRECTION_OPPOSE(Direction direction);
