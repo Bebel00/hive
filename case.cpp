@@ -32,6 +32,7 @@ Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
     }
 }
 
+//Méthode premetant d'incrémenter une position selon une direction passée en paramètre
 Position Case::direction_to_position_increment(Direction direction)
 {
     switch(direction)
