@@ -52,7 +52,7 @@ void Cloporte::get_pion_deplacer(std::vector<Insecte *> &pions_deplacer){
          * Et qu'enfin ce pion ne soit pas le dernier à avoir été déplacer
          */
         Case* c = get_case()->get_case_from_direction(i_direction);
-        if((c->possede_pion()) && (c->get_pion()->get_en_dessous()==nullptr) && (!move_casse_ruche(c,c->get_plateau()->get_cases())) &&(c->get_pion()!=c->get_plateau()->get_dernier_deplacement()))
+        if((c->possede_pion()) && (c->get_pion()->get_en_dessous()==nullptr) && (!move_casse_ruche(c,c->get_plateau()->get_cases())) &&(c->get_pion()!=c->get_plateau()->get_dernier_deplacement_pion()))
             pions_deplacer.push_back(c->get_pion());
     }
 }
