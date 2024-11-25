@@ -14,7 +14,7 @@ public:
 
     class Plateau* get_plateau() const { return plateau; }
     class QGraphicsView* get_view() const { return view; }
-    inline const Team get_tour() {return tour;}
+    inline Team get_tour() const {return tour;}
     inline void set_tour_suivant() {if(tour == Team::BLANC){tour=Team::NOIR;} else if(tour == Team::NOIR){tour = Team::BLANC;} else {tour = Team::NONE;}}
 
     std::string jouer_tour_cli(std::string cmd);

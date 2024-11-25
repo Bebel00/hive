@@ -78,24 +78,33 @@ int IA::evaluation_poids(Plateau* plateau){
             }
         }
     }
+
+
     //prise en compte du nombre d'insectes autour de notre reine
 
-    for(auto i_abeille : plateau->get_abeilles()){ // toujours ta merde abel on est pas ensemble
+    for(auto i_abeille : plateau->get_abeilles())
+    {
         int nb_insectes_autour = 0;
-        for(auto i_direction : Case::DIRECTIONS_ALL){
-            if(i_abeille->get_case()->get_case_from_direction(i_direction)!=nullptr){
+        for(auto i_direction : Case::DIRECTIONS_ALL)
+        {
+            if(i_abeille->get_case()->get_case_from_direction(i_direction)!=nullptr)
+            {
                 nb_insectes_autour++;
             }
         }
-        if(nb_insectes_autour == 6){
-            if(i_abeille->get_team() == team){
+        if(nb_insectes_autour == 6)
+        {
+            if(i_abeille->get_team() == team)
+            {
                 somme_points -= 1000000;
             }
-            else{
+            else
+            {
                 somme_points += 1000000;
             }
         }
-        else{
+        else
+        {
             if(i_abeille->get_team() == team){
                 somme_points -= (10*nb_insectes_autour+nb_insectes_autour*2);
             }

@@ -5,7 +5,7 @@
 #include "teams.h"
 #include "partie.h"
 #include "plateau.h"
-#include "Joueur.h"
+#include "joueur.h"
 #include "types.h"
 #include "insecte.h"
 #include <vector>
@@ -30,7 +30,7 @@ class NoeudIA
     Case* case_debut = nullptr;
     Case* case_fin = nullptr;
     bool enfants_testes = true;
-    int poids=NULL;
+    int poids = 0;
     std::vector<NoeudIA*> liste_fils;
 
 public:
@@ -39,19 +39,19 @@ public:
 
     NoeudIA()= default;
 
-    inline int get_poids() const {return poids;}
-    inline TypeAction get_type_action() const {return type_action;}
-    inline Type::Type get_type_insecte() const {return type_insecte;}
-    inline Case* get_case_debut() const {return case_debut;}
-    inline Case* get_case_fin() const {return case_fin;}
-    inline bool get_enfants_testes() const {return enfants_testes;}
-    inline std::vector<NoeudIA*> get_liste_fils() {return liste_fils;}
-    inline NoeudIA* get_pere() {return pere;}
+    int get_poids() const {return poids;}
+    TypeAction get_type_action() const {return type_action;}
+    Type::Type get_type_insecte() const {return type_insecte;}
+    Case* get_case_debut() const {return case_debut;}
+    Case* get_case_fin() const {return case_fin;}
+    bool get_enfants_testes() const {return enfants_testes;}
+    std::vector<NoeudIA*> get_liste_fils() {return liste_fils;}
+    NoeudIA* get_pere() {return pere;}
 
-    inline void ajouter_fils(NoeudIA* fils) {if(fils != nullptr) {liste_fils.push_back(fils);} else {std::cout << "le fils est vide";}}
-    inline void set_poids(int n_poids) {poids = n_poids;}
-    inline void set_pere(NoeudIA* n_pere) {pere = n_pere;}
-    inline void set_enfants_testes(bool b) {enfants_testes = b;}
+    void ajouter_fils(NoeudIA* fils) {if(fils != nullptr) {liste_fils.push_back(fils);} else {std::cout << "le fils est vide";}}
+    void set_poids(int n_poids) {poids = n_poids;}
+    void set_pere(NoeudIA* n_pere) {pere = n_pere;}
+    void set_enfants_testes(bool b) {enfants_testes = b;}
 
     int appliquer_move(Partie* partie);
     int appliquer_move_inverse(Partie* partie);
