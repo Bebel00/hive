@@ -53,5 +53,5 @@ void MainMenu::goToNewGame() {
 }
 
 void MainMenu::quitApplication() {
-    QApplication::quit();
+    emit quitApplication();
 }
