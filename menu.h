@@ -14,6 +14,7 @@ public:
 signals:
    
     void nouvellePartieDemandee();
+    void quitApplication();
 
 private:
     QGraphicsScene* mainMenuScene;
