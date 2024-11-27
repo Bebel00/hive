@@ -16,7 +16,13 @@ int main(int argc, char *argv[]) {
   QObject::connect(&menu, &MainMenu::nouvellePartieDemandee, [&]() {
       QString joueur1 = QInputDialog::getText(nullptr, "Joueur 1", "Entrez le nom du joueur 1 :");
       QString joueur2 = QInputDialog::getText(nullptr, "Joueur 2", "Entrez le nom du joueur 2 :");
-        // Supprimer l'ancienne partie si elle existe
+       
+      if (joueur1.isEmpty() || joueur2.isEmpty()) {
+            QMessageBox::warning(nullptr, "Erreur", "Les noms des joueurs ne peuvent pas être vides !");
+            return; 
+        }
+
+      
         if (partie) {
             delete partie;
             partie = nullptr;
@@ -58,10 +64,13 @@ int main(int argc, char *argv[]) {
             partie = nullptr;
         }
 
-        // Créer une nouvelle partie
+       
         QString joueur1 = QInputDialog::getText(nullptr, "Joueur 1", "Entrez le nom du joueur 1 :");
         QString joueur2 = QInputDialog::getText(nullptr, "Joueur 2", "Entrez le nom du joueur 2 :");
-
+        if (joueur1.isEmpty() || joueur2.isEmpty()) {
+            QMessageBox::warning(nullptr, "Erreur", "Les noms des joueurs ne peuvent pas être vides !");
+            return; 
+        }
         partie = new Partie(joueur1.toStdString(), joueur2.toStdString());
         w.setPartie(partie);
 
