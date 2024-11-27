@@ -6,7 +6,6 @@
 #include "case.h"
 #include "teams.h"
 #include "types.h"
-#include "plateau.h"
 #include <set>
 
     class Insecte
@@ -26,7 +25,7 @@ public:
      * Et de placement du pion
      * Le placement est quand on met le pion sur le plateau pour la première fois
      */
-    virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const = 0;
+    virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const=0 ;
 
     // Fonction qui met la liste des placements possibles dans "placements_possibles" (la valeur de retour)
     static void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team);
@@ -45,8 +44,8 @@ public:
     const std::unique_ptr<Insecte>& get_en_dessous() const { return en_dessous; }
 
     bool est_cerne() const;
-    void get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite);
-    void get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite);
+    void get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite=nullptr) const ;
+    void get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite=nullptr) const ;
 
 private:
     // BLANC ou NOIR
@@ -57,7 +56,7 @@ private:
     std::unique_ptr<Insecte> en_dessous;
 
 protected:
-    static bool move_casse_ruche(Case* const case_depart, const std::vector<Case*>& liste_cases);
+    static bool move_casse_ruche(Case* const case_depart, const std::vector<Case*>& liste_cases) ;
     static void compter_nb_insecte_connecte(Case* const case_depart, unsigned int& nb_trouve);
 
     static bool move_trop_serre(Case* depart, Case::Direction d);

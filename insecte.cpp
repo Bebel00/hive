@@ -177,7 +177,7 @@ bool Insecte::est_cerne() const
 // Fonction permettant d'obtenir les déplacements possibles sur des cases adjacentes sans faire de saut.
 //case_interdite est pas défaut à nullptr, il permet dans la fonction d'ajouter cette case dans le veteur.
 //On a besoin de cela notamment pour que l'areignée ne fasse pas de demi-tout pendant son déplacement
-void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite){
+void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite) const{
     bool haut_droit=false;
     bool haut_gauche=false;
     bool droite=false;
@@ -241,7 +241,7 @@ void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case
     }
 }
 
-void Insecte::get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite){
+void Insecte::get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite) const {
     bool haut_droit=false;
     bool haut_gauche=false;
     bool droite=false;

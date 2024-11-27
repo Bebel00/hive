@@ -11,10 +11,13 @@
 
 #include <QPainterPath>
 #include <QPainter>
+#include <vector>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
-Plateau::Plateau() : QGraphicsScene()
+Plateau::Plateau(size_t nb) :
+    // La taille des vecteurs est égale à 2 * nb_retour_possible car lorsqu'on supprime un déplacement, on supprime aussi le déplacement de l'adveraire suivant celui-ci
+    QGraphicsScene(), dernier_deplacement_debut(nb*2),dernier_deplacement_fin(nb*2),nb_retour_possible(nb)
 {
     case_base = new Case(Position(0, 0), this);
 
@@ -31,7 +34,15 @@ Plateau::~Plateau()
 
 }
 
-void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
+Insecte* Plateau::get_dernier_deplacement_pion() const {
+    if(!dernier_deplacement_pion.empty())
+        return dernier_deplacement_pion.back();
+    else
+        return nullptr;
+}
+
+
+void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
 {
     if (case_fin)
     {
@@ -49,7 +60,19 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
                 tenter_supprimer_case(*(case_depart->case_ptr_from_direction(i_direction)));
             }
         }
-        dernier_deplacement=std::move(pion);
+        if(undo){
+            if (dernier_deplacement_debut.size()==nb_retour_possible){
+                dernier_deplacement_pion.erase( dernier_deplacement_pion.begin());
+                dernier_deplacement_debut.erase( dernier_deplacement_debut.begin());
+                dernier_deplacement_fin.erase( dernier_deplacement_fin.begin());
+            }
+            dernier_deplacement_pion.push_back(pion.get());
+            dernier_deplacement_debut.push_back(case_depart);
+            dernier_deplacement_fin.push_back(case_fin);
+
+        }
+
+
     }
 }
 
@@ -76,6 +99,16 @@ bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& 
 
         else
             c->textItem->setDefaultTextColor(Qt::black);
+
+        if (dernier_deplacement_debut.size()==nb_retour_possible){
+            dernier_deplacement_pion.erase( dernier_deplacement_pion.begin());
+            dernier_deplacement_debut.erase( dernier_deplacement_debut.begin());
+            dernier_deplacement_fin.erase( dernier_deplacement_fin.begin());
+        }
+        dernier_deplacement_pion.push_back(insecte.get());
+        dernier_deplacement_debut.push_back(c);
+        dernier_deplacement_fin.push_back(c);
+
 
         return true;
     }
@@ -330,4 +363,43 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
         i_case->setPen(QPen(color));
         i_case->setZValue(zvalue);
     }
+}
+
+void Plateau::annuler_deplacement(size_t n){
+    if (n!=0){
+        for (size_t i=dernier_deplacement_debut.size()-1;i>dernier_deplacement_debut.size()-1-n;i--) {
+            if (dernier_deplacement_fin[i]==dernier_deplacement_debut[i]){
+                // On annule un placement donc on supprime le pion
+                dernier_deplacement_fin[i]->pion=nullptr;
+                pions_supprimer.push_back(dernier_deplacement_pion[i]);
+
+            }else{
+                deplacer_insecte(dernier_deplacement_fin[i],dernier_deplacement_debut[i],1);
+            }
+            if (dernier_deplacement_fin[i]->pion== nullptr)
+            {
+                for (auto i_direction : Case::DIRECTIONS_ALL)
+                {
+                    tenter_supprimer_case(*(dernier_deplacement_fin[i]->case_ptr_from_direction(i_direction)));
+                }
+            }
+            dernier_deplacement_pion.erase(dernier_deplacement_pion.begin()+i);
+            dernier_deplacement_debut.erase(dernier_deplacement_debut.begin()+i);
+            dernier_deplacement_fin.erase(dernier_deplacement_fin.begin()+i);
+        }
+
+
+    }
+}
+
+Insecte* Plateau::get_pion_supprimer(Team te, Type::Type ty){
+    Insecte* i=nullptr;
+    for (int j=pions_supprimer.size()-1;j==0;j--){
+        if (pions_supprimer[j]->get_team()==te && pions_supprimer[j]->get_type()==ty ){
+            i=pions_supprimer[j];
+            pions_supprimer.erase(pions_supprimer.begin()+j);
+            return i;
+        }
+    }
+    return i;
 }

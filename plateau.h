@@ -4,6 +4,7 @@
 #include "case.h"
 #include <vector>
 #include <array>
+#include "types.h"
 
 #include <QGraphicsScene>
 #include <QWidget>
@@ -14,10 +15,10 @@ class Plateau : public QGraphicsScene
     Q_OBJECT
 
 public:
-    Plateau();
+    Plateau(size_t nb_retour_possible);
     ~Plateau();
 
-    void deplacer_insecte(class Case* case_depart, class Case* case_fin);
+    void deplacer_insecte(class Case* case_depart, class Case* case_fin,bool undo=0);
 
     bool placer_insecte(class Case* c, std::unique_ptr<Insecte> insecte, class Joueur& joueur, bool bypass_check = false);
 
@@ -45,7 +46,9 @@ public:
     Case* get_case(Position p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
-    Insecte* get_dernier_deplacement() const {return dernier_deplacement.get();}
+    Insecte* get_dernier_deplacement_pion() const ;
+    Insecte* get_pion_supprimer(Team te, Type::Type ty);
+    void annuler_deplacement(size_t n);
 
     QGraphicsScene* get_scene() { return this; }
 
@@ -63,7 +66,14 @@ private:
     Case* case_selectionnee = nullptr;
 
     void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
-    std::unique_ptr<Insecte> dernier_deplacement;
+
+    //On stocke le dernier déplacement afin de pouvoir retourner en arrière
+    std::vector<Insecte *> dernier_deplacement_pion;
+    std::vector<Case*> dernier_deplacement_debut;
+    std::vector<Case*> dernier_deplacement_fin;
+    size_t nb_retour_possible=0;
+
+    std::vector<Insecte* > pions_supprimer; // Ce sont les pions dont on a annulé le placement
 
 
 
