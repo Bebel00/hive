@@ -29,7 +29,8 @@ private:
     void fermerMenu();
 
 signals:
-    void menuFerme()
+    void menuFerme();
+    void nouvellePartieDemandee();  
 
 };
 #endif // MAINWINDOW_H
