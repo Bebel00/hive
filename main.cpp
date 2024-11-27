@@ -13,36 +13,75 @@ int main(int argc, char *argv[]) {
     MainWindow w;
     Partie* partie = nullptr;
 
-    // Connexion pour lancer une nouvelle partie depuis le menu
-    QObject::connect(&menu, &MainMenu::nouvellePartieDemandee, [&]() {
-        // Création d'une nouvelle partie si celle ci est nécessaire
-        if (!partie) {
-            partie = new Partie("Leo", "Abel"); 
-            w.setPartie(partie);
+  QObject::connect(&menu, &MainMenu::nouvellePartieDemandee, [&]() {
+      QString joueur1 = QInputDialog::getText(nullptr, "Joueur 1", "Entrez le nom du joueur 1 :");
+      QString joueur2 = QInputDialog::getText(nullptr, "Joueur 2", "Entrez le nom du joueur 2 :");
+        // Supprimer l'ancienne partie si elle existe
+        if (partie) {
+            delete partie;
+            partie = nullptr;
         }
 
-        //pour cacher le menu et afficher la fenêtre principale
+  
+        partie = new Partie(joueur1.toStdString(), joueur2.toStdString());
+        w.setPartie(partie);
+
+
+    
         menu.hide();
         w.show();
     });
 
-    // connexion pour quitter l'application depuis le menu
+   
     QObject::connect(&menu, &MainMenu::quitApplication, [&]() {
-        a.quit();
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(nullptr, "Quitter", "Êtes-vous sûr de vouloir quitter ?",
+                                       QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            a.quit();
+        }
     });
 
-    // pour lancer  le menu principal
-    menu.show();
+    QObject::connect(&w, &MainWindow::menuFerme, [&]() {
+        if (partie) {
+            delete partie;
+            partie = nullptr;
+        }
+        w.hide();
+        menu.show();
+    });
 
    
+    QObject::connect(&w, &MainWindow::nouvellePartieDemandee, [&]() {
+        if (partie) {
+            delete partie;
+            partie = nullptr;
+        }
+
+        // Créer une nouvelle partie
+        QString joueur1 = QInputDialog::getText(nullptr, "Joueur 1", "Entrez le nom du joueur 1 :");
+        QString joueur2 = QInputDialog::getText(nullptr, "Joueur 2", "Entrez le nom du joueur 2 :");
+
+        partie = new Partie(joueur1.toStdString(), joueur2.toStdString());
+        w.setPartie(partie);
+
+        // Rester dans la fenêtre principale
+    });
+
+    // Lancer le menu principal
+    menu.show();
+    return a.exec();
+}
+    // Boucle CLI pour tester les commandes (désactivée en mode GUI)
+    /*
     while (partie) {
         std::string cmd;
         std::getline(std::cin, cmd);
         std::cout << partie->jouer_tour_cli(cmd) << std::endl;
     }
+    */
 
-    return a.exec();
-}
+
 
 //QObject::connect(&menu, &MainMenu::quitApplication, [&]() {
         // Afficher une boîte de dialogue de confirmation avant de quitter
