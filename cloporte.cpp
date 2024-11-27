@@ -1,6 +1,7 @@
 #include "cloporte.h"
 #include "insecte.h"
 #include "teams.h"
+#include "plateau.h"
 
 Cloporte::Cloporte(Team team) : Insecte(team)
 {
