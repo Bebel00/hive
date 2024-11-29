@@ -66,7 +66,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                         if (type==Type::Type::ABEILLE){
                             tour->placer_abeille();
                         }
-                         else if ((nb_tours==6 || nb_tours==7)&& !tour->get_a_place_abeille()){
+                         else if ((nb_tours==3)&& !tour->get_a_place_abeille()){
                             return " L'abeille doit être placé";
                         }
 
@@ -94,7 +94,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
     }
     else if (token == "move")
     {
-        if ((nb_tours==6 || nb_tours==7)&& !tour->get_a_place_abeille()){
+        if ((nb_tours==3)&& !tour->get_a_place_abeille()){
             return " L'abeille doit être placé";
         }
         Position p;
@@ -190,6 +190,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                     return "Vous avez jouer moins de tours que " + std::to_string(nb_undo);
                 }else{
                     plateau->annuler_deplacement(nb_undo);
+                    nb_tours=nb_tours-nb_undo;
                 }
 
             }
