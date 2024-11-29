@@ -10,6 +10,8 @@
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsPixmapItem>
+#include <QMessageBox>
 
 Plateau::Plateau() : QGraphicsScene()
 {
@@ -30,47 +32,30 @@ Plateau::~Plateau()
 
 }
 
-void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
-{
-    if (case_fin)
-    {
+void Plateau::deplacer_insecte(Case* case_depart, Case* case_fin) {
+    if (case_fin && case_depart->pion) {
         Insecte* pion = case_depart->pion;
         pion->bouger(case_fin);
         case_fin->pion = pion;
-
+        afficher_piece_sur_case(case_fin, QString::fromStdString(pion->get_chemin_icone()));
         case_depart->pion = pion->get_en_dessous();
 
-        if (case_depart->pion == nullptr)
-        {
-            for (auto i_direction : Case::DIRECTIONS_ALL)
-            {
+        if (!case_depart->pion) {
+            for (auto i_direction : Case::DIRECTIONS_ALL) {
                 tenter_supprimer_case(*(case_depart->case_ptr_from_direction(i_direction)));
             }
         }
     }
 }
 
-bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_check)
-{
-    if (Insecte::verifier_placement(c, team) || bypass_check)
-    {
+bool Plateau::placer_insecte(Case* c, Insecte* insecte, Team team, bool bypass_check) {
+    if (Insecte::verifier_placement(c, team) || bypass_check) {
         c->pion = insecte;
         creer_alentours(c);
         insecte->placer(c);
 
-        QBrush brush;
-        brush.setColor(Qt::darkCyan);
-        brush.setStyle(Qt::SolidPattern);
-        c->setBrush(brush);
-
-        c->textItem->setPlainText(QString(type_to_str(insecte->get_type())[0]));
-
-        if (team == Team::BLANC)
-            c->textItem->setDefaultTextColor(Qt::white);
-
-        else
-            c->textItem->setDefaultTextColor(Qt::black);
-
+        afficher_piece_sur_case(c, QString::fromStdString(insecte->get_chemin_icone()));
+        
         return true;
     }
     return false;
@@ -324,4 +309,10 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
         i_case->setPen(QPen(color));
         i_case->setZValue(zvalue);
     }
+}
+void Plateau::afficher_piece_sur_case(Case* c, const QString& icon_path) {
+    QPixmap pixmap(icon_path);
+    QGraphicsPixmapItem* icon = new QGraphicsPixmapItem(pixmap.scaled(40, 40));
+    icon->setPos(c->scenePos());
+    addItem(icon);
 }
