@@ -4,11 +4,13 @@
 #include <stdexcept>
 #include "plateau.h"
 
-Insecte::Insecte(Team team) : team(team)
+Insecte::Insecte(Team team) : team(team), position(nullptr), en_dessous(nullptr)
 {
 
 }
-
+std::string Insecte::get_chemin_icone() const {
+    return ""; 
+}
 void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team)
 {
     for (auto i_case : liste_cases)
