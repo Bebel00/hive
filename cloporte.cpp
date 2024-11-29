@@ -58,11 +58,11 @@ void Cloporte::get_pion_deplacer(std::vector<Insecte *> &pions_deplacer){
     }
 }
 
-void Cloporte::get_moves_possibles_pions_ennemis(std::vector<Case *> &move_possibles){
+void Cloporte::get_deplacements_possibles(std::vector<Case *> &deplacements_possibles){
     for (auto i_direction: Case::DIRECTIONS_ALL){
         Case* c = get_case()->get_case_from_direction(i_direction);
         if(!c->possede_pion()){
-            move_possibles.push_back(c);
+            deplacements_possibles.push_back(c);
         }
     }
 }

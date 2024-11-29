@@ -4,6 +4,7 @@
 #include "mainwindow.h"
 #include "types.h"
 #include "joueur.h"
+#include "insecte.h"
 
 #include <vector>
 #include <string>
@@ -11,7 +12,7 @@
 class Partie
 {
 public:
-    Partie(std::string joueur1_pseudo, std::string joueur2_pseudo);
+    Partie(std::string joueur1_pseudo, std::string joueur2_pseudo,size_t retour=0);
     ~Partie();
 
     class Plateau* get_plateau() const { return plateau; }
@@ -19,6 +20,8 @@ public:
     bool verifier_victoire();
 
     std::string jouer_tour_cli(std::string cmd);
+    size_t get_nb_retour_possible() const {return nb_retour_possible;}
+    void set_nb_retour_possible(size_t nb)  {nb_retour_possible=nb;}
 
 private:
     class Plateau* plateau;
@@ -40,6 +43,11 @@ private:
     void lire_prochain_token(std::string& cmd, std::string& token);
 
     void setup_test();
+
+    bool abeille_place(Joueur* joueur);
+
+    size_t nb_retour_possible=0;
+
 
     class QGraphicsView* view;
 
