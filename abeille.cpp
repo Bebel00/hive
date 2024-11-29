@@ -34,3 +34,11 @@ void Abeille::get_moves_possibles(std::vector<Case *> &move_possibles) const
         }
     }
 }
+Type Abeille::get_type() const {
+    return Type::ABEILLE;
+}
+
+
+std::string Abeille::get_chemin_icone() const {
+    return "//trouver image "; 
+}
