@@ -3,6 +3,8 @@
 #include <vector>
 #include <stdexcept>
 #include "plateau.h"
+#include <set>
+
 
 Insecte::Insecte(Team team) : team(team)
 {
@@ -18,6 +20,12 @@ void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*
 
 bool Insecte::verifier_placement(const Case * const c, const Team team)
 {
+    if (c->get_plateau()->get_cases().size() == 1 && c == c->get_plateau()->get_case_base())
+        return true;
+
+    if (c->get_plateau()->get_cases().size() == 7 && c != c->get_plateau()->get_case_base())
+        return true;
+
     // Est-ce qu'il existe un allié adjacent ?
     bool a_allie = false;
 
@@ -80,7 +88,7 @@ bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case 
         return false;
 
     // On enlève le pion pour voir ce qu'il se passe
-    Insecte* insecte = case_depart->pion;
+    std::unique_ptr<Insecte> insecte = std::move(case_depart->pion);
     case_depart->pion = nullptr;
 
     unsigned int nb_trouve = 0;
@@ -105,7 +113,7 @@ bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case 
     }
 
     // On remet le pion à sa place
-    case_depart->pion = insecte;
+    case_depart->pion = std::move(insecte);
 
     // Si on a trouvé tous les autres pions sur le plateau alors la ruche n'est pas cassé.
     if (nb_trouve == nb_pions)
@@ -143,6 +151,33 @@ bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
     }
 }
 
+
+bool Insecte::est_un_glissement(Case* depart, Case::Direction d)  {
+    switch (d)
+    {
+    case(Case::Direction::HAUT_DROIT):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE))
+               || !Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE));
+    case(Case::Direction::DROITE):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT))
+               || !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_DROIT));
+    case(Case::Direction::BAS_DROIT):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE))
+               || !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_GAUCHE));
+    case(Case::Direction::BAS_GAUCHE):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_DROIT))
+               || !Case::is_empty(depart->get_case_from_direction(Case::Direction::GAUCHE));
+    case(Case::Direction::GAUCHE):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE))
+               || !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_GAUCHE));
+    case(Case::Direction::HAUT_GAUCHE):
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT))
+               ||!Case::is_empty(depart->get_case_from_direction(Case::Direction::GAUCHE));
+    default:
+        return false;
+    }
+}
+
 void Insecte::placer(Case * const c)
 {
     // La vérification du placement se fera au niveau du plateau
@@ -151,9 +186,11 @@ void Insecte::placer(Case * const c)
 
 void Insecte::bouger(Case* const c)
 {
+    position->pion = std::move(en_dessous);
+
     position = c;
     if (c->possede_pion())
-        en_dessous = c->get_pion();
+        en_dessous = std::move(c->pion);
 }
 
 bool Insecte::est_cerne() const
@@ -167,7 +204,7 @@ bool Insecte::est_cerne() const
 // Fonction permettant d'obtenir les déplacements possibles sur des cases adjacentes sans faire de saut.
 //case_interdite est pas défaut à nullptr, il permet dans la fonction d'ajouter cette case dans le veteur.
 //On a besoin de cela notamment pour que l'areignée ne fasse pas de demi-tout pendant son déplacement
-void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite){
+void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite) const{
     bool haut_droit=false;
     bool haut_gauche=false;
     bool droite=false;
@@ -231,7 +268,7 @@ void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case
     }
 }
 
-void Insecte::get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite){
+void Insecte::get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite) const {
     bool haut_droit=false;
     bool haut_gauche=false;
     bool droite=false;
