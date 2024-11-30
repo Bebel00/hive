@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <iostream>
 
-Joueur::Joueur(Team team, std::string pseudo) : team(team), pseudo(pseudo) {
+Joueur::Joueur(Team team, std::string pseudo) : team(team), pseudo(std::move(pseudo)) {
     // Initialisation des jetons
     jetons[Type::Type::ABEILLE] = 1;
     jetons[Type::Type::ARAIGNEE] = 2;
@@ -32,6 +32,7 @@ void Joueur::utiliser(Type::Type type) {
     }
 
     jetons[type]--;
+    std::cout << "Jeton de type " << toString(type) << " utilisé. Restants : " << jetons[type] << std::endl;
 }
 
 void Joueur::remettre(Type::Type type) {
@@ -49,6 +50,7 @@ void Joueur::remettre(Type::Type type) {
     }
 
     jetons[type]++;
+    std::cout << "Jeton de type " << toString(type) << " remis. Disponibles : " << jetons[type] << std::endl;
 }
 
 int Joueur::getJetonsMax(Type::Type type) const {
@@ -68,4 +70,27 @@ int Joueur::getJetonsMax(Type::Type type) const {
     default:
         throw std::invalid_argument("Type d'insecte invalide.");
     }
+}
+
+bool Joueur::peutUtiliser(Type::Type type) const {
+    return jetons.count(type) > 0 && jetons.at(type) > 0;
+}
+
+void Joueur::afficherJetons() const {
+    std::cout << "Jetons disponibles pour " << pseudo << " :\n";
+    for (const auto& [type, count] : jetons) {
+        std::cout << "- " << toString(type) << " : " << count << "\n";
+    }
+}
+
+bool Joueur::estAbeillePlacee() const {
+    return a_place_abeille;
+}
+
+std::string Joueur::getPseudo() const {
+    return pseudo;
+}
+
+Team Joueur::getTeam() const {
+    return team;
 }
