@@ -6,6 +6,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <iostream>
 
 class Joueur
 {
@@ -16,9 +17,10 @@ public:
     void remettre(Type::Type type);
 
     bool peut_utiliser(Type::Type type) const;
-    const std::string& get_pseudo() const { return pseudo; }
-    const bool& get_a_place_abeille() const { return a_place_abeille; }
-    const Team& get_team() const { return team; }
+    const std::string& getPseudo() const;
+    bool estAbeillePlacee() const;
+    Team getTeam() const;
+    void afficherJetons() const;
 
 private:
     Team team;
