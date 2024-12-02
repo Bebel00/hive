@@ -73,8 +73,6 @@ private:
     std::vector<Case*> dernier_deplacement_fin;
     size_t nb_retour_possible=0;
 
-    std::vector<Insecte* > pions_supprimer; // Ce sont les pions dont on a annulé le placement
-
 
 
 

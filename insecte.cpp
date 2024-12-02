@@ -151,6 +151,9 @@ bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
     }
 }
 
+
+
+
 void Insecte::placer(Case * const c)
 {
     // La vérification du placement se fera au niveau du plateau
@@ -172,136 +175,4 @@ bool Insecte::est_cerne() const
         if (Case::is_empty(get_case()->get_case_from_direction(i_direction)))
             return false;
     return true;
-}
-
-// Fonction permettant d'obtenir les déplacements possibles sur des cases adjacentes sans faire de saut.
-//case_interdite est pas défaut à nullptr, il permet dans la fonction d'ajouter cette case dans le veteur.
-//On a besoin de cela notamment pour que l'areignée ne fasse pas de demi-tout pendant son déplacement
-void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite) const{
-    bool haut_droit=false;
-    bool haut_gauche=false;
-    bool droite=false;
-    bool gauche= false;
-    bool bas_gauche= false;
-    bool bas_droit= false;
-
-    // Si on a un pion en haut_droit alors on peut aller en haut_gauche ou à droite
-    if (case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)->possede_pion() && case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE)->possede_pion()){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::DROITE)->possede_pion() ){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::DROITE));
-        }
-    }
-     // Si on a un pion en haut_gauche alors on peut aller en haut_droit ou à gauche
-    if (case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE)->possede_pion() && case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)->possede_pion()){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::GAUCHE)->possede_pion()){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::GAUCHE));
-        }
-    }
-     // Si on a un pion à droite alors on peut aller en haut_droit ou en bas_droit
-    if (case_depart.get_case_from_direction(Case::Direction::DROITE)->possede_pion() && case_depart.get_case_from_direction(Case::Direction::DROITE)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)->possede_pion() && !haut_droit){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::BAS_DROIT)->possede_pion()){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::BAS_DROIT));
-        }
-    }
-    //Si on a un pion à gauche alors on peut aller en haut_gauche ou en bas_gauche
-    if (case_depart.get_case_from_direction(Case::Direction::GAUCHE )->possede_pion() && case_depart.get_case_from_direction(Case::Direction::GAUCHE)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE)->possede_pion() && !haut_gauche){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE)->possede_pion() ){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE));
-        }
-    }
-    //Si on a un pion en bas_droit alors on peut aller en bas_gauche ou à droite
-    if (case_depart.get_case_from_direction(Case::Direction::BAS_DROIT )->possede_pion() && case_depart.get_case_from_direction(Case::Direction::BAS_DROIT)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE)->possede_pion() && !bas_gauche){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::DROITE)->possede_pion()&& !droite){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::DROITE));
-        }
-    }
-     //Si on a un pion en bas_gauche alors on peut aller en bas_droit ou à gauche
-    if (case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE )->possede_pion() && case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::BAS_DROIT)->possede_pion() && !bas_gauche){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::BAS_DROIT));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::GAUCHE)->possede_pion()&& !droite){
-            glissements_possibles.push_back(case_depart.get_case_from_direction(Case::Direction::GAUCHE));
-        }
-    }
-}
-
-void Insecte::get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite) const {
-    bool haut_droit=false;
-    bool haut_gauche=false;
-    bool droite=false;
-    bool gauche= false;
-    bool bas_gauche= false;
-    bool bas_droit= false;
-
-    // Si on a un pion en haut_droit alors on peut aller en haut_gauche ou à droite
-    if (case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)->possede_pion()  && case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE)->possede_pion()){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::DROITE)->possede_pion()){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::DROITE));
-        }
-    }
-    // Si on a un pion en haut_gauche alors on peut aller en haut_droit ou à gauche
-    if (case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE)->possede_pion() && case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)->possede_pion()){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::GAUCHE)->possede_pion()){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::GAUCHE));
-        }
-    }
-    // Si on a un pion à droite alors on peut aller en haut_droit ou en bas_droit
-    if (case_depart.get_case_from_direction(Case::Direction::DROITE)->possede_pion()  && case_depart.get_case_from_direction(Case::Direction::DROITE)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)->possede_pion() && !haut_droit){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::BAS_DROIT)->possede_pion()){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::BAS_DROIT));
-        }
-    }
-    //Si on a un pion à gauche alors on peut aller en haut_gauche ou en bas_gauche
-    if (case_depart.get_case_from_direction(Case::Direction::GAUCHE )->possede_pion()  && case_depart.get_case_from_direction(Case::Direction::GAUCHE)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE)->possede_pion() && !haut_gauche){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::HAUT_GAUCHE));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE)->possede_pion()){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE));
-        }
-    }
-    //Si on a un pion en bas_droit alors on peut aller en bas_gauche ou à droite
-    if (case_depart.get_case_from_direction(Case::Direction::BAS_DROIT )->possede_pion()  && case_depart.get_case_from_direction(Case::Direction::BAS_DROIT)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE)->possede_pion() && !bas_gauche){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::DROITE)->possede_pion()&& !droite){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::DROITE));
-        }
-    }
-    //Si on a un pion en bas_gauche alors on peut aller en bas_droit ou à gauche
-    if (case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE )->possede_pion()  && case_depart.get_case_from_direction(Case::Direction::BAS_GAUCHE)!=case_interdite){
-        if (!case_depart.get_case_from_direction(Case::Direction::BAS_DROIT)->possede_pion() && !bas_gauche){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::BAS_DROIT));
-        }
-        if (!case_depart.get_case_from_direction(Case::Direction::GAUCHE)->possede_pion()&& !droite){
-            glissements_possibles.insert(case_depart.get_case_from_direction(Case::Direction::GAUCHE));
-        }
-    }
-
 }

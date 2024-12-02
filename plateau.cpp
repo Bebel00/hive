@@ -371,7 +371,7 @@ void Plateau::annuler_deplacement(size_t n){
             if (dernier_deplacement_fin[i]==dernier_deplacement_debut[i]){
                 // On annule un placement donc on supprime le pion
                 dernier_deplacement_fin[i]->pion=nullptr;
-                pions_supprimer.push_back(dernier_deplacement_pion[i]);
+                delete dernier_deplacement_fin[i];
 
             }else{
                 deplacer_insecte(dernier_deplacement_fin[i],dernier_deplacement_debut[i],1);
@@ -390,16 +390,4 @@ void Plateau::annuler_deplacement(size_t n){
 
 
     }
-}
-
-Insecte* Plateau::get_pion_supprimer(Team te, Type::Type ty){
-    Insecte* i=nullptr;
-    for (int j=pions_supprimer.size()-1;j==0;j--){
-        if (pions_supprimer[j]->get_team()==te && pions_supprimer[j]->get_type()==ty ){
-            i=pions_supprimer[j];
-            pions_supprimer.erase(pions_supprimer.begin()+j);
-            return i;
-        }
-    }
-    return i;
 }

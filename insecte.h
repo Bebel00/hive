@@ -33,6 +33,7 @@ public:
     static bool verifier_placement(const Case* const c, const Team team);
 
 
+
     void placer(Case* const c);
     void bouger(Case* const c);
 
@@ -44,8 +45,6 @@ public:
     const std::unique_ptr<Insecte>& get_en_dessous() const { return en_dessous; }
 
     bool est_cerne() const;
-    void get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite=nullptr) const ;
-    void get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite=nullptr) const ;
 
 private:
     // BLANC ou NOIR
