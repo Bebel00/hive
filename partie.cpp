@@ -56,7 +56,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
             return "Nombre d'annulation invalide";
         }
 
-    if(nb_tours==3 & token!="place" && !tour->get_a_place_abeille()){
+    if(nb_tours==3 && token!="place" && !tour->get_a_place_abeille()){
         return " L'abeille doit être placé";
     }
 
@@ -199,6 +199,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
             return "Coordonees invlalides";
         }
     }
+
 
     }else{
         return "Commande inconnue";
