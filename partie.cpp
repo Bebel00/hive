@@ -11,10 +11,10 @@
 #include <QScrollBar>
 
 
-Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo,size_t retour)
-    : joueur1(Team::BLANC, joueur1_pseudo), joueur2(Team::NOIR, joueur2_pseudo),nb_retour_possible(retour)
+Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
+    : joueur1(Team::BLANC, joueur1_pseudo), joueur2(Team::NOIR, joueur2_pseudo)
 {
-    plateau = new Plateau(retour);
+    plateau = new Plateau();
 
     view = new QGraphicsView(plateau->get_scene());
     view->setBackgroundBrush(QBrush(Qt::black));
@@ -35,6 +35,9 @@ std::string Partie::jouer_tour_cli(std::string cmd)
 
     lire_prochain_token(cmd, token);
 
+    if (nb_tours == 3 && !tour->get_a_place_abeille() && token != "place")
+        return "L'abeille doit être placée";
+
     if (token == "place")
     {
         lire_prochain_token(cmd, token);
@@ -42,10 +45,10 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         Type::Type type = Type::str_to_type(token);
         if (type != Type::Type::NONE)
         {
-            //On vérifier que l'abeille de chaque joueur est placé avant leu 5 ème tour
-            if ((nb_tours==6 || nb_tours==7)&& !tour->get_a_place_abeille() && type!=Type::Type::ABEILLE){
-                return " L'abeille doit être placé";
-            }
+            //On vérifier que l'abeille de chaque joueur est placé avant lieu 4 ème tour
+            if (nb_tours == 3 && !tour->get_a_place_abeille() && token != "abeille")
+                return "L'abeille doit être placée";
+
             Position p;
 
             lire_prochain_token(cmd, token);
@@ -95,9 +98,6 @@ std::string Partie::jouer_tour_cli(std::string cmd)
     }
     else if (token == "move")
     {
-        if ((nb_tours==3)&& !tour->get_a_place_abeille()){
-            return " L'abeille doit être placé";
-        }
         Position p;
 
         lire_prochain_token(cmd, token);
@@ -177,35 +177,18 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         }
         catch (const std::invalid_argument& e)
         {
-            return "Coordonees invlalides";
+            return "Coordonees invalides";
         }
-    }else if (token == "undo"){
-
-        lire_prochain_token(cmd, token);
-        try{
-            int nb_undo=stoi(token); // Le nombre de tour que l'utilisateur veut supprimer
-            if(nb_undo>nb_retour_possible){
-                return " Les paramètres de la partie permettent de supprimer au maximum " + std::to_string(nb_retour_possible) + " annulations";
-            }else{
-                if (nb_tours<nb_undo){
-                    return "Vous avez jouer moins de tours que " + std::to_string(nb_undo);
-                }else{
-                    plateau->annuler_deplacement(nb_undo);
-                    nb_tours=nb_tours-nb_undo;
-                }
-
-            }
-        }catch(const std::invalid_argument& e){
-            return "Nombre d'annulation invalide";
+    }
+    }
+    
+    else if (token == "cloporte")
+    {
+        if(!tour->a_place_cloporte())
+        {
+            return "Vous n'avez pas encore placé votre cloporte.";
         }
 
-    }else if (token=="cloporte"){
-        if ((nb_tours==3 )&& !tour->get_a_place_abeille()){
-            return " L'abeille doit être placé";
-        }
-        if(!tour->a_place_cloporte()){
-            return "Vous n'avez pas encore placer votre cloporte.";
-        }
         Position p;
         lire_prochain_token(cmd,token);
         try
@@ -258,48 +241,78 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                                                 {
                                                     return "Movement illegal";
                                                 }
-                                            }else{
+                                            }
+                                            
+                                            else
+                                            {
                                                 return "Le Cloporte ne peut pas déplacer le pion sélectionné";
                                             }
 
-                                        }else{
+                                        }
+
+                                        else
+                                        {
                                             return "Ce n'est pas le tour de ce pion";
                                         }
-                                    }else
+                                    }
+                                    
+                                    else
                                     {
                                         return "Case [" + std::to_string(p2.x) + "; " + std::to_string(p2.y) + "] non existante";
                                     }
-                                }catch(const std::invalid_argument& e){
+                                }
+                                catch(const std::invalid_argument& e)
+                                {
                                     return "Coordonees invalides";
                                 }
 
-                            }catch(const std::invalid_argument& e){
+                            }
+                            catch(const std::invalid_argument& e)
+                            {
                                 return "Coordonees invalides";
                             }
 
-                        }catch(const std::invalid_argument& e){
-                    return "Coordonees invalides";
                         }
-                    }else{
+                        catch(const std::invalid_argument& e){
+                            return "Coordonees invalides";
+                        }
+                    }
+                    else
+                    {
                         return " Il n'y a pas de pion sur la case sélectionné";
                     }
 
-                }else{
+                }
+                
+                else
+                {
                     return "Case [" + std::to_string(p.x) + "; " + std::to_string(p.y) + "] non existante";
                 }
-            }catch(const std::invalid_argument& e){
+            }
+
+            catch(const std::invalid_argument& e)
+            {
                 return "Coordonees invalides";
             }
-        }catch(const std::invalid_argument& e){
+        }
+
+        catch(const std::invalid_argument& e)
+        {
                 return "Coordonees invalides";
         }
-    }else{
+    }
+    
+    else
+    {
         return "Commande inconnue";
     }
 
-    if (tour == &joueur1){
+    if (tour == &joueur1)
+    {
             tour = &joueur2;
-    }else{
+    }
+    else
+    {
         tour = &joueur1;
         nb_tours++;
     }
@@ -310,11 +323,8 @@ std::string Partie::jouer_tour_cli(std::string cmd)
 }
 
 bool Partie::ajouter_insecte(Joueur& joueur, Case* c, Type::Type type, bool bypass)
-{   std::unique_ptr<Insecte> insecte (plateau->get_pion_supprimer(joueur.get_team(),type));
-    if (insecte==nullptr){
-         insecte=UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
-    }
-
+{  
+    std::unique_ptr<Insecte> insecte = UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
     return bypass || (joueur.peut_utiliser(type) && plateau->placer_insecte(c, std::move(insecte), joueur, bypass));
 }
 
@@ -376,6 +386,7 @@ std::string Partie::get_display_plateau() const
 
     return plateau_str;
 }
+
 bool Partie::verifier_victoire()
 {
     bool victoire_joueur1 = verifier_victoire_joueur(joueur1);

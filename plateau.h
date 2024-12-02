@@ -63,9 +63,6 @@ private:
     Case* case_selectionnee = nullptr;
 
     void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
-    std::unique_ptr<Insecte> dernier_deplacement;
-
-
 
 
 protected:
