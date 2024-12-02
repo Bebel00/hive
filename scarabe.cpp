@@ -10,7 +10,7 @@ Scarabe::Scarabe(Team team) : Insecte(team)
 
 void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
 {
-    if (!move_casse_ruche(get_case(), get_case()->get_plateau()->get_cases()))
+    if (!move_casse_ruche(get_case()))
     {
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {

@@ -77,8 +77,10 @@ void Insecte::compter_nb_insecte_connecte(Case * const case_depart, unsigned int
  * Pour ça on vérifie qu'en enlevant le pion de la case passée en paramètre,
  * on peut toujours atteindre tous les pions de la ruche.
  */
-bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case *> &liste_cases)
+bool Insecte::move_casse_ruche(Case * const case_depart)
 {
+    const std::vector<Case*>& liste_cases = case_depart->get_plateau()->get_cases();
+
     if (Case::is_empty(case_depart))
         throw std::invalid_argument("Move casse ruche : impossible de bouger une case vide.");
 
@@ -127,7 +129,7 @@ bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
     switch (d)
     {
     case(Case::Direction::HAUT_DROIT):
-            return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE))
+        return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE))
                 && !Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE));
     case(Case::Direction::DROITE):
         return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT))
