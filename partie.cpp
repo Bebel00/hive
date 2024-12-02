@@ -200,97 +200,6 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         }
     }
 
-    }else if (token=="cloporte"){
-        if(!tour->a_place_cloporte()){
-            return "Vous n'avez pas encore placer votre cloporte.";
-        }
-        Position p;
-        lire_prochain_token(cmd,token);
-        try
-        {
-            p.x = std::stoi(token);
-
-            lire_prochain_token(cmd, token);
-            try
-            {
-                p.y = std::stoi(token);
-
-
-                Case* c = plateau->get_case(p);
-                if (c)
-                {
-                    if (!c->possede_pion()){
-                        Position p2;
-
-                        lire_prochain_token(cmd, token);
-                        try{
-                            Position p2;
-
-                            lire_prochain_token(cmd, token);
-                            try
-                            {
-                                p2.x = std::stoi(token);
-
-
-                                lire_prochain_token(cmd, token);
-                                try
-                                {
-                                    p2.y = std::stoi(token);
-
-
-                                    Case* c2 = plateau->get_case(p2);
-                                    if (c2)
-                                    {
-                                        if (tour->get_cloporte()->get_team() == tour->get_team())
-                                        {
-                                            std::vector<Insecte*> pions_deplacer;
-                                            tour->get_cloporte()->get_pion_deplacer(pions_deplacer);
-                                            if (std::find(pions_deplacer.begin(),pions_deplacer.end(),c->get_pion())!=pions_deplacer.end()){
-                                                std::vector<Case*> deplacements_possibles;
-                                                tour->get_cloporte()->get_deplacements_possibles(deplacements_possibles);
-                                                if (std::find(deplacements_possibles.begin(), deplacements_possibles.end(), c2) != deplacements_possibles.end())
-                                                {
-                                                    plateau->deplacer_insecte(c, c2);
-                                                }
-                                                else
-                                                {
-                                                    return "Movement illegal";
-                                                }
-                                            }else{
-                                                return "Le Cloporte ne peut pas déplacer le pion sélectionné";
-                                            }
-
-                                        }else{
-                                            return "Ce n'est pas le tour de ce pion";
-                                        }
-                                    }else
-                                    {
-                                        return "Case [" + std::to_string(p2.x) + "; " + std::to_string(p2.y) + "] non existante";
-                                    }
-                                }catch(const std::invalid_argument& e){
-                                    return "Coordonees invalides";
-                                }
-
-                            }catch(const std::invalid_argument& e){
-                                return "Coordonees invalides";
-                            }
-
-                        }catch(const std::invalid_argument& e){
-                    return "Coordonees invalides";
-                        }
-                    }else{
-                        return " Il n'y a pas de pion sur la case sélectionné";
-                    }
-
-                }else{
-                    return "Case [" + std::to_string(p.x) + "; " + std::to_string(p.y) + "] non existante";
-                }
-            }catch(const std::invalid_argument& e){
-                return "Coordonees invalides";
-            }
-        }catch(const std::invalid_argument& e){
-                return "Coordonees invalides";
-        }
     }else{
         return "Commande inconnue";
     }
@@ -308,9 +217,8 @@ std::string Partie::jouer_tour_cli(std::string cmd)
 }
 
 bool Partie::ajouter_insecte(Joueur& joueur, Case* c, Type::Type type, bool bypass)
-{   std::unique_ptr<Insecte> insecte (plateau->get_pion_supprimer(joueur.get_team(),type));
-    insecte=UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
-
+{
+    std::unique_ptr<Insecte> insecte=UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
     return bypass || (joueur.peut_utiliser(type) && plateau->placer_insecte(c, std::move(insecte), joueur, bypass));
 }
 
