@@ -12,9 +12,7 @@ public:
     MainMenu(QWidget* parent = nullptr);
 
 signals:
-   
     void nouvellePartieDemandee();
-    void quitApplication();
 
 private:
     QGraphicsScene* mainMenuScene;

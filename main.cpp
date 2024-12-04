@@ -1,7 +1,9 @@
 #include "mainwindow.h"
-#include "mainmenu.h"
+#include "menu.h"
 #include "partie.h"
 #include <QApplication>
+#include <QMessageBox>
+#include <QInputDialog>
 #include <iostream>
 #include <string>
 
@@ -89,24 +91,3 @@ int main(int argc, char *argv[]) {
         std::cout << partie->jouer_tour_cli(cmd) << std::endl;
     }
     */
-
-
-
-//QObject::connect(&menu, &MainMenu::quitApplication, [&]() {
-        // Afficher une boîte de dialogue de confirmation avant de quitter
-        //QMessageBox::StandardButton reply;
-        //reply = QMessageBox::question(nullptr, "Quitter", "Êtes-vous sûr de vouloir quitter?",
-          //                            QMessageBox::Yes | QMessageBox::No);
-        //if (reply == QMessageBox::Yes) {
-          //  app.quit();
-        //}
-    //});
-
-    // Connexion pour réinitialiser la fenêtre de jeu et recommencer une nouvelle partie
-    //QObject::connect(&w, &MainWindow::nouvellePartieDemandee, [&]() {
-        // Supprimer l'ancienne partie si elle existe
-       // delete partie;
-        //partie = nullptr; // Réinitialiser la partie
-       // menu.show();  // Afficher de nouveau le menu principal
-       //w.hide();     // Cacher la fenêtre de jeu
- //   });//*

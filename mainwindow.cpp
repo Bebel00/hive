@@ -39,7 +39,8 @@ MainWindow::~MainWindow()
 void MainWindow::setPartie(Partie* const nouvellePartie)
 {
     // Supprime l'ancienne partie si elle existe
-    if (partie) {
+    if (partie)
+    {
         layout->removeWidget(partie->get_view());
         delete partie;
         partie = nullptr;
@@ -96,6 +97,5 @@ void MainWindow::fermerMenu()
 
 void MainWindow::recommencerPartie()
 {
-    
     emit nouvellePartieDemandee();
 }

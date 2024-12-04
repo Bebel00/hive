@@ -29,7 +29,8 @@ Partie::~Partie()
 
 std::string Partie::jouer_tour_cli(std::string cmd)
 {
-    if (menu_affiche) { // si le menu est encore affiché on ne permet pas au joueur de jouer 
+    if (menu_affiche)
+    { // si le menu est encore affiché on ne permet pas au joueur de jouer
         return "Veuillez fermer le menu avant de jouer.";
     }
     std::string token;

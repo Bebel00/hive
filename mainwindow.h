@@ -28,6 +28,8 @@ private:
     void afficherMenu();
     void fermerMenu();
 
+    void recommencerPartie();
+
 signals:
     void menuFerme();
     void nouvellePartieDemandee();  

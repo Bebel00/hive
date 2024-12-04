@@ -23,6 +23,10 @@ public:
 
     void initialiser_partie();
     void quitter_partie();
+
+    void fermer_menu();
+
+
 private:
     class Plateau* plateau;
 
@@ -45,8 +49,9 @@ private:
     void setup_test();
 
     class QGraphicsView* view;
-    void initialiser_partie();
-    void quitter_partie();
+
+
+    bool menu_affiche;
 
 };
 
