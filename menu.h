@@ -12,17 +12,21 @@ public:
     MainMenu(QWidget* parent = nullptr);
 
 signals:
-    void nouvellePartieDemandee();
+    void nouvellePartieDemandee(QString joueur1, QString joueur2, bool contreIA);
+    void quitApplication();
 
 private:
     QGraphicsScene* mainMenuScene;
     QGraphicsScene* newGameScene;
+    QGraphicsScene* settingsScene;
 
     void setupMainMenu();
     void setupNewGameScene();
+    void setupSettingsScene();
 
 private slots:
     void goToNewGame();
+    void goToSettings();
     void quitApplication();
 };
 
