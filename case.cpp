@@ -4,6 +4,7 @@
 #include <QGraphicsPolygonItem>
 #include <QGraphicsTextItem>
 #include <QFont>
+#include <QBrush>
 
 Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
 {
@@ -79,12 +80,27 @@ Case::Case(Position position, Plateau *plateau, QGraphicsItem* parent) : QGraphi
     // Position text in the center of the hexagon
     QRectF bounds = boundingRect();
     textItem->setPos(bounds.center() - textItem->boundingRect().center());
-
+    setAcceptHoverEvents(true);
 }
 
 void Case::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    std::cout << "Clicked !" << std::endl;
+    if (possede_pion()) {
+        setBrush(QBrush(Qt::green)); 
+    }
+    QGraphicsPolygonItem::mousePressEvent(event);
+    //*std::cout << "Clicked !" << std::endl;//
+}
+void Case::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    setBrush(QBrush(Qt::blue, Qt::Dense4Pattern)); 
+    QGraphicsPolygonItem::hoverEnterEvent(event);
+}
+
+void Case::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    setBrush(Qt::NoBrush); // Reset highlight when hover ends
+    QGraphicsPolygonItem::hoverLeaveEvent(event);
 }
 
 Case* Case::creer_case(Direction direction, Plateau* const plateau)
@@ -180,4 +196,22 @@ Team Case::get_team() const
     if (pion) return pion->get_team(); else return Team::NONE;
 }
 
+bool Case::possede_pion() const
+{
+    return pion != nullptr;
+}
+
+void Case::surbrillance(QColor color)
+{
+    setPen(QPen(color));
+    setZValue(0.5);
+}
+
+void Case::reset_surbrillance()
+{
+    setPen(QPen(Qt::red));
+    setZValue(0);
+}
+
 Case::~Case() = default;
+
