@@ -35,7 +35,6 @@ void Araignee::get_moves_possibles(std::vector<Case*>& moves_possibles) const
                 }
             }
         }
-
     }
 
 }
