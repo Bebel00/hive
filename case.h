@@ -3,7 +3,9 @@
 
 #include "teams.h"
 #include <QGraphicsPolygonItem>
-
+#include <QColor>
+#include <QPen>
+#include <memory>
 class Insecte;
 
 class Position
@@ -127,12 +129,16 @@ public:
     // Pour utiliser qgraphicsitem_cast
     enum { Type = UserType + 1 };
 
+
     int type() const override
     {
         // Enable the use of qgraphicsitem_cast with this item.
         return Type;
     }
 
+    bool possede_pion() const { return pion != nullptr; }
+    void surbrillance(QColor color);  
+    void reset_surbrillance();
     ~Case();
 
 private:
