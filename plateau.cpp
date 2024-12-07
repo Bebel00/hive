@@ -304,7 +304,7 @@ void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             {
 
                 // Reset la surbrillance
-                surbriller_cases(liste_cases, Qt::red, 0);
+                reset_surbrillance();
 
                 case_selectionnee = case_cliquee;
                 case_selectionnee->setPen(QPen(Qt::cyan));
@@ -327,5 +327,10 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
     {
         i_case->setPen(QPen(color));
         i_case->setZValue(zvalue);
+    }
+}
+void Plateau::reset_surbrillance() {
+    for (auto i_case : liste_cases) {
+        i_case->reset_surbrillance();
     }
 }
