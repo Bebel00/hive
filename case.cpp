@@ -200,10 +200,7 @@ Team Case::get_team() const
     if (pion) return pion->get_team(); else return Team::NONE;
 }
 
-bool Case::possede_pion() const
-{
-    return pion != nullptr;
-}
+
 
 void Case::surbrillance(QColor color)
 {
