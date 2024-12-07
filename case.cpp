@@ -5,6 +5,10 @@
 #include <QGraphicsTextItem>
 #include <QFont>
 #include <QBrush>
+#include <QColor>
+#include <QPen>
+#include <QGraphicsSceneMouseEvent>
+
 
 Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
 {
