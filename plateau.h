@@ -15,7 +15,7 @@ class Plateau : public QGraphicsScene
     Q_OBJECT
 
 public:
-    Plateau(size_t nb_retour_possible);
+    Plateau(size_t nb_retour_possible=0);
     ~Plateau();
 
     void deplacer_insecte(class Case* case_depart, class Case* case_fin,bool undo=0);
@@ -47,10 +47,12 @@ public:
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
     Insecte* get_dernier_deplacement_pion() const ;
-    Insecte* get_pion_supprimer(Team te, Type::Type ty);
     void annuler_deplacement(size_t n);
+    void retirer_piece_sur_case(Case* c);
 
     QGraphicsScene* get_scene() { return this; }
+
+
 
 
 private:
@@ -66,12 +68,14 @@ private:
     Case* case_selectionnee = nullptr;
 
     void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
+    void afficher_piece_sur_case(Case* c, const QString& icon_path);
 
     //On stocke le dernier déplacement afin de pouvoir retourner en arrière
     std::vector<Insecte *> dernier_deplacement_pion;
     std::vector<Case*> dernier_deplacement_debut;
     std::vector<Case*> dernier_deplacement_fin;
-    size_t nb_retour_possible=0;
+    size_t nb_retour_possible;
+
 
 
 

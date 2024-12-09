@@ -6,9 +6,14 @@
 #include "insecte.h"
 #include "usineinsecte.h"
 #include "cloporte.h"
+#include "insecte.h"
+#include <stdexcept>
 
 #include <QGraphicsView>
 #include <QScrollBar>
+#include <iostream>
+
+
 
 
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo,size_t retour)
@@ -16,12 +21,19 @@ Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo,size_t ret
 {
     plateau = new Plateau(retour);
 
+
+    setup_test();
+
     view = new QGraphicsView(plateau->get_scene());
     view->setBackgroundBrush(QBrush(Qt::black));
 
     view->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
     view->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
+
 }
+
+
+
 
 Partie::~Partie()
 {
@@ -200,7 +212,97 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         }
     }
 
+    }else if (token=="cloporte"){
+        if(!tour->a_place_cloporte()){
+            return "Vous n'avez pas encore placer votre cloporte.";
+        }
+        Position p;
+        lire_prochain_token(cmd,token);
+        try
+        {
+            p.x = std::stoi(token);
 
+            lire_prochain_token(cmd, token);
+            try
+            {
+                p.y = std::stoi(token);
+
+
+                Case* c = plateau->get_case(p);
+                if (c)
+                {
+                    if (!c->possede_pion()){
+                        Position p2;
+
+                        lire_prochain_token(cmd, token);
+                        try{
+                            Position p2;
+
+                            lire_prochain_token(cmd, token);
+                            try
+                            {
+                                p2.x = std::stoi(token);
+
+
+                                lire_prochain_token(cmd, token);
+                                try
+                                {
+                                    p2.y = std::stoi(token);
+
+
+                                    Case* c2 = plateau->get_case(p2);
+                                    if (c2)
+                                    {
+                                        if (tour->get_cloporte()->get_team() == tour->get_team())
+                                        {
+                                            std::vector<Insecte*> pions_deplacer;
+                                            tour->get_cloporte()->get_pion_deplacer(pions_deplacer);
+                                            if (std::find(pions_deplacer.begin(),pions_deplacer.end(),c->get_pion())!=pions_deplacer.end()){
+                                                std::vector<Case*> deplacements_possibles;
+                                                tour->get_cloporte()->get_deplacements_possibles(deplacements_possibles);
+                                                if (std::find(deplacements_possibles.begin(), deplacements_possibles.end(), c2) != deplacements_possibles.end())
+                                                {
+                                                    plateau->deplacer_insecte(c, c2);
+                                                }
+                                                else
+                                                {
+                                                    return "Movement illegal";
+                                                }
+                                            }else{
+                                                return "Le Cloporte ne peut pas déplacer le pion sélectionné";
+                                            }
+
+                                        }else{
+                                            return "Ce n'est pas le tour de ce pion";
+                                        }
+                                    }else
+                                    {
+                                        return "Case [" + std::to_string(p2.x) + "; " + std::to_string(p2.y) + "] non existante";
+                                    }
+                                }catch(const std::invalid_argument& e){
+                                    return "Coordonees invalides";
+                                }
+
+                            }catch(const std::invalid_argument& e){
+                                return "Coordonees invalides";
+                            }
+
+                        }catch(const std::invalid_argument& e){
+                    return "Coordonees invalides";
+                        }
+                    }else{
+                        return " Il n'y a pas de pion sur la case sélectionné";
+                    }
+
+                }else{
+                    return "Case [" + std::to_string(p.x) + "; " + std::to_string(p.y) + "] non existante";
+                }
+            }catch(const std::invalid_argument& e){
+                return "Coordonees invalides";
+            }
+        }catch(const std::invalid_argument& e){
+                return "Coordonees invalides";
+        }
     }else{
         return "Commande inconnue";
     }
@@ -220,7 +322,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
 bool Partie::ajouter_insecte(Joueur& joueur, Case* c, Type::Type type, bool bypass)
 {
     std::unique_ptr<Insecte> insecte=UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
-    return bypass || (joueur.peut_utiliser(type) && plateau->placer_insecte(c, std::move(insecte), joueur, bypass));
+    return bypass ||(joueur.peut_utiliser(type) && plateau->placer_insecte(c, std::move(insecte), joueur, bypass));
 }
 
 void Partie::lire_prochain_token(std::string &cmd, std::string &token)
@@ -235,8 +337,13 @@ void Partie::setup_test()
 {
     ajouter_insecte(joueur1, plateau->get_case_base(), Type::Type::ABEILLE);
     ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT), Type::Type::ABEILLE);
-    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_GAUCHE), Type::Type::SAUTERELLE);
-    ajouter_insecte(joueur1, plateau->get_case_base()->get_case_from_direction(Case::Direction::DROITE), Type::Type::COCCINELLE);
+    ajouter_insecte(joueur1, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_DROIT), Type::Type::SAUTERELLE);
+    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT)->get_case_from_direction(Case::Direction::BAS_DROIT), Type::Type::FOURMI);
+    Position p;
+    p.x=1;
+    p.y=1;
+    plateau->deplacer_insecte(plateau->get_case(p),plateau->get_case(p)->get_case_from_direction(Case::Direction::BAS_GAUCHE)->get_case_from_direction(Case::Direction::BAS_GAUCHE));
+    nb_tours=3;
 }
 
 std::string Partie::get_display_plateau() const

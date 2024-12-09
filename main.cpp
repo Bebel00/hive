@@ -1,24 +1,18 @@
 #include "mainwindow.h"
 #include "partie.h"
+#include "plateau.h"
 #include <QApplication>
 #include <iostream>
-#include <string>
 
 int main(int argc, char *argv[])
 {
+    std::cout<<"a";
     QApplication a(argc, argv);
     MainWindow w;
-    // w.show();
+    w.show();
 
-    Partie partie("Bebel", "Léo");
+    Partie partie("Bebel", "Léo",6);
     w.setPartie(&partie);
-
-    while (true)
-    {
-        std::string cmd;
-        std::getline(std::cin, cmd);
-        std::cout << partie.jouer_tour_cli(cmd) << std::endl;
-    }
 
     return a.exec();
 }

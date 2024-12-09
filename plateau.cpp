@@ -2,6 +2,7 @@
 #include "case.h"
 #include "insecte.h"
 #include "joueur.h"
+#include "types.h"
 
 #include <iostream>
 #include <array>    // pour std::array une liste
@@ -14,11 +15,18 @@
 #include <vector>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsPixmapItem>
+#include <QMessageBox>
 
 Plateau::Plateau(size_t nb) :
     // La taille des vecteurs est égale à 2 * nb_retour_possible car lorsqu'on supprime un déplacement, on supprime aussi le déplacement de l'adveraire suivant celui-ci
-    QGraphicsScene(), dernier_deplacement_debut(nb*2),dernier_deplacement_fin(nb*2),nb_retour_possible(nb)
+    QGraphicsScene(), dernier_deplacement_debut(nb*2),dernier_deplacement_fin(nb*2),dernier_deplacement_pion(nb*2),nb_retour_possible(nb)
 {
+    for (int i=0;i<nb*2;i++){
+        dernier_deplacement_debut[i]=nullptr;
+        dernier_deplacement_fin[i]=nullptr;
+        dernier_deplacement_pion[i]=nullptr;
+    }
     case_base = new Case(Position(0, 0), this);
 
     add_case(case_base);
@@ -44,12 +52,19 @@ Insecte* Plateau::get_dernier_deplacement_pion() const {
 
 void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
 {
-    if (case_fin)
+    if (case_fin && case_depart->pion)
     {
         std::unique_ptr<Insecte> pion = std::move(case_depart->pion);
 
         pion->bouger(case_fin);
+        Insecte* i =pion.get();
+        retirer_piece_sur_case(case_depart);
+
+
         case_fin->pion = std::move(pion);
+        afficher_piece_sur_case(case_fin, QString::fromStdString(i->get_chemin_icone()));
+
+
         creer_alentours(case_fin);
 
 
@@ -61,53 +76,60 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
             }
         }
         if(undo){
-            if (dernier_deplacement_debut.size()==nb_retour_possible){
+            if (dernier_deplacement_debut.back()==nullptr){
                 dernier_deplacement_pion.erase( dernier_deplacement_pion.begin());
                 dernier_deplacement_debut.erase( dernier_deplacement_debut.begin());
                 dernier_deplacement_fin.erase( dernier_deplacement_fin.begin());
             }
-            dernier_deplacement_pion.push_back(pion.get());
-            dernier_deplacement_debut.push_back(case_depart);
-            dernier_deplacement_fin.push_back(case_fin);
+
 
         }
+         else if(nb_retour_possible!=0){
+            for (int j=0;j<dernier_deplacement_debut.size();j++){
+                if (dernier_deplacement_fin[j]==nullptr){
+                    dernier_deplacement_debut[j]=case_depart;
+                    dernier_deplacement_fin[j]=case_fin;
+                    dernier_deplacement_pion[j]=i;
+                }
 
+            }
+        }
 
     }
+
+
+
 }
 
 bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& joueur, bool bypass_check)
 {
-    if (Insecte::verifier_placement(c, joueur.get_team()) || bypass_check)
+    if (Insecte::verifier_placement(c, joueur.get_team()) || bypass_check )
     {
+        Insecte * i=insecte.get();
         c->pion = std::move(insecte);
         creer_alentours(c);
         c->pion->placer(c);
 
         joueur.utiliser(c->pion->get_type());
 
-        QBrush brush;
-        brush.setColor(Qt::darkCyan);
-        brush.setStyle(Qt::SolidPattern);
-        c->setBrush(brush);
+        afficher_piece_sur_case(c, QString::fromStdString(i->get_chemin_icone()));
 
-        // La première lettre du type
-        c->textItem->setPlainText(QString(type_to_str(c->pion->get_type())[0]));
 
-        if (joueur.get_team() == Team::BLANC)
-            c->textItem->setDefaultTextColor(Qt::white);
+        if (nb_retour_possible!=0){
+            for (int j=0;j<dernier_deplacement_debut.size();j++){
+                if (dernier_deplacement_fin[j]==nullptr){
+                    dernier_deplacement_debut[j]=c;
+                    dernier_deplacement_fin[j]=c;
+                    dernier_deplacement_pion[j]=i;
+                    return true;
+                }
+            }
+            dernier_deplacement_debut.erase(dernier_deplacement_debut.begin());
+            dernier_deplacement_fin.erase(dernier_deplacement_fin.begin());
+            dernier_deplacement_pion.erase(dernier_deplacement_pion.begin());
 
-        else
-            c->textItem->setDefaultTextColor(Qt::black);
-
-        if (dernier_deplacement_debut.size()==nb_retour_possible){
-            dernier_deplacement_pion.erase( dernier_deplacement_pion.begin());
-            dernier_deplacement_debut.erase( dernier_deplacement_debut.begin());
-            dernier_deplacement_fin.erase( dernier_deplacement_fin.begin());
         }
-        dernier_deplacement_pion.push_back(insecte.get());
-        dernier_deplacement_debut.push_back(c);
-        dernier_deplacement_fin.push_back(c);
+
 
 
         return true;
@@ -365,29 +387,62 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
     }
 }
 
-void Plateau::annuler_deplacement(size_t n){
-    if (n!=0){
-        for (size_t i=dernier_deplacement_debut.size()-1;i>dernier_deplacement_debut.size()-1-n;i--) {
-            if (dernier_deplacement_fin[i]==dernier_deplacement_debut[i]){
-                // On annule un placement donc on supprime le pion
-                dernier_deplacement_fin[i]->pion=nullptr;
-                delete dernier_deplacement_fin[i];
+void Plateau::afficher_piece_sur_case(Case* c, const QString& icon_path) {
+    QPixmap pixmap(icon_path);
+    QGraphicsPixmapItem* icon = new QGraphicsPixmapItem(pixmap.scaled(40, 40));
+    icon->setPos(c->scenePos());
+    addItem(icon);
+    QBrush brush;
+    brush.setColor(Qt::darkCyan);
+    brush.setStyle(Qt::SolidPattern);
+    c->setBrush(brush);
 
-            }else{
-                deplacer_insecte(dernier_deplacement_fin[i],dernier_deplacement_debut[i],1);
-            }
-            if (dernier_deplacement_fin[i]->pion== nullptr)
-            {
-                for (auto i_direction : Case::DIRECTIONS_ALL)
-                {
-                    tenter_supprimer_case(*(dernier_deplacement_fin[i]->case_ptr_from_direction(i_direction)));
+    // La première lettre du type
+    c->textItem->setPlainText(QString(type_to_str(c->pion->get_type())[0]));
+
+    if (c->get_pion()->get_team() == Team::BLANC)
+        c->textItem->setDefaultTextColor(Qt::white);
+
+    else
+        c->textItem->setDefaultTextColor(Qt::black);
+}
+
+void Plateau::annuler_deplacement(size_t n){
+    if (n!=0 &&nb_retour_possible!=0 && dernier_deplacement_debut[n-1]!=nullptr){
+        size_t i=0;
+        size_t j=0;
+        while(j<n) {
+            if (dernier_deplacement_debut[nb_retour_possible-i]!=nullptr){
+                if (dernier_deplacement_fin[nb_retour_possible-i]==dernier_deplacement_debut[nb_retour_possible-i]){
+                    // On annule un placement donc on supprime le pion
+
+                    retirer_piece_sur_case(dernier_deplacement_fin[nb_retour_possible-i]);
+                    std::unique_ptr<Insecte> s=move(dernier_deplacement_fin[nb_retour_possible-i]->pion);
+                    s.reset();
+
+
+
+                }else{
+                    deplacer_insecte(dernier_deplacement_fin[nb_retour_possible-i],dernier_deplacement_debut[nb_retour_possible-i],1);
                 }
+                dernier_deplacement_pion[nb_retour_possible-i]=nullptr;
+                dernier_deplacement_debut[nb_retour_possible-i]=nullptr;
+                dernier_deplacement_fin[nb_retour_possible-i]=nullptr;
+                j++;
+
             }
-            dernier_deplacement_pion.erase(dernier_deplacement_pion.begin()+i);
-            dernier_deplacement_debut.erase(dernier_deplacement_debut.begin()+i);
-            dernier_deplacement_fin.erase(dernier_deplacement_fin.begin()+i);
+            i++;
         }
 
 
     }
+}
+
+void Plateau::retirer_piece_sur_case(Case* c) {
+    QBrush brush = c->brush();
+    brush.setColor(Qt::black);
+    c->setBrush(brush);
+    QGraphicsTextItem* text=c->textItem;
+    text->setPlainText("");
+
 }

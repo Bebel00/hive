@@ -22,6 +22,8 @@ public:
     std::string jouer_tour_cli(std::string cmd);
     size_t get_nb_retour_possible() const {return nb_retour_possible;}
     void set_nb_retour_possible(size_t nb)  {nb_retour_possible=nb;}
+    const unsigned int get_nb_tours(){return nb_tours;}
+    void annuler_tour(){if(nb_tours>0) nb_tours--;}
 
 private:
     class Plateau* plateau;
@@ -46,7 +48,7 @@ private:
 
     bool abeille_place(Joueur* joueur);
 
-    size_t nb_retour_possible=0;
+    size_t nb_retour_possible;
 
 
     class QGraphicsView* view;

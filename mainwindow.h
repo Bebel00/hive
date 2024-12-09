@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
+#include <qdialog.h>
+#include "plateau.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,7 +18,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setPartie(class Partie* const partie);
+    void setPartie(class Partie* const p);
+
+private slots:
+    void onButtonAnnulerClicked();
 
 private:
     Ui::MainWindow *ui;
@@ -23,6 +29,8 @@ private:
     class Partie* partie;
 
     class QGridLayout* layout;
+    QPushButton *button;
+    QLabel *annuler;
 
 };
 #endif // MAINWINDOW_H
