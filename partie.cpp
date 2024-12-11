@@ -433,3 +433,5 @@ bool Partie::verifier_victoire_joueur(const Joueur& joueur)
 
     return true;
 }
+
+

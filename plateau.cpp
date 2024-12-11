@@ -360,6 +360,15 @@ void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if (case_cliquee != case_selectionnee)
             {
 
+                if (case_selectionnee!=nullptr){
+                    std::vector<Case*> deplacement;
+                    case_selectionnee->get_pion()->get_moves_possibles(deplacement);
+                    if (std::find(deplacement.begin(),deplacement.end(),case_cliquee)!=deplacement.end()){
+                        deplacer_insecte(case_selectionnee,case_cliquee,0);
+                    }
+                }
+
+
                 // Reset la surbrillance
                 surbriller_cases(liste_cases, Qt::red, 0);
 
@@ -367,12 +376,15 @@ void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 case_selectionnee->setPen(QPen(Qt::cyan));
                 case_selectionnee->setZValue(1);
 
+
+
                 if (case_selectionnee->possede_pion())
                 {
                     std::vector<Case*> move_possibles;
                     case_selectionnee->get_pion()->get_moves_possibles(move_possibles);
                     surbriller_cases(move_possibles, Qt::yellow, 0.5);
                 }
+
             }
         }
     }
