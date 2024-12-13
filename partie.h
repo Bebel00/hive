@@ -18,6 +18,13 @@ public:
     bool verifier_victoire();
 
     std::string jouer_tour_cli(std::string cmd);
+    void afficher_menu();
+
+    void initialiser_partie();
+    void quitter_partie();
+
+    void fermer_menu();
+
 
 private:
     class Plateau* plateau;
@@ -39,6 +46,9 @@ private:
     void setup_test();
 
     class QGraphicsView* view;
+
+
+    bool menu_affiche;
 
 };
 

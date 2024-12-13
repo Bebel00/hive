@@ -22,7 +22,8 @@ SOURCES += \
     partie.cpp \
     plateau.cpp \
     sauterelle.cpp \
-    scarabe.cpp
+    scarabe.cpp \
+    menu.cpp
 
 HEADERS += \
     abeille.h \
@@ -40,7 +41,8 @@ HEADERS += \
     scarabe.h \
     teams.h \
     types.h \
-    usineinsecte.h
+    usineinsecte.h \
+    menu.h
 
 FORMS += \
     mainwindow.ui

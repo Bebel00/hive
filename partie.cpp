@@ -8,7 +8,7 @@
 
 #include <QGraphicsView>
 #include <QScrollBar>
-
+#include <iostream>
 
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
     : joueur1(Team::BLANC, joueur1_pseudo), joueur2(Team::NOIR, joueur2_pseudo)
@@ -29,6 +29,10 @@ Partie::~Partie()
 
 std::string Partie::jouer_tour_cli(std::string cmd)
 {
+    if (menu_affiche)
+    { // si le menu est encore affiché on ne permet pas au joueur de jouer
+        return "Veuillez fermer le menu avant de jouer.";
+    }
     std::string token;
 
     lire_prochain_token(cmd, token);
@@ -175,6 +179,17 @@ std::string Partie::jouer_tour_cli(std::string cmd)
     nb_tours++;
 
     return get_display_plateau();
+}
+void Partie::afficher_menu()
+{
+    menu_affiche = true;
+    
+}
+
+void Partie::fermer_menu()
+{
+    menu_affiche = false;
+  
 }
 
 bool Partie::ajouter_insecte(Joueur& joueur, Case* c, Type::Type type, bool bypass)
