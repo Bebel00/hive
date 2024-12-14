@@ -345,6 +345,7 @@ void Partie::setup_test()
     p.y=1;
     plateau->deplacer_insecte(plateau->get_case(p),plateau->get_case(p)->get_case_from_direction(Case::Direction::BAS_GAUCHE)->get_case_from_direction(Case::Direction::BAS_GAUCHE));
     nb_tours=3;
+
 }
 
 std::string Partie::get_display_plateau() const

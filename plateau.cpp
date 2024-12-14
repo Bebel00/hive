@@ -363,6 +363,7 @@ void Plateau::add_case(Case *c)
 
 void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+
     if (mouseEvent->button() == Qt::LeftButton)
     {
         QGraphicsItem *item = itemAt(mouseEvent->scenePos(), QTransform());
