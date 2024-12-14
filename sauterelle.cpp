@@ -1,6 +1,7 @@
 #include "sauterelle.h"
 #include "insecte.h"
 #include "usineinsecte.h"
+#include "plateau.h"
 
 #include <vector>
 #include <stdexcept>
@@ -16,7 +17,7 @@ Case* Sauterelle::get_case_au_bout_direction(Case::Direction direction) const
     Case* c = get_case();
 
 
-    while (c->get_case_from_direction(direction) != nullptr)
+    while (c->get_pion() != nullptr)
     {
         c = c->get_case_from_direction(direction);
     }
@@ -33,7 +34,7 @@ void Sauterelle::get_moves_possibles(std::vector<Case*>& moves_possibles) const
         throw std::logic_error("L'Insecte n'est pas encore positionné");
     }
 
-    else if (!move_casse_ruche(get_case()))
+    else if (!move_casse_ruche(get_case(), get_case()->get_plateau()->get_cases()))
     {
         for (auto i_direction : Case::DIRECTIONS_ALL)
         {
