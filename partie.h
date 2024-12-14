@@ -24,6 +24,8 @@ public:
     void set_nb_retour_possible(size_t nb)  {nb_retour_possible=nb;}
     const unsigned int get_nb_tours(){return nb_tours;}
     void annuler_tour(){if(nb_tours>0) nb_tours--;}
+    void jouer_tour();
+    const Team get_tour_team() const {return tour->get_team();}
 
 private:
     class Plateau* plateau;
@@ -32,7 +34,7 @@ private:
     Joueur joueur2;
 
     unsigned int nb_tours = 0;
-    Joueur* tour = &joueur1;
+    Joueur* tour = &joueur2;
 
     std::vector<class Insecte*> insectes;
 

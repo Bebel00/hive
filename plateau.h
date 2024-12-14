@@ -49,6 +49,7 @@ public:
     Insecte* get_dernier_deplacement_pion() const ;
     void annuler_deplacement(size_t n);
     void retirer_piece_sur_case(Case* c);
+    void set_partie(class Partie* p){partie=p;}
 
     QGraphicsScene* get_scene() { return this; }
 
@@ -75,6 +76,7 @@ private:
     std::vector<Case*> dernier_deplacement_debut;
     std::vector<Case*> dernier_deplacement_fin;
     size_t nb_retour_possible;
+    class Partie *partie;
 
 
 

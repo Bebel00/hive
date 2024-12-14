@@ -29,6 +29,7 @@ Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo,size_t ret
 
     view->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
     view->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
+    plateau->set_partie(this);
 
 }
 
@@ -432,6 +433,15 @@ bool Partie::verifier_victoire_joueur(const Joueur& joueur)
     }
 
     return true;
+}
+
+void Partie::jouer_tour(){
+    if (tour==&joueur1){
+        tour=&joueur2;
+    }else{
+        tour=&joueur1;
+        nb_tours++;
+    }
 }
 
 

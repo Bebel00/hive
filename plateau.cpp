@@ -3,6 +3,7 @@
 #include "insecte.h"
 #include "joueur.h"
 #include "types.h"
+#include "partie.h"
 
 #include <iostream>
 #include <array>    // pour std::array une liste
@@ -58,12 +59,10 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
 
         pion->bouger(case_fin);
         Insecte* i =pion.get();
+
         retirer_piece_sur_case(case_depart);
-
-
-        case_fin->pion = std::move(pion);
+        case_fin->pion=std::move(pion);
         afficher_piece_sur_case(case_fin, QString::fromStdString(i->get_chemin_icone()));
-
 
         creer_alentours(case_fin);
 
@@ -75,24 +74,30 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
                 tenter_supprimer_case(*(case_depart->case_ptr_from_direction(i_direction)));
             }
         }
-        if(undo){
-            if (dernier_deplacement_debut.back()==nullptr){
-                dernier_deplacement_pion.erase( dernier_deplacement_pion.begin());
-                dernier_deplacement_debut.erase( dernier_deplacement_debut.begin());
-                dernier_deplacement_fin.erase( dernier_deplacement_fin.begin());
-            }
-
-
-        }
-         else if(nb_retour_possible!=0){
-            for (int j=0;j<dernier_deplacement_debut.size();j++){
+        if(nb_retour_possible!=0 && !undo){
+            for (size_t j=0;j<dernier_deplacement_debut.size()-1;j++){
                 if (dernier_deplacement_fin[j]==nullptr){
                     dernier_deplacement_debut[j]=case_depart;
                     dernier_deplacement_fin[j]=case_fin;
                     dernier_deplacement_pion[j]=i;
+                    return;
                 }
 
             }
+
+            dernier_deplacement_debut[0]=nullptr;
+            dernier_deplacement_fin[0]=nullptr;
+            dernier_deplacement_pion[0]=nullptr;
+            for (size_t k=0;k<dernier_deplacement_debut.size()-2;k++){
+                dernier_deplacement_debut[k]=dernier_deplacement_debut[k+1];
+                dernier_deplacement_fin[k]=dernier_deplacement_fin[k+1];
+                dernier_deplacement_pion[k]=dernier_deplacement_pion[k+1];
+            }
+            dernier_deplacement_debut[dernier_deplacement_debut.size()-1]=case_depart;
+            dernier_deplacement_fin[dernier_deplacement_debut.size()-1]=case_fin;
+            dernier_deplacement_pion[dernier_deplacement_debut.size()-1]=i;
+
+
         }
 
     }
@@ -116,7 +121,7 @@ bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& 
 
 
         if (nb_retour_possible!=0){
-            for (int j=0;j<dernier_deplacement_debut.size();j++){
+            for (int j=0;j<dernier_deplacement_debut.size()-1;j++){
                 if (dernier_deplacement_fin[j]==nullptr){
                     dernier_deplacement_debut[j]=c;
                     dernier_deplacement_fin[j]=c;
@@ -124,9 +129,18 @@ bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& 
                     return true;
                 }
             }
-            dernier_deplacement_debut.erase(dernier_deplacement_debut.begin());
-            dernier_deplacement_fin.erase(dernier_deplacement_fin.begin());
-            dernier_deplacement_pion.erase(dernier_deplacement_pion.begin());
+            dernier_deplacement_debut[0]=nullptr;
+            dernier_deplacement_fin[0]=nullptr;
+            dernier_deplacement_pion[0]=nullptr;
+            for (size_t k=0;k<dernier_deplacement_debut.size()-2;k++){
+                dernier_deplacement_debut[k]=dernier_deplacement_debut[k+1];
+                dernier_deplacement_fin[k]=dernier_deplacement_fin[k+1];
+                dernier_deplacement_pion[k]=dernier_deplacement_pion[k+1];
+            }
+            dernier_deplacement_debut[dernier_deplacement_debut.size()-1]=c;
+            dernier_deplacement_fin[dernier_deplacement_debut.size()-1]=c;
+            dernier_deplacement_pion[dernier_deplacement_debut.size()-1]=i;
+
 
         }
 
@@ -360,11 +374,13 @@ void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if (case_cliquee != case_selectionnee)
             {
 
-                if (case_selectionnee!=nullptr){
+                if (case_selectionnee!=nullptr && case_selectionnee->possede_pion() && case_selectionnee->get_pion()->get_team()==partie->get_tour_team()){
                     std::vector<Case*> deplacement;
+                    if(case_cliquee)
                     case_selectionnee->get_pion()->get_moves_possibles(deplacement);
                     if (std::find(deplacement.begin(),deplacement.end(),case_cliquee)!=deplacement.end()){
                         deplacer_insecte(case_selectionnee,case_cliquee,0);
+                        partie->jouer_tour();
                     }
                 }
 
@@ -419,27 +435,33 @@ void Plateau::afficher_piece_sur_case(Case* c, const QString& icon_path) {
         c->textItem->setDefaultTextColor(Qt::black);
 }
 
+
+/*
+ * Méthode permettant d'annuler les n derniers déplacements.
+ */
 void Plateau::annuler_deplacement(size_t n){
     if (n!=0 &&nb_retour_possible!=0 && dernier_deplacement_debut[n-1]!=nullptr){
-        size_t i=0;
+        size_t i=1;
         size_t j=0;
+
         while(j<n) {
-            if (dernier_deplacement_debut[nb_retour_possible-i]!=nullptr){
-                if (dernier_deplacement_fin[nb_retour_possible-i]==dernier_deplacement_debut[nb_retour_possible-i]){
+
+            if (dernier_deplacement_debut[nb_retour_possible*2-i]!=nullptr){
+                if (dernier_deplacement_fin[nb_retour_possible*2-i]==dernier_deplacement_debut[nb_retour_possible*2-i]){
                     // On annule un placement donc on supprime le pion
 
-                    retirer_piece_sur_case(dernier_deplacement_fin[nb_retour_possible-i]);
-                    std::unique_ptr<Insecte> s=move(dernier_deplacement_fin[nb_retour_possible-i]->pion);
+                    retirer_piece_sur_case(dernier_deplacement_fin[nb_retour_possible*2-i]);
+                    std::unique_ptr<Insecte> s=move(dernier_deplacement_fin[nb_retour_possible*2-i]->pion);
                     s.reset();
 
 
 
                 }else{
-                    deplacer_insecte(dernier_deplacement_fin[nb_retour_possible-i],dernier_deplacement_debut[nb_retour_possible-i],1);
+                    deplacer_insecte(dernier_deplacement_fin[nb_retour_possible*2-i],dernier_deplacement_debut[nb_retour_possible*2-i],1);
                 }
-                dernier_deplacement_pion[nb_retour_possible-i]=nullptr;
-                dernier_deplacement_debut[nb_retour_possible-i]=nullptr;
-                dernier_deplacement_fin[nb_retour_possible-i]=nullptr;
+                dernier_deplacement_pion[nb_retour_possible*2-i]=nullptr;
+                dernier_deplacement_debut[nb_retour_possible*2-i]=nullptr;
+                dernier_deplacement_fin[nb_retour_possible*2-i]=nullptr;
                 j++;
 
             }
