@@ -14,12 +14,6 @@ Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
 {
     plateau = new Plateau();
 
-    view = new QGraphicsView(plateau->get_scene());
-    view->setBackgroundBrush(QBrush(Qt::black));
-
-    view->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
-    view->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
-
     setup_test();
 }
 
@@ -41,19 +35,19 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         Type::Type type = Type::str_to_type(token);
         if (type != Type::Type::NONE)
         {
-            Position p;
+            QPoint p;
 
             lire_prochain_token(cmd, token);
 
             try
             {
-                p.x = std::stoi(token);
+                p.rx() = std::stoi(token);
 
                 lire_prochain_token(cmd, token);
 
                 try
                 {
-                    p.y = std::stoi(token);
+                    p.ry() = std::stoi(token);
 
 
                     Case* c = plateau->get_case(p);
@@ -66,7 +60,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                     }
                     else
                     {
-                        return "Case [" + std::to_string(p.x) + "; " + std::to_string(p.y) + "] non existante";
+                        return "Case [" + std::to_string(p.x()) + "; " + std::to_string(p.y()) + "] non existante";
                     }
                 }
                 catch (const std::invalid_argument& e)
@@ -83,34 +77,34 @@ std::string Partie::jouer_tour_cli(std::string cmd)
     else if (token == "move")
     {
 
-        Position p;
+        QPoint p;
 
         lire_prochain_token(cmd, token);
         try
         {
-            p.x = std::stoi(token);
+            p.rx() = std::stoi(token);
 
             lire_prochain_token(cmd, token);
             try
             {
-                p.y = std::stoi(token);
+                p.ry() = std::stoi(token);
 
 
                 Case* c = plateau->get_case(p);
                 if (c)
                 {
 
-                    Position p2;
+                    QPoint p2;
 
                     lire_prochain_token(cmd, token);
                     try
                     {
-                        p2.x = std::stoi(token);
+                        p2.rx() = std::stoi(token);
 
                         lire_prochain_token(cmd, token);
                         try
                         {
-                            p2.y = std::stoi(token);
+                            p2.ry() = std::stoi(token);
 
 
                             Case* c2 = plateau->get_case(p2);
@@ -136,7 +130,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                             }
                             else
                             {
-                                return "Case [" + std::to_string(p2.x) + "; " + std::to_string(p2.y) + "] non existante";
+                                return "Case [" + std::to_string(p2.x()) + "; " + std::to_string(p2.y()) + "] non existante";
                             }
                         }
                         catch (const std::invalid_argument& e)
@@ -151,7 +145,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                 }
                 else
                 {
-                    return "Case [" + std::to_string(p.x) + "; " + std::to_string(p.y) + "] non existante";
+                    return "Case [" + std::to_string(p.x()) + "; " + std::to_string(p.y()) + "] non existante";
                 }
             }
             catch (const std::invalid_argument& e)
@@ -204,24 +198,24 @@ std::string Partie::get_display_plateau() const
 {
     std::string plateau_str = "";
 
-    int x_max = plateau->get_cases()[0]->get_position().x;
-    int x_min = plateau->get_cases()[0]->get_position().x;
+    int x_max = plateau->get_cases()[0]->get_position().x();
+    int x_min = plateau->get_cases()[0]->get_position().x();
 
-    int y_max = plateau->get_cases()[0]->get_position().y;
-    int y_min = plateau->get_cases()[0]->get_position().y;
+    int y_max = plateau->get_cases()[0]->get_position().y();
+    int y_min = plateau->get_cases()[0]->get_position().y();
     for (auto i_case : plateau->get_cases())
     {
-        if (i_case->get_position().x > x_max)
-            x_max = i_case->get_position().x;
+        if (i_case->get_position().x() > x_max)
+            x_max = i_case->get_position().x();
 
-        else if (i_case->get_position().x < x_min)
-                x_min = i_case->get_position().x;
+        else if (i_case->get_position().x() < x_min)
+            x_min = i_case->get_position().x();
 
-        if (i_case->get_position().y > y_max)
-            y_max = i_case->get_position().y;
+        if (i_case->get_position().y() > y_max)
+            y_max = i_case->get_position().y();
 
-        else if (i_case->get_position().y < y_min)
-            y_min = i_case->get_position().y;
+        else if (i_case->get_position().y() < y_min)
+            y_min = i_case->get_position().y();
     }
 
     int n_lignes = y_max - y_min + 1;
@@ -232,10 +226,14 @@ std::string Partie::get_display_plateau() const
         plateau_str_vec.push_back(std::string(n_colonnes, ' '));
 
     for (auto i_case : plateau->get_cases())
+    {
         if (Case::is_empty(i_case))
-            plateau_str_vec[i_case->get_position().y - y_min][i_case->get_position().x - x_min] = '.';
+            plateau_str_vec[i_case->get_position().y() - y_min][i_case->get_position().x() - x_min]
+                = '.';
         else
-            plateau_str_vec[i_case->get_position().y - y_min][i_case->get_position().x - x_min] = Type::type_to_str(i_case->get_pion()->get_type())[0];
+            plateau_str_vec[i_case->get_position().y() - y_min][i_case->get_position().x() - x_min]
+                = Type::type_to_str(i_case->get_pion()->get_type())[0];
+    }
 
     for (auto ligne : plateau_str_vec)
         plateau_str += ligne + "\n";
