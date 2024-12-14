@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "partie.h"
+#include "graphicspartie.h"
 
+#include <QApplication>
 #include <iostream>
 #include <QApplication>
 
@@ -11,7 +13,8 @@ int main(int argc, char *argv[])
     w.show();
 
     Partie partie("Bebel", "Léo");
-    w.setPartie(&partie);
+    GraphicsPartie graphics(&partie);
+    w.setPartie(&graphics);
 
     return a.exec();
 }

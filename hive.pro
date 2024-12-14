@@ -14,6 +14,9 @@ SOURCES += \
     case.cpp \
     coccinelle.cpp \
     fourmi.cpp \
+    graphicscase.cpp \
+    graphicspartie.cpp \
+    graphicsplateau.cpp \
     insecte.cpp \
     joueur.cpp \
     main.cpp \
@@ -22,7 +25,7 @@ SOURCES += \
     partie.cpp \
     plateau.cpp \
     sauterelle.cpp \
-    scarabe.cpp \
+    scarabe.cpp
 
 HEADERS += \
     abeille.h \
@@ -30,6 +33,9 @@ HEADERS += \
     case.h \
     coccinelle.h \
     fourmi.h \
+    graphicscase.h \
+    graphicspartie.h \
+    graphicsplateau.h \
     insecte.h \
     joueur.h \
     mainwindow.h \

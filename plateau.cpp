@@ -14,9 +14,11 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
-Plateau::Plateau() : QGraphicsScene()
+#include "graphicsplateau.h"
+
+Plateau::Plateau()
 {
-    case_base = new Case(Position(0, 0), this);
+    case_base = new Case(QPoint(0, 0), this);
 
     add_case(case_base);
 }
@@ -61,19 +63,8 @@ bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& 
 
         joueur.utiliser(c->pion->get_type());
 
-        QBrush brush;
-        brush.setColor(Qt::darkCyan);
-        brush.setStyle(Qt::SolidPattern);
-        c->setBrush(brush);
-
-        // La première lettre du type
-        c->textItem->setPlainText(QString(type_to_str(c->pion->get_type())[0]));
-
-        if (joueur.get_team() == Team::BLANC)
-            c->textItem->setDefaultTextColor(Qt::white);
-
-        else
-            c->textItem->setDefaultTextColor(Qt::black);
+        if (graphics && c->graphics)
+            graphics->placer_insecte(c->graphics.get(), joueur.get_team());
 
         return true;
     }
@@ -145,11 +136,11 @@ bool Plateau::creer_alentours(Case* c)
 
     // Les incréments de position vont permettre de travailler sur des cases dont on calculera la position
     // En ajoutant un incrément de position qui est équivalent à bouger dans une direction
-    Position increment_position;
-    Position increment_position_2;
+    QPoint increment_position;
+    QPoint increment_position_2;
 
     // La position de la case depuis laquelle on crée les alentours est au centre de la matrice adjacence, donc (4, 2)
-    Position case_base_pos(4, 2);
+    QPoint case_base_pos(4, 2);
 
     // On boucle sur toutes les directions pour créer une nouvelle case dans chaque direction
     for (auto i_direction : Case::DIRECTIONS_ALL)
@@ -157,7 +148,7 @@ bool Plateau::creer_alentours(Case* c)
         increment_position = Case::direction_to_position_increment(i_direction);
 
         *(c->case_ptr_from_direction(i_direction)) =
-                adjacence[case_base_pos.y + increment_position.y][case_base_pos.x + increment_position.x];
+            adjacence[case_base_pos.y() + increment_position.y()][case_base_pos.x() + increment_position.x()];
 
         // On récupère le pointeur vers le pointeur vers la case dans la direction actuelle
         // Double pointeur pour pouvoir changer la valeur du pointeur case_droite par exemple,
@@ -202,10 +193,10 @@ bool Plateau::creer_alentours(Case* c)
                 increment_position_2 = Case::direction_to_position_increment(j_direction);
 
                 // La position finale de la case observée
-                Position position_finale = case_base_pos + increment_position + increment_position_2;
+                QPoint position_finale = case_base_pos + increment_position + increment_position_2;
 
                 // Son pointeur
-                Case* const case_finale = adjacence[position_finale.y][position_finale.x];
+                Case* const case_finale = adjacence[position_finale.y()][position_finale.x()];
 
                 // On initialise le pointeur dans la direction donnée et on le fait pointer vers la case finale observée
                 (*(nouvelle_case->case_ptr_from_direction(j_direction))) = case_finale;
@@ -232,11 +223,11 @@ void Plateau::explorer_adjacence_2(std::array<std::array<Case *, 9>, 5> &adjacen
 
     for (auto i_case : liste_cases)
     {
-        if (abs(i_case->get_position().x - case_base->get_position().x) <= 4)
-            if (abs(i_case->get_position().y - case_base->get_position().y) <= 2)
+        if (abs(i_case->get_position().x() - case_base->get_position().x()) <= 4)
+            if (abs(i_case->get_position().y() - case_base->get_position().y()) <= 2)
             {
-                const int x = i_case->get_position().x - case_base->get_position().x + 4;
-                const int y = i_case->get_position().y - case_base->get_position().y + 2;
+                const int x = i_case->get_position().x() - case_base->get_position().x() + 4;
+                const int y = i_case->get_position().y() - case_base->get_position().y() + 2;
                 adjacence[y][x] = i_case;
             }
     }
@@ -283,55 +274,6 @@ void Plateau::add_case(Case *c)
 {
     liste_cases.push_back(c);
 
-    QBrush brush;
-    brush.setStyle(Qt::NoBrush);
-    c->setBrush(brush);
-    c->setPen(QPen(Qt::red));
-    addItem(c);
-}
-
-void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
-{
-    if (mouseEvent->button() == Qt::LeftButton)
-    {
-        QGraphicsItem *item = itemAt(mouseEvent->scenePos(), QTransform());
-        Case* case_cliquee = qgraphicsitem_cast<Case*>(item);
-
-
-        if (case_cliquee)
-        {
-            if (case_cliquee != case_selectionnee)
-            {
-
-                // Reset la surbrillance
-                reset_surbrillance();
-
-                case_selectionnee = case_cliquee;
-                case_selectionnee->setPen(QPen(Qt::cyan));
-                case_selectionnee->setZValue(1);
-
-                if (case_selectionnee->possede_pion())
-                {
-                    std::vector<Case*> move_possibles;
-                    case_selectionnee->get_pion()->get_moves_possibles(move_possibles);
-                    surbriller_cases(move_possibles, Qt::yellow, 0.5);
-                }
-            }
-        }
-    }
-}
-
-void Plateau::surbriller_cases(const std::vector<Case*>& cases, QColor color, qreal zvalue)
-{
-    for (auto i_case : cases)
-    {
-        i_case->setPen(QPen(color));
-        i_case->setZValue(zvalue);
-    }
-}
-
-void Plateau::reset_surbrillance() {
-    for (auto i_case : liste_cases) {
-        i_case->reset_surbrillance();
-    }
+    if (graphics)
+        graphics->add_case(c);
 }

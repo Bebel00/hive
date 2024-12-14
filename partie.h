@@ -13,8 +13,9 @@ public:
     Partie(std::string joueur1_pseudo, std::string joueur2_pseudo);
     ~Partie();
 
+    friend class GraphicsPartie;
+
     class Plateau* get_plateau() const { return plateau; }
-    class QGraphicsView* get_view() const { return view; }
 
     bool verifier_victoire();
 
@@ -39,9 +40,6 @@ private:
     void lire_prochain_token(std::string& cmd, std::string& token);
 
     void setup_test();
-
-    class QGraphicsView* view;
-
 };
 
 #endif // PARTIE_H
