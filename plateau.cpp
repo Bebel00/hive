@@ -88,14 +88,14 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
             dernier_deplacement_debut[0]=nullptr;
             dernier_deplacement_fin[0]=nullptr;
             dernier_deplacement_pion[0]=nullptr;
-            for (size_t k=0;k<dernier_deplacement_debut.size()-2;k++){
+            for (size_t k=0;k<nb_retour_possible*2-1;k++){
                 dernier_deplacement_debut[k]=dernier_deplacement_debut[k+1];
                 dernier_deplacement_fin[k]=dernier_deplacement_fin[k+1];
                 dernier_deplacement_pion[k]=dernier_deplacement_pion[k+1];
             }
-            dernier_deplacement_debut[dernier_deplacement_debut.size()-1]=case_depart;
-            dernier_deplacement_fin[dernier_deplacement_debut.size()-1]=case_fin;
-            dernier_deplacement_pion[dernier_deplacement_debut.size()-1]=i;
+            dernier_deplacement_debut[nb_retour_possible*2-1]=case_depart;
+            dernier_deplacement_fin[nb_retour_possible*2-1]=case_fin;
+            dernier_deplacement_pion[nb_retour_possible*2-1]=i;
 
 
         }
