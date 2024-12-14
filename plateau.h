@@ -49,6 +49,9 @@ public:
 
     QGraphicsScene* get_scene() { return this; }
 
+    void reset_surbrillance();
+    void surbriller_cases(const std::vector<Case*>& cases, QColor color, qreal zvalue);
+
 private:
     Case* case_base;
     std::vector<Case*> liste_cases;
@@ -61,8 +64,8 @@ private:
 
     Case* case_selectionnee = nullptr;
 
-    void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
-
+    
+    
 protected:
 //    void paintEvent(class QPaintEvent *);
 

@@ -2,7 +2,12 @@
 #define CASE_H
 
 #include "teams.h"
+
 #include <QGraphicsPolygonItem>
+#include <QColor>
+#include <QPen>
+
+#include <memory>
 
 class Insecte;
 
@@ -127,11 +132,17 @@ public:
     // Pour utiliser qgraphicsitem_cast
     enum { Type = UserType + 1 };
 
+
     int type() const override
     {
         // Enable the use of qgraphicsitem_cast with this item.
         return Type;
     }
+
+    void surbrillance(QColor color);  
+    void reset_surbrillance();
+
+    void set_brush(QColor color);
 
     ~Case();
 
@@ -170,12 +181,19 @@ private:
     Case(Position position, class Plateau* plateau, QGraphicsItem* parent = nullptr);
 
     QGraphicsTextItem* textItem;
-
 protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
+public:
+    void setBrush(const QBrush &brush);
 
 private:
     static constexpr float SCALE = 20.0;
+
+    QBrush remplissage;
+    bool hovered = false;
+    bool wants_hovering = false;
 };
 
 #endif // CASE_H

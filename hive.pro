@@ -22,7 +22,7 @@ SOURCES += \
     partie.cpp \
     plateau.cpp \
     sauterelle.cpp \
-    scarabe.cpp
+    scarabe.cpp \
 
 HEADERS += \
     abeille.h \

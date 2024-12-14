@@ -4,6 +4,11 @@
 #include <QGraphicsPolygonItem>
 #include <QGraphicsTextItem>
 #include <QFont>
+#include <QBrush>
+#include <QColor>
+#include <QPen>
+#include <QGraphicsSceneMouseEvent>
+
 
 Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
 {
@@ -79,12 +84,7 @@ Case::Case(Position position, Plateau *plateau, QGraphicsItem* parent) : QGraphi
     // Position text in the center of the hexagon
     QRectF bounds = boundingRect();
     textItem->setPos(bounds.center() - textItem->boundingRect().center());
-
-}
-
-void Case::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    std::cout << "Clicked !" << std::endl;
+    setAcceptHoverEvents(true);
 }
 
 Case* Case::creer_case(Direction direction, Plateau* const plateau)
@@ -180,4 +180,48 @@ Team Case::get_team() const
     if (pion) return pion->get_team(); else return Team::NONE;
 }
 
+
+
+void Case::surbrillance(QColor color)
+{
+    setPen(QPen(color));
+    setZValue(0.5);
+}
+
+void Case::reset_surbrillance()
+{
+    setPen(QPen(Qt::red));
+    setZValue(0);
+}
+
+void Case::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    wants_hovering = true;
+
+    setBrush(QBrush(Qt::blue, Qt::Dense4Pattern));
+    QGraphicsPolygonItem::hoverEnterEvent(event);
+
+    hovered = true;
+    wants_hovering = false;
+}
+
+void Case::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+
+    hovered = false;
+
+    setBrush(QBrush(remplissage)); // Reset highlight when hover ends
+    QGraphicsPolygonItem::hoverLeaveEvent(event);
+}
+
+void Case::setBrush(const QBrush &brush)
+{
+    if (wants_hovering)
+        remplissage = QGraphicsPolygonItem::brush();
+
+    if (!hovered)
+        QGraphicsPolygonItem::setBrush(brush);
+}
+
 Case::~Case() = default;
+

@@ -15,9 +15,11 @@ public:
 
     class Plateau* get_plateau() const { return plateau; }
     class QGraphicsView* get_view() const { return view; }
+
     bool verifier_victoire();
 
     std::string jouer_tour_cli(std::string cmd);
+
 
 private:
     class Plateau* plateau;
