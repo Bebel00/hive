@@ -1,93 +1,17 @@
 #include "mainwindow.h"
-#include "menu.h"
 #include "partie.h"
-#include <QApplication>
-#include <QMessageBox>
-#include <QInputDialog>
+
 #include <iostream>
-#include <string>
+#include <QApplication>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     QApplication a(argc, argv);
-
-    MainMenu menu;
-
     MainWindow w;
-    Partie* partie = nullptr;
+    w.show();
 
-  QObject::connect(&menu, &MainMenu::nouvellePartieDemandee, [&]() {
-      QString joueur1 = QInputDialog::getText(nullptr, "Joueur 1", "Entrez le nom du joueur 1 :");
-      QString joueur2 = QInputDialog::getText(nullptr, "Joueur 2", "Entrez le nom du joueur 2 :");
-       
-      if (joueur1.isEmpty() || joueur2.isEmpty()) {
-            QMessageBox::warning(nullptr, "Erreur", "Les noms des joueurs ne peuvent pas être vides !");
-            return; 
-        }
+    Partie partie("Bebel", "Léo");
+    w.setPartie(&partie);
 
-      
-        if (partie) {
-            delete partie;
-            partie = nullptr;
-        }
-
-  
-        partie = new Partie(joueur1.toStdString(), joueur2.toStdString());
-        w.setPartie(partie);
-
-
-    
-        menu.hide();
-        w.show();
-    });
-
-   
-    QObject::connect(&menu, &MainMenu::quitApplication, [&]() {
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(nullptr, "Quitter", "Êtes-vous sûr de vouloir quitter ?",
-                                       QMessageBox::Yes | QMessageBox::No);
-        if (reply == QMessageBox::Yes) {
-            a.quit();
-        }
-    });
-
-    QObject::connect(&w, &MainWindow::menuFerme, [&]() {
-        if (partie) {
-            delete partie;
-            partie = nullptr;
-        }
-        w.hide();
-        menu.show();
-    });
-
-   
-    QObject::connect(&w, &MainWindow::nouvellePartieDemandee, [&]() {
-        if (partie) {
-            delete partie;
-            partie = nullptr;
-        }
-
-       
-        QString joueur1 = QInputDialog::getText(nullptr, "Joueur 1", "Entrez le nom du joueur 1 :");
-        QString joueur2 = QInputDialog::getText(nullptr, "Joueur 2", "Entrez le nom du joueur 2 :");
-        if (joueur1.isEmpty() || joueur2.isEmpty()) {
-            QMessageBox::warning(nullptr, "Erreur", "Les noms des joueurs ne peuvent pas être vides !");
-            return; 
-        }
-        partie = new Partie(joueur1.toStdString(), joueur2.toStdString());
-        w.setPartie(partie);
-
-        // Rester dans la fenêtre principale
-    });
-
-    // Lancer le menu principal
-    menu.show();
     return a.exec();
 }
-    // Boucle CLI pour tester les commandes (désactivée en mode GUI)
-    /*
-    while (partie) {
-        std::string cmd;
-        std::getline(std::cin, cmd);
-        std::cout << partie->jouer_tour_cli(cmd) << std::endl;
-    }
-    */

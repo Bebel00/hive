@@ -2,10 +2,13 @@
 #define CASE_H
 
 #include "teams.h"
+
 #include <QGraphicsPolygonItem>
 #include <QColor>
 #include <QPen>
+
 #include <memory>
+
 class Insecte;
 
 class Position
@@ -136,9 +139,11 @@ public:
         return Type;
     }
 
-    bool possede_pion() const { return pion != nullptr; }
     void surbrillance(QColor color);  
     void reset_surbrillance();
+
+    void set_brush(QColor color);
+
     ~Case();
 
 private:
@@ -176,12 +181,19 @@ private:
     Case(Position position, class Plateau* plateau, QGraphicsItem* parent = nullptr);
 
     QGraphicsTextItem* textItem;
-
 protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
+public:
+    void setBrush(const QBrush &brush);
 
 private:
     static constexpr float SCALE = 20.0;
+
+    QBrush remplissage;
+    bool hovered = false;
+    bool wants_hovering = false;
 };
 
 #endif // CASE_H

@@ -321,7 +321,7 @@ void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue)
+void Plateau::surbriller_cases(const std::vector<Case*>& cases, QColor color, qreal zvalue)
 {
     for (auto i_case : cases)
     {
@@ -329,6 +329,7 @@ void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zv
         i_case->setZValue(zvalue);
     }
 }
+
 void Plateau::reset_surbrillance() {
     for (auto i_case : liste_cases) {
         i_case->reset_surbrillance();

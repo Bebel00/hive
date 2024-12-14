@@ -87,26 +87,6 @@ Case::Case(Position position, Plateau *plateau, QGraphicsItem* parent) : QGraphi
     setAcceptHoverEvents(true);
 }
 
-void Case::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (possede_pion()) {
-        setBrush(QBrush(Qt::green)); 
-    }
-    QGraphicsPolygonItem::mousePressEvent(event);
-    //*std::cout << "Clicked !" << std::endl;//
-}
-void Case::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    setBrush(QBrush(Qt::blue, Qt::Dense4Pattern)); 
-    QGraphicsPolygonItem::hoverEnterEvent(event);
-}
-
-void Case::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    setBrush(Qt::NoBrush); // Reset highlight when hover ends
-    QGraphicsPolygonItem::hoverLeaveEvent(event);
-}
-
 Case* Case::creer_case(Direction direction, Plateau* const plateau)
 {
     Case** case_a_creer = case_ptr_from_direction(direction);
@@ -212,6 +192,35 @@ void Case::reset_surbrillance()
 {
     setPen(QPen(Qt::red));
     setZValue(0);
+}
+
+void Case::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    wants_hovering = true;
+
+    setBrush(QBrush(Qt::blue, Qt::Dense4Pattern));
+    QGraphicsPolygonItem::hoverEnterEvent(event);
+
+    hovered = true;
+    wants_hovering = false;
+}
+
+void Case::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+
+    hovered = false;
+
+    setBrush(QBrush(remplissage)); // Reset highlight when hover ends
+    QGraphicsPolygonItem::hoverLeaveEvent(event);
+}
+
+void Case::setBrush(const QBrush &brush)
+{
+    if (wants_hovering)
+        remplissage = QGraphicsPolygonItem::brush();
+
+    if (!hovered)
+        QGraphicsPolygonItem::setBrush(brush);
 }
 
 Case::~Case() = default;

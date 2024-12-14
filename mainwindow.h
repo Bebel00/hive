@@ -25,14 +25,5 @@ private:
 
     class QGridLayout* layout;
 
-    void afficherMenu();
-    void fermerMenu();
-
-    void recommencerPartie();
-
-signals:
-    void menuFerme();
-    void nouvellePartieDemandee();  
-
 };
 #endif // MAINWINDOW_H
