@@ -6,9 +6,8 @@
 #include "case.h"
 #include "teams.h"
 #include "types.h"
-#include <set>
 
-    class Insecte
+class Insecte
 {
 public:
     Insecte(Team team);
@@ -32,8 +31,6 @@ public:
 
     static bool verifier_placement(const Case* const c, const Team team);
 
-
-
     void placer(Case* const c);
     void bouger(Case* const c);
 
@@ -55,7 +52,8 @@ private:
     std::unique_ptr<Insecte> en_dessous;
 
 protected:
-    static bool move_casse_ruche(Case* const case_depart, const std::vector<Case*>& liste_cases) ;
+    static bool move_casse_ruche(Case* const case_depart);
+
     static void compter_nb_insecte_connecte(Case* const case_depart, unsigned int& nb_trouve);
 
     static bool move_trop_serre(Case* depart, Case::Direction d);

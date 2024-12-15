@@ -1,40 +1,23 @@
 #include "partie.h"
 #include "teams.h"
 #include "plateau.h"
-#include "mainwindow.h"
 
 #include "insecte.h"
 #include "usineinsecte.h"
-#include "cloporte.h"
 #include "insecte.h"
 #include <stdexcept>
 
-#include <QGraphicsView>
-#include <QScrollBar>
 #include <iostream>
 
-
-
-
-Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo,size_t retour)
-    : joueur1(Team::BLANC, joueur1_pseudo), joueur2(Team::NOIR, joueur2_pseudo),nb_retour_possible(retour)
+Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo, size_t retour)
+    : nb_retours_possibles(retour),
+    joueur1(Team::BLANC, joueur1_pseudo),
+    joueur2(Team::NOIR, joueur2_pseudo)
 {
     plateau = new Plateau(retour);
 
-
-    setup_test();
-
-    view = new QGraphicsView(plateau->get_scene());
-    view->setBackgroundBrush(QBrush(Qt::black));
-
-    view->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
-    view->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
-    plateau->set_partie(this);
-
+    // setup_test();
 }
-
-
-
 
 Partie::~Partie()
 {
@@ -48,29 +31,15 @@ std::string Partie::jouer_tour_cli(std::string cmd)
 
     lire_prochain_token(cmd, token);
 
-
-    if (token == "undo"){
-
-        lire_prochain_token(cmd, token);
-        try{
-            int nb_undo=stoi(token); // Le nombre de tour que l'utilisateur veut supprimer
-            if(nb_undo>nb_retour_possible){
-                return " Les paramètres de la partie permettent de supprimer au maximum " + std::to_string(nb_retour_possible) + " annulations";
-            }else{
-                if (nb_tours<nb_undo ){
-                    return "Vous avez jouer moins de tours que " + std::to_string(nb_undo);
-                }else{
-                    plateau->annuler_deplacement(nb_undo*2);
-                    nb_tours=nb_tours-nb_undo;
-                }
-
-            }
-        }catch(const std::invalid_argument& e){
-            return "Nombre d'annulation invalide";
+    if (token == "undo")
+    {
+        if (nb_tours < 2)
+        {
+            return "Vous ne pouvez pas encore annuler d'action.";
         }
 
-    if(nb_tours==3 && token!="place" && !tour->get_a_place_abeille()){
-        return " L'abeille doit être placé";
+        else
+            annuler_deplacement();
     }
 
     if (token == "place")
@@ -80,32 +49,24 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         Type::Type type = Type::str_to_type(token);
         if (type != Type::Type::NONE)
         {
-            //On vérifier que l'abeille de chaque joueur est placé avant leu 5 ème tour
-            if ((nb_tours==3)&& !tour->get_a_place_abeille() && type!=Type::Type::ABEILLE){
-                return " L'abeille doit être placé";
-            }
-            Position p;
+            QPoint p;
 
             lire_prochain_token(cmd, token);
 
             try
             {
-                p.x = std::stoi(token);
+                p.rx() = std::stoi(token);
 
                 lire_prochain_token(cmd, token);
 
                 try
                 {
-                    p.y = std::stoi(token);
+                    p.ry() = std::stoi(token);
 
 
                     Case* c = plateau->get_case(p);
                     if (c)
                     {
-                        if (type==Type::Type::ABEILLE){
-                            tour->placer_abeille();
-                        }
-
                         if (!ajouter_insecte(*tour, c, type))
                         {
                             return "Placement invalide";
@@ -114,7 +75,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                     }
                     else
                     {
-                        return "Case [" + std::to_string(p.x) + "; " + std::to_string(p.y) + "] non existante";
+                        return "Case [" + std::to_string(p.x()) + "; " + std::to_string(p.y()) + "] non existante";
                     }
                 }
                 catch (const std::invalid_argument& e)
@@ -130,35 +91,35 @@ std::string Partie::jouer_tour_cli(std::string cmd)
     }
     else if (token == "move")
     {
-        Position p;
+        QPoint p;
 
         lire_prochain_token(cmd, token);
         try
         {
-            p.x = std::stoi(token);
+            p.rx() = std::stoi(token);
 
             lire_prochain_token(cmd, token);
             try
             {
-                p.y = std::stoi(token);
+                p.ry() = std::stoi(token);
 
 
                 Case* c = plateau->get_case(p);
                 if (c)
                 {
 
-                    Position p2;
+                    QPoint p2;
 
                     lire_prochain_token(cmd, token);
                     try
                     {
-                        p2.x = std::stoi(token);
+                        p2.rx() = std::stoi(token);
 
 
                         lire_prochain_token(cmd, token);
                         try
                         {
-                            p2.y = std::stoi(token);
+                            p2.ry() = std::stoi(token);
 
 
                             Case* c2 = plateau->get_case(p2);
@@ -184,7 +145,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                             }
                             else
                             {
-                                return "Case [" + std::to_string(p2.x) + "; " + std::to_string(p2.y) + "] non existante";
+                                return "Case [" + std::to_string(p2.x()) + "; " + std::to_string(p2.y()) + "] non existante";
                             }
                         }
                         catch (const std::invalid_argument& e)
@@ -199,7 +160,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                 }
                 else
                 {
-                    return "Case [" + std::to_string(p.x) + "; " + std::to_string(p.y) + "] non existante";
+                    return "Case [" + std::to_string(p.x()) + "; " + std::to_string(p.y()) + "] non existante";
                 }
             }
             catch (const std::invalid_argument& e)
@@ -213,8 +174,10 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         }
     }
 
-    }else if (token=="cloporte"){
-        if(!tour->a_place_cloporte()){
+    /*else if (token=="cloporte")
+    {
+        if(!tour->a_place_cloporte())
+        {
             return "Vous n'avez pas encore placer votre cloporte.";
         }
         Position p;
@@ -304,26 +267,22 @@ std::string Partie::jouer_tour_cli(std::string cmd)
         }catch(const std::invalid_argument& e){
                 return "Coordonees invalides";
         }
-    }else{
+    }*/
+
+    else{
         return "Commande inconnue";
     }
 
-    if (tour == &joueur1){
-        tour = &joueur2;
-    }else{
-        tour = &joueur1;
-        nb_tours++;
-    }
-
-
+    jouer_tour();
 
     return get_display_plateau();
 }
 
 bool Partie::ajouter_insecte(Joueur& joueur, Case* c, Type::Type type, bool bypass)
 {
-    std::unique_ptr<Insecte> insecte=UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
-    return bypass ||(joueur.peut_utiliser(type) && plateau->placer_insecte(c, std::move(insecte), joueur, bypass));
+    std::unique_ptr<Insecte> insecte = UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
+
+    return (joueur.peut_utiliser(type) && plateau->placer_insecte(c, std::move(insecte), joueur, bypass)) || bypass;
 }
 
 void Partie::lire_prochain_token(std::string &cmd, std::string &token)
@@ -338,38 +297,37 @@ void Partie::setup_test()
 {
     ajouter_insecte(joueur1, plateau->get_case_base(), Type::Type::ABEILLE);
     ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT), Type::Type::ABEILLE);
-    ajouter_insecte(joueur1, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_DROIT), Type::Type::SAUTERELLE);
-    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT)->get_case_from_direction(Case::Direction::BAS_DROIT), Type::Type::FOURMI);
-    Position p;
-    p.x=1;
-    p.y=1;
-    plateau->deplacer_insecte(plateau->get_case(p),plateau->get_case(p)->get_case_from_direction(Case::Direction::BAS_GAUCHE)->get_case_from_direction(Case::Direction::BAS_GAUCHE));
-    nb_tours=3;
+    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_GAUCHE), Type::Type::SAUTERELLE);
+}
 
+void Partie::annuler_deplacement()
+{
+    if (nb_tours > 1) { nb_tours--; nb_tours--; }
+    plateau->annuler_deplacement();
 }
 
 std::string Partie::get_display_plateau() const
 {
     std::string plateau_str = "";
 
-    int x_max = plateau->get_cases()[0]->get_position().x;
-    int x_min = plateau->get_cases()[0]->get_position().x;
+    int x_max = plateau->get_cases()[0]->get_position().x();
+    int x_min = plateau->get_cases()[0]->get_position().x();
 
-    int y_max = plateau->get_cases()[0]->get_position().y;
-    int y_min = plateau->get_cases()[0]->get_position().y;
+    int y_max = plateau->get_cases()[0]->get_position().y();
+    int y_min = plateau->get_cases()[0]->get_position().y();
     for (auto i_case : plateau->get_cases())
     {
-        if (i_case->get_position().x > x_max)
-            x_max = i_case->get_position().x;
+        if (i_case->get_position().x() > x_max)
+            x_max = i_case->get_position().x();
 
-        else if (i_case->get_position().x < x_min)
-            x_min = i_case->get_position().x;
+        else if (i_case->get_position().x() < x_min)
+            x_min = i_case->get_position().x();
 
-        if (i_case->get_position().y > y_max)
-            y_max = i_case->get_position().y;
+        if (i_case->get_position().y() > y_max)
+            y_max = i_case->get_position().y();
 
-        else if (i_case->get_position().y < y_min)
-            y_min = i_case->get_position().y;
+        else if (i_case->get_position().y() < y_min)
+            y_min = i_case->get_position().y();
     }
 
     int n_lignes = y_max - y_min + 1;
@@ -380,16 +338,22 @@ std::string Partie::get_display_plateau() const
         plateau_str_vec.push_back(std::string(n_colonnes, ' '));
 
     for (auto i_case : plateau->get_cases())
+    {
         if (Case::is_empty(i_case))
-            plateau_str_vec[i_case->get_position().y - y_min][i_case->get_position().x - x_min] = '.';
+            plateau_str_vec[i_case->get_position().y() - y_min][i_case->get_position().x() - x_min]
+                = '.';
         else
-            plateau_str_vec[i_case->get_position().y - y_min][i_case->get_position().x - x_min] = Type::type_to_str(i_case->get_pion()->get_type())[0];
+            plateau_str_vec[i_case->get_position().y() - y_min][i_case->get_position().x() - x_min]
+                = Type::type_to_str(i_case->get_pion()->get_type())[0];
+    }
 
     for (auto ligne : plateau_str_vec)
         plateau_str += ligne + "\n";
 
     return plateau_str;
 }
+
+
 bool Partie::verifier_victoire()
 {
     bool victoire_joueur1 = verifier_victoire_joueur(joueur1);
@@ -436,10 +400,13 @@ bool Partie::verifier_victoire_joueur(const Joueur& joueur)
     return true;
 }
 
-void Partie::jouer_tour(){
-    if (tour==&joueur1){
+void Partie::jouer_tour()
+{
+    if (tour==&joueur1)
         tour=&joueur2;
-    }else{
+
+    else
+    {
         tour=&joueur1;
         nb_tours++;
     }

@@ -1,6 +1,8 @@
 #include "araignee.h"
 #include "case.h"
 #include "plateau.h"
+#include "usineinsecte.h"
+
 #include <set>
 
 Araignee::Araignee(Team team) : Insecte(team) { }
@@ -11,7 +13,7 @@ void Araignee::get_moves_possibles(std::vector<Case*>& move_possibles) const {
 
     auto dfs = [&](Case* current_case, int depth, auto&& dfs_ref) -> void {
         if (depth == 3) {
-            if (Case::is_empty(current_case) && !move_casse_ruche(get_case(), get_case()->get_plateau()->get_cases())) {
+            if (Case::is_empty(current_case) && !move_casse_ruche(get_case())) {
                 move_possibles.push_back(current_case);
             }
             return;
@@ -32,3 +34,6 @@ void Araignee::get_moves_possibles(std::vector<Case*>& move_possibles) const {
     dfs(get_case(), 0, dfs);
 }
 
+bool Araignee::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::ARAIGNEE, [](Team team) {
+    return std::make_unique<Araignee>(team);
+});

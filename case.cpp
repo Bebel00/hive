@@ -1,9 +1,8 @@
 #include "case.h"
 #include "insecte.h"
+#include "graphicscase.h"
+
 #include <iostream>
-#include <QGraphicsPolygonItem>
-#include <QGraphicsTextItem>
-#include <QFont>
 
 Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
 {
@@ -32,60 +31,37 @@ Case::Direction Case::DIRECTION_OPPOSE(Direction direction)
     }
 }
 
-//Méthode premetant d'incrémenter une position selon une direction passée en paramètre
-Position Case::direction_to_position_increment(Direction direction)
+
+QPoint Case::direction_to_position_increment(Direction direction)
 {
     switch(direction)
     {
     case Direction::HAUT_DROIT:
-        return Position(1, 1);
+        return QPoint(1, 1);
         break;
     case Direction::DROITE:
-        return Position(2, 0);
+        return QPoint(2, 0);
         break;
     case Direction::BAS_DROIT:
-        return Position(1, -1);
+        return QPoint(1, -1);
         break;
     case Direction::HAUT_GAUCHE:
-        return Position(-1, 1);
+        return QPoint(-1, 1);
         break;
     case Direction::GAUCHE:
-        return Position(-2, 0);
+        return QPoint(-2, 0);
         break;
     case Direction::BAS_GAUCHE:
-        return Position(-1, -1);
+        return QPoint(-1, -1);
         break;
     default:
-        return Position(0, 0);
+        return QPoint(0, 0);
     }
 }
 
-Case::Case(Position position, Plateau *plateau, QGraphicsItem* parent) : QGraphicsPolygonItem(parent), position(position), plateau(plateau)
+Case::Case(QPoint position, Plateau *plateau) : position(position), plateau(plateau)
 {
     pion = nullptr;
-
-    QVector<QPoint> points;
-
-    points << QPoint(0, 4) * SCALE << QPoint(4, 2) *  SCALE << QPoint(4, -2) *  SCALE << QPoint(0, -4) * SCALE
-           << QPoint(0, -4) * SCALE << QPoint(-4, -2) * SCALE << QPoint(-4, 2) * SCALE;
-
-    setPolygon(QPolygonF(points));
-    setPolygon(polygon().translated(get_position().x * 4 * Case::SCALE, get_position().y * 6 * Case::SCALE));
-
-    // Create and configure the text item
-    textItem = new QGraphicsTextItem("", this);
-    textItem->setDefaultTextColor(Qt::white);  // Set text color
-    textItem->setFont(QFont("Arial", 30));     // Set font and size
-
-    // Position text in the center of the hexagon
-    QRectF bounds = boundingRect();
-    textItem->setPos(bounds.center() - textItem->boundingRect().center());
-
-}
-
-void Case::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    std::cout << "Clicked !" << std::endl;
 }
 
 Case* Case::creer_case(Direction direction, Plateau* const plateau)
@@ -182,3 +158,4 @@ Team Case::get_team() const
 }
 
 Case::~Case() = default;
+

@@ -1,16 +1,19 @@
 #include "mainwindow.h"
-#include "plateau.h"
 #include "ui_mainwindow.h"
+
+#include "graphicspartie.h"
 #include "partie.h"
-#include "QGridLayout"
+#include "plateau.h"
+
+#include <QGridLayout>
 #include <QGraphicsView>
 #include <QPushButton>
-#include <iostream>
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , partie(nullptr)
 {
     ui->setupUi(this);
     layout = new QGridLayout(centralWidget());
@@ -24,9 +27,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setPartie(Partie* const p)
+void MainWindow::setPartie(GraphicsPartie* const partie)
 {
-    layout->addWidget(p->get_view(), 1, 1, Qt::AlignCenter);
+    layout->addWidget(partie, 1, 1, Qt::AlignCenter);
+
     layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),0,0);
     layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),2,2);
     layout->setColumnStretch(0, 1);
@@ -35,8 +39,9 @@ void MainWindow::setPartie(Partie* const p)
     layout->setRowStretch(0, 1);
     layout->setRowStretch(2, 1);
     layout->setRowStretch(1, 9);
-    partie=p;
-    if (partie->get_nb_retour_possible()>0){
+
+    if (partie->partie->nb_retours_possibles > 0)
+    {
         button = new QPushButton("<-", this);
         button->setFixedSize(50, 30); // Taille fixe pour le bouton
 
@@ -54,19 +59,14 @@ void MainWindow::setPartie(Partie* const p)
 
 void MainWindow::onButtonAnnulerClicked()
 {
-    if (partie->get_nb_tours()==0){
+    if (partie->partie->get_nb_tours() == 0)
         annuler->setText("Vous ne pouvez pas annuler tant que les 2 joueurs n'ont pas encore jouer");
-    }else if(partie->get_nb_tours()==1){
+
+    else if(partie->partie->get_nb_tours() == 1)
         annuler->setText("Vous ne pouvez pas annuler le premier tour");
-    }else{
-        partie->get_plateau()->annuler_deplacement(2);
-        partie->annuler_tour();
-    }
+
+    else
+        partie->partie->get_plateau()->annuler_deplacement();
+
     annuler->setText("Annuler");
-
-
-
 }
-
-
-

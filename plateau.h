@@ -6,19 +6,15 @@
 #include <array>
 #include "types.h"
 
-#include <QGraphicsScene>
-#include <QWidget>
-#include <QGridLayout>
-
-class Plateau : public QGraphicsScene
+class Plateau
 {
-    Q_OBJECT
-
 public:
     Plateau(size_t nb_retour_possible=0);
     ~Plateau();
 
-    void deplacer_insecte(class Case* case_depart, class Case* case_fin,bool undo=0);
+    friend class GraphicsPlateau;
+
+    void deplacer_insecte(class Case* case_depart, class Case* case_fin, bool undo = 0);
 
     bool placer_insecte(class Case* c, std::unique_ptr<Insecte> insecte, class Joueur& joueur, bool bypass_check = false);
 
@@ -43,18 +39,13 @@ public:
     void explorer_adjacence_2(std::array<std::array<Case*, 9>, 5>& adjacence, Case* case_base);
 
     Case* get_case_base() const  { return case_base; }
-    Case* get_case(Position p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
+    Case* get_case(QPoint p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
-    Insecte* get_dernier_deplacement_pion() const ;
-    void annuler_deplacement(size_t n);
+    Insecte* get_dernier_deplacement_pion() const;
+
+    void annuler_deplacement();
     void retirer_piece_sur_case(Case* c);
-    void set_partie(class Partie* p){partie=p;}
-
-    QGraphicsScene* get_scene() { return this; }
-
-
-
 
 private:
     Case* case_base;
@@ -62,35 +53,18 @@ private:
 
     bool tenter_supprimer_case(Case* c);
 
-    constexpr static float echelle_plateau = 20.0;
-
     void add_case(Case* c);
-
-    Case* case_selectionnee = nullptr;
-
-    void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
-    void afficher_piece_sur_case(Case* c, const QString& icon_path);
 
     //On stocke le dernier déplacement afin de pouvoir retourner en arrière
     std::vector<Insecte *> dernier_deplacement_pion;
     std::vector<Case*> dernier_deplacement_debut;
     std::vector<Case*> dernier_deplacement_fin;
     size_t nb_retour_possible;
-    class Partie *partie;
 
+    void retirer_insecte(Case* c);
 
-
-
-
-protected:
-    //    void paintEvent(class QPaintEvent *);
-
-    //    QSize sizeHint() const;
-
-    //    QSize minimumSizeHint() const;
-
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
-
+public:
+    std::unique_ptr<class GraphicsPlateau> graphics;
 };
 
 #endif // PLATEAU_H

@@ -11,24 +11,23 @@
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <stdexcept>
 
-#include <QPainterPath>
-#include <QPainter>
-#include <vector>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsPixmapItem>
-#include <QMessageBox>
+#include "graphicsplateau.h"
 
-Plateau::Plateau(size_t nb) :
+Plateau::Plateau(size_t nb)
     // La taille des vecteurs est égale à 2 * nb_retour_possible car lorsqu'on supprime un déplacement, on supprime aussi le déplacement de l'adveraire suivant celui-ci
-    QGraphicsScene(), dernier_deplacement_debut(nb*2),dernier_deplacement_fin(nb*2),dernier_deplacement_pion(nb*2),nb_retour_possible(nb)
+    : dernier_deplacement_debut(nb*2),
+    dernier_deplacement_fin(nb*2),
+    dernier_deplacement_pion(nb*2),
+    nb_retour_possible(nb)
 {
-    for (int i=0;i<nb*2;i++){
+    for (unsigned int i{ 0 }; i < nb * 2; i++)
+    {
         dernier_deplacement_debut[i]=nullptr;
         dernier_deplacement_fin[i]=nullptr;
         dernier_deplacement_pion[i]=nullptr;
     }
-    case_base = new Case(Position(0, 0), this);
+
+    case_base = new Case(QPoint(0, 0), this);
 
     add_case(case_base);
 }
@@ -43,7 +42,8 @@ Plateau::~Plateau()
 
 }
 
-Insecte* Plateau::get_dernier_deplacement_pion() const {
+Insecte* Plateau::get_dernier_deplacement_pion() const
+{
     if(!dernier_deplacement_pion.empty())
         return dernier_deplacement_pion.back();
     else
@@ -60,12 +60,12 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
         pion->bouger(case_fin);
         Insecte* i =pion.get();
 
-        retirer_piece_sur_case(case_depart);
+        if (graphics && case_depart->graphics && case_fin->graphics)
+            graphics->deplacer_insecte(case_depart->graphics.get(), case_fin->graphics.get());
+
         case_fin->pion=std::move(pion);
-        afficher_piece_sur_case(case_fin, QString::fromStdString(i->get_chemin_icone()));
 
         creer_alentours(case_fin);
-
 
         if (case_depart->pion == nullptr)
         {
@@ -74,77 +74,50 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
                 tenter_supprimer_case(*(case_depart->case_ptr_from_direction(i_direction)));
             }
         }
-        if(nb_retour_possible!=0 && !undo){
-            for (size_t j=0;j<dernier_deplacement_debut.size()-1;j++){
-                if (dernier_deplacement_fin[j]==nullptr){
-                    dernier_deplacement_debut[j]=case_depart;
-                    dernier_deplacement_fin[j]=case_fin;
-                    dernier_deplacement_pion[j]=i;
+
+        if (nb_retour_possible != 0 && !undo)
+        {
+            for (size_t j=0;j<dernier_deplacement_debut.size()-1;j++)
+            {
+                if (dernier_deplacement_fin[j] == nullptr)
+                {
+                    dernier_deplacement_debut[j] = case_depart;
+                    dernier_deplacement_fin[j] = case_fin;
+                    dernier_deplacement_pion[j] = i;
                     return;
                 }
 
             }
 
-            dernier_deplacement_debut[0]=nullptr;
-            dernier_deplacement_fin[0]=nullptr;
-            dernier_deplacement_pion[0]=nullptr;
-            for (size_t k=0;k<nb_retour_possible*2-1;k++){
-                dernier_deplacement_debut[k]=dernier_deplacement_debut[k+1];
-                dernier_deplacement_fin[k]=dernier_deplacement_fin[k+1];
-                dernier_deplacement_pion[k]=dernier_deplacement_pion[k+1];
+            dernier_deplacement_debut[0] = nullptr;
+            dernier_deplacement_fin[0] = nullptr;
+            dernier_deplacement_pion[0] = nullptr;
+
+            for (size_t k=0; k < nb_retour_possible*2 - 1; k++)
+            {
+                dernier_deplacement_debut[k] = dernier_deplacement_debut[k+1];
+                dernier_deplacement_fin[k] = dernier_deplacement_fin[k+1];
+                dernier_deplacement_pion[k] = dernier_deplacement_pion[k+1];
             }
-            dernier_deplacement_debut[nb_retour_possible*2-1]=case_depart;
-            dernier_deplacement_fin[nb_retour_possible*2-1]=case_fin;
-            dernier_deplacement_pion[nb_retour_possible*2-1]=i;
-
-
+            dernier_deplacement_debut[nb_retour_possible*2 - 1] = case_depart;
+            dernier_deplacement_fin[nb_retour_possible*2 - 1] = case_fin;
+            dernier_deplacement_pion[nb_retour_possible*2 - 1] = i;
         }
-
     }
-
-
-
 }
 
 bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& joueur, bool bypass_check)
 {
     if (Insecte::verifier_placement(c, joueur.get_team()) || bypass_check )
     {
-        Insecte * i=insecte.get();
         c->pion = std::move(insecte);
         creer_alentours(c);
         c->pion->placer(c);
 
         joueur.utiliser(c->pion->get_type());
 
-        afficher_piece_sur_case(c, QString::fromStdString(i->get_chemin_icone()));
-
-
-        if (nb_retour_possible!=0){
-            for (int j=0;j<dernier_deplacement_debut.size()-1;j++){
-                if (dernier_deplacement_fin[j]==nullptr){
-                    dernier_deplacement_debut[j]=c;
-                    dernier_deplacement_fin[j]=c;
-                    dernier_deplacement_pion[j]=i;
-                    return true;
-                }
-            }
-            dernier_deplacement_debut[0]=nullptr;
-            dernier_deplacement_fin[0]=nullptr;
-            dernier_deplacement_pion[0]=nullptr;
-            for (size_t k=0;k<dernier_deplacement_debut.size()-2;k++){
-                dernier_deplacement_debut[k]=dernier_deplacement_debut[k+1];
-                dernier_deplacement_fin[k]=dernier_deplacement_fin[k+1];
-                dernier_deplacement_pion[k]=dernier_deplacement_pion[k+1];
-            }
-            dernier_deplacement_debut[dernier_deplacement_debut.size()-1]=c;
-            dernier_deplacement_fin[dernier_deplacement_debut.size()-1]=c;
-            dernier_deplacement_pion[dernier_deplacement_debut.size()-1]=i;
-
-
-        }
-
-
+        if (graphics && c->graphics)
+            graphics->placer_insecte(c->graphics.get(), joueur.get_team());
 
         return true;
     }
@@ -216,11 +189,11 @@ bool Plateau::creer_alentours(Case* c)
 
     // Les incréments de position vont permettre de travailler sur des cases dont on calculera la position
     // En ajoutant un incrément de position qui est équivalent à bouger dans une direction
-    Position increment_position;
-    Position increment_position_2;
+    QPoint increment_position;
+    QPoint increment_position_2;
 
     // La position de la case depuis laquelle on crée les alentours est au centre de la matrice adjacence, donc (4, 2)
-    Position case_base_pos(4, 2);
+    QPoint case_base_pos(4, 2);
 
     // On boucle sur toutes les directions pour créer une nouvelle case dans chaque direction
     for (auto i_direction : Case::DIRECTIONS_ALL)
@@ -228,7 +201,7 @@ bool Plateau::creer_alentours(Case* c)
         increment_position = Case::direction_to_position_increment(i_direction);
 
         *(c->case_ptr_from_direction(i_direction)) =
-            adjacence[case_base_pos.y + increment_position.y][case_base_pos.x + increment_position.x];
+            adjacence[case_base_pos.y() + increment_position.y()][case_base_pos.x() + increment_position.x()];
 
         // On récupère le pointeur vers le pointeur vers la case dans la direction actuelle
         // Double pointeur pour pouvoir changer la valeur du pointeur case_droite par exemple,
@@ -273,10 +246,10 @@ bool Plateau::creer_alentours(Case* c)
                 increment_position_2 = Case::direction_to_position_increment(j_direction);
 
                 // La position finale de la case observée
-                Position position_finale = case_base_pos + increment_position + increment_position_2;
+                QPoint position_finale = case_base_pos + increment_position + increment_position_2;
 
                 // Son pointeur
-                Case* const case_finale = adjacence[position_finale.y][position_finale.x];
+                Case* const case_finale = adjacence[position_finale.y()][position_finale.x()];
 
                 // On initialise le pointeur dans la direction donnée et on le fait pointer vers la case finale observée
                 (*(nouvelle_case->case_ptr_from_direction(j_direction))) = case_finale;
@@ -303,11 +276,11 @@ void Plateau::explorer_adjacence_2(std::array<std::array<Case *, 9>, 5> &adjacen
 
     for (auto i_case : liste_cases)
     {
-        if (abs(i_case->get_position().x - case_base->get_position().x) <= 4)
-            if (abs(i_case->get_position().y - case_base->get_position().y) <= 2)
+        if (abs(i_case->get_position().x() - case_base->get_position().x()) <= 4)
+            if (abs(i_case->get_position().y() - case_base->get_position().y()) <= 2)
             {
-                const int x = i_case->get_position().x - case_base->get_position().x + 4;
-                const int y = i_case->get_position().y - case_base->get_position().y + 2;
+                const int x = i_case->get_position().x() - case_base->get_position().x() + 4;
+                const int y = i_case->get_position().y() - case_base->get_position().y() + 2;
                 adjacence[y][x] = i_case;
             }
     }
@@ -354,130 +327,67 @@ void Plateau::add_case(Case *c)
 {
     liste_cases.push_back(c);
 
-    QBrush brush;
-    brush.setStyle(Qt::NoBrush);
-    c->setBrush(brush);
-    c->setPen(QPen(Qt::red));
-    addItem(c);
+    if (graphics)
+        graphics->add_case(c);
 }
 
-void Plateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+void Plateau::retirer_insecte(Case *c)
 {
+    std::unique_ptr<Insecte> pion = std::move(c->pion);
 
-    if (mouseEvent->button() == Qt::LeftButton)
+    if (c->pion == nullptr)
     {
-        QGraphicsItem *item = itemAt(mouseEvent->scenePos(), QTransform());
-        Case* case_cliquee = qgraphicsitem_cast<Case*>(item);
-
-
-        if (case_cliquee)
+        for (auto i_direction : Case::DIRECTIONS_ALL)
         {
-            if (case_cliquee != case_selectionnee)
-            {
-
-                if (case_selectionnee!=nullptr && case_selectionnee->possede_pion() && case_selectionnee->get_pion()->get_team()==partie->get_tour_team()){
-                    std::vector<Case*> deplacement;
-                    if(case_cliquee)
-                    case_selectionnee->get_pion()->get_moves_possibles(deplacement);
-                    if (std::find(deplacement.begin(),deplacement.end(),case_cliquee)!=deplacement.end()){
-                        deplacer_insecte(case_selectionnee,case_cliquee,0);
-                        partie->jouer_tour();
-                    }
-                }
-
-
-                // Reset la surbrillance
-                surbriller_cases(liste_cases, Qt::red, 0);
-
-                case_selectionnee = case_cliquee;
-                case_selectionnee->setPen(QPen(Qt::cyan));
-                case_selectionnee->setZValue(1);
-
-
-
-                if (case_selectionnee->possede_pion())
-                {
-                    std::vector<Case*> move_possibles;
-                    case_selectionnee->get_pion()->get_moves_possibles(move_possibles);
-                    surbriller_cases(move_possibles, Qt::yellow, 0.5);
-                }
-
-            }
+            tenter_supprimer_case(*(c->case_ptr_from_direction(i_direction)));
         }
     }
+
+    if (graphics && c->graphics)
+        graphics->retirer_insecte(c->graphics.get());
 }
-
-void Plateau::surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue)
-{
-    for (auto i_case : cases)
-    {
-        i_case->setPen(QPen(color));
-        i_case->setZValue(zvalue);
-    }
-}
-
-void Plateau::afficher_piece_sur_case(Case* c, const QString& icon_path) {
-    QPixmap pixmap(icon_path);
-    QGraphicsPixmapItem* icon = new QGraphicsPixmapItem(pixmap.scaled(40, 40));
-    icon->setPos(c->scenePos());
-    addItem(icon);
-    QBrush brush;
-    brush.setColor(Qt::darkCyan);
-    brush.setStyle(Qt::SolidPattern);
-    c->setBrush(brush);
-
-    // La première lettre du type
-    c->textItem->setPlainText(QString(type_to_str(c->pion->get_type())[0]));
-
-    if (c->get_pion()->get_team() == Team::BLANC)
-        c->textItem->setDefaultTextColor(Qt::white);
-
-    else
-        c->textItem->setDefaultTextColor(Qt::black);
-}
-
 
 /*
  * Méthode permettant d'annuler les n derniers déplacements.
  */
-void Plateau::annuler_deplacement(size_t n){
-    if (n!=0 &&nb_retour_possible!=0 && dernier_deplacement_debut[n-1]!=nullptr){
-        size_t i=1;
-        size_t j=0;
+void Plateau::annuler_deplacement()
+{
+    unsigned int n = 2;
+    if (n != 0 && nb_retour_possible != 0
+        && dernier_deplacement_debut[n - 1] != nullptr)
+    {
+        size_t i = 1;
+        size_t j = 0;
 
-        while(j<n) {
+        while(j < n)
+        {
 
-            if (dernier_deplacement_debut[nb_retour_possible*2-i]!=nullptr){
-                if (dernier_deplacement_fin[nb_retour_possible*2-i]==dernier_deplacement_debut[nb_retour_possible*2-i]){
+            if (dernier_deplacement_debut[nb_retour_possible*2 - i] != nullptr)
+            {
+                if (dernier_deplacement_fin[nb_retour_possible*2 - i] == dernier_deplacement_debut[nb_retour_possible*2 - i])
+                {
                     // On annule un placement donc on supprime le pion
 
-                    retirer_piece_sur_case(dernier_deplacement_fin[nb_retour_possible*2-i]);
-                    std::unique_ptr<Insecte> s=move(dernier_deplacement_fin[nb_retour_possible*2-i]->pion);
+                    retirer_insecte(dernier_deplacement_fin[nb_retour_possible*2 - i]);
+                    std::unique_ptr<Insecte> s = std::move(dernier_deplacement_fin[nb_retour_possible*2 - i]->pion);
                     s.reset();
-
-
-
-                }else{
-                    deplacer_insecte(dernier_deplacement_fin[nb_retour_possible*2-i],dernier_deplacement_debut[nb_retour_possible*2-i],1);
                 }
-                dernier_deplacement_pion[nb_retour_possible*2-i]=nullptr;
-                dernier_deplacement_debut[nb_retour_possible*2-i]=nullptr;
-                dernier_deplacement_fin[nb_retour_possible*2-i]=nullptr;
-                j++;
+                else
+                {
+                    deplacer_insecte(
+                        dernier_deplacement_fin[nb_retour_possible*2 - i],
+                        dernier_deplacement_debut[nb_retour_possible*2 - i],
+                        1);
+                }
 
+                dernier_deplacement_pion[nb_retour_possible*2 - i] = nullptr;
+                dernier_deplacement_debut[nb_retour_possible*2 - i] = nullptr;
+                dernier_deplacement_fin[nb_retour_possible*2 - i] = nullptr;
+
+                j++;
             }
             i++;
         }
-
-
     }
 }
 
-void Plateau::retirer_piece_sur_case(Case* c) {
-    QBrush brush = c->brush();
-    brush.setColor(Qt::black);
-    c->setBrush(brush);
-    QGraphicsTextItem* text=c->textItem;
-    text->setPlainText("");
-
-}

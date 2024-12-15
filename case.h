@@ -2,63 +2,19 @@
 #define CASE_H
 
 #include "teams.h"
-#include <QGraphicsPolygonItem>
+
+#include <memory>
+#include <QPoint>
 
 class Insecte;
 
-class Position
-{
-    /*
-     * Structure qui sert à compter la position d'un hexagone
-     * Utile pour retrouver un hexagone juste en connaissant sa position
-     *
-     * La première case devrait être en (0; 0)
-     * Aller en Haut Droit fait bouger de 1 en x et en y
-     * Aller en Haut Gauche fait avancer de -1 en x, 1 en y
-     * Aller à Droite fait avancer de 2 en x
-     * Aller à Gauche fait bouger de -2 en x
-     * Aller en Bas Droit fait avancer de 1 en x et -1 en y
-     * Enfin, aller en Bas Gauche
-     */
-
-public:
-    Position() { }
-    Position(int x, int y) : x(x), y(y) { }
-
-    int x = 0;
-    int y = 0;
-
-
-    // Fonctions qui permettent d'aditionner / de soustraire des positions entre elles
-
-    Position operator+(const Position& a)
-    {
-        return Position(x + a.x, y + a.y);
-    }
-
-    Position& operator+=(const Position& a)
-    {
-        x += a.x;
-        y += a.y;
-        return *this;
-    }
-
-    Position operator-(const Position& a)
-    {
-        return Position(x - a.x, y - a.y);
-    }
-
-    bool operator==(const Position& a)
-    {
-        return (x == a.x && y == a.y);
-    }
-};
-
-class Case : public QGraphicsPolygonItem
+class Case
 {
 
     friend class Plateau;
     friend class Insecte;
+    friend class GraphicsCase;
+    friend class GraphicsPlateau;
 
 public:
     enum class Direction
@@ -81,7 +37,7 @@ public:
     // Fonction qui renvoie un incrément de position pour une direction donnée
     // Par exemple Direction::HAUT_DROIT renvoie (+1, +1)
     // Direction::GAUCHE renvoie (-2, 0).
-    static Position direction_to_position_increment(Direction direction);
+    static QPoint direction_to_position_increment(Direction direction);
 
 public:
     /*
@@ -121,20 +77,10 @@ public:
     class Insecte* get_pion() const { return pion.get(); }
 
     // getter pour la position de la case
-    Position get_position() const { return position; }
+    QPoint get_position() const { return position; }
 
     // getter plateau
     const class Plateau* get_plateau() const { return plateau; }
-
-    // https://doc.qt.io/qt-6/qgraphicsitem.html#type
-    // Pour utiliser qgraphicsitem_cast
-    enum { Type = UserType + 1 };
-
-    int type() const override
-    {
-        // Enable the use of qgraphicsitem_cast with this item.
-        return Type;
-    }
 
     ~Case();
 
@@ -162,7 +108,7 @@ private:
     // Pour plus tard si on en a besoin
 
     // Position (coordonnées) de la case
-    Position position;
+    QPoint position;
 
     // Pointeur vers le plateau qui gère la case
     class Plateau* const plateau;
@@ -170,15 +116,10 @@ private:
     bool visite = false;
 
     // Constructeur en privé car seul plateau peut créer une case
-    Case(Position position, class Plateau* plateau, QGraphicsItem* parent = nullptr);
+    Case(QPoint position, class Plateau* plateau);
 
-    QGraphicsTextItem* textItem;
-
-protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-
-private:
-    static constexpr float SCALE = 20.0;
+public:
+    std::unique_ptr<class GraphicsCase> graphics;
 };
 
 #endif // CASE_H

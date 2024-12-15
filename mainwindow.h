@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 #include <QLabel>
-#include <qdialog.h>
-#include "plateau.h"
+#include <QDialog>
+#include <QGridLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,7 +18,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setPartie(class Partie* const p);
+    void setPartie(class GraphicsPartie* const partie);
 
 private slots:
     void onButtonAnnulerClicked();
@@ -26,7 +26,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    class Partie* partie;
+    class GraphicsPartie* partie;
 
     class QGridLayout* layout;
     QPushButton *button;
