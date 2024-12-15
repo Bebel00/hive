@@ -1,6 +1,6 @@
 #include "fourmi.h"
-#include "insecte.h"
 #include "teams.h"
+#include "usineinsecte.h"
 
 Fourmi::Fourmi(Team team) : Insecte(team)
 {
@@ -9,30 +9,47 @@ Fourmi::Fourmi(Team team) : Insecte(team)
 
 
 void Fourmi::get_moves_possibles(std::vector<Case*>& moves_possibles) const{
-    if (get_case()==nullptr)
+    if (!move_casse_ruche(get_case()))
     {
-        throw std::logic_error("L'Insecte n'est pas encore positionné");
-    }
+        unsigned int size_cases = moves_possibles.size();
 
-    else if (!move_casse_ruche(get_case(), get_case()->get_plateau()->get_cases())){
-        std::set<Case *> cases; // On utilise un set pour éviter d'avoir des doublons.
-        int size_cases=0;
-        int i=0;
+        Case* c = nullptr;
 
-        Insecte::get_glissements_possibles(*get_case(),cases); // On cherche dans un premier temps les glissements possibles sur des cases adjacentes à la case actuelle de la fourmie
-        while(cases.size()!=size_cases){ // tant que l'on trouve d'autre case sur lesquelles on peut se déplacer
-            auto it = cases.begin();
-            size_cases=cases.size();
-            for (i;i<size_cases;i++){ // On va chercher les glissements possibles sur les cases ajouté à la dernière boucle while
-                std::advance(it,i);
-                get_glissements_possibles(**it,cases,get_case());
+        for (auto i_direction : Case::DIRECTIONS_ALL)
+        {
+            c = get_case()->get_case_from_direction(i_direction);
+            if (Case::is_empty(c) && est_un_glissement(get_case(), i_direction, get_case()))
+            {
+                moves_possibles.push_back(c);
             }
         }
-        if (cases.size()!=0){
-            // On va transverser les données du set dans moves_possibles
-            moves_possibles.clear();
-            moves_possibles.insert(moves_possibles.end(), cases.begin(), cases.end());
+
+        // On cherche dans un premier temps les glissements possibles sur des cases adjacentes à la case actuelle de la fourmie
+        while(moves_possibles.size() != size_cases)
+        {
+            // tant que l'on trouve d'autre case sur lesquelles on peut se déplacer
+
+            size_cases=moves_possibles.size();
+
+            for (unsigned int i{0}; i < size_cases; i++)
+            {
+                // On va chercher les glissements possibles sur les cases ajouté à la dernière boucle while
+                for (auto i_direction : Case::DIRECTIONS_ALL)
+                {
+                    c=moves_possibles[i]->get_case_from_direction(i_direction);
+
+                    if (c!=nullptr &&Case::is_empty(c)&& est_un_glissement(moves_possibles[i],i_direction,get_case())
+                        && std::find(moves_possibles.begin(),moves_possibles.end(),c)==moves_possibles.end())
+                    {
+                        moves_possibles.push_back(c);
+                    }
+                }
+            }
+
         }
     }
-
 }
+
+bool Fourmi::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::FOURMI, [](Team team) {
+    return std::make_unique<Fourmi>(team);
+});

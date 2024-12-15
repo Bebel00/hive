@@ -1,46 +1,59 @@
 #include "araignee.h"
-#include "insecte.h"
 #include "teams.h"
-#include "case.h"
-#include "plateau.h"
 #include "usineinsecte.h"
+#include "insecte.h"
 
-#include <set>
+#include <iostream>
 
 void Araignee::get_moves_possibles(std::vector<Case*>& moves_possibles) const
 {
-    // Est ce que la pièce est déjà positionné ?
-    if (get_case()==nullptr)
-    {
-        throw std::logic_error("L'Insecte n'est pas encore positionné");
-    }
+    int i = 0;
+    int j  =0;
+    int k = 0;
 
-    else if (!move_casse_ruche(get_case(), get_case()->get_plateau()->get_cases()))
+    if (!move_casse_ruche(get_case()))
     {
-        std::vector<Case*> case1;
-        std::vector<int> case1_r;
-        std::set<Case*> case2;
-        int size_case2=0;
-        std::set<Case*> case3;
-        int i=0;
+        for (auto i_direction : Case::DIRECTIONS_ALL)
+        {
 
-        get_glissements_possibles(*get_case(),case1);
-        for(int j=0;j<case1.size();j++){
-            get_glissements_possibles(*case1[j],case2,get_case());
-            for(int k=0; k<case2.size()-size_case2;k++){
-                case1_r.push_back(i);
+            Case* c1 = get_case()->get_case_from_direction(i_direction);
+            i++;
+
+            if (c1 != nullptr && Case::is_empty(c1)
+                && Insecte::est_un_glissement(get_case(), i_direction, get_case()))
+            {
+                for (auto j_direction : Case::DIRECTIONS_ALL){
+                    j++;
+                    Case* c2 = c1->get_case_from_direction(j_direction);
+
+                    if (c2!=nullptr && Case::is_empty(c2)
+                        && j_direction!=Case::DIRECTION_OPPOSE(i_direction)
+                        && Insecte::est_un_glissement(c1, j_direction, get_case()))
+                    {
+                        for(auto k_direction : Case::DIRECTIONS_ALL){
+                            k++;
+                            Case* c3 = c2->get_case_from_direction(k_direction);
+
+                            if (c3 !=nullptr
+                                && Case::is_empty(c3)
+                                && k_direction != Case::DIRECTION_OPPOSE(j_direction)
+                                && Insecte::est_un_glissement(c2, k_direction, get_case())
+                                && c3 != get_case())
+                            {
+                                moves_possibles.push_back(c3);
+                            }
+                        }
+                    }
+                }
             }
-            size_case2=case2.size();
-            i++;
         }
-        i=0;
-        for (const auto& case_j: case2){
-            get_glissements_possibles(*case_j,case3,case1[case1_r[i]]);
-            i++;
-        }
-        case3.erase(get_case());
-        moves_possibles.clear();
-        moves_possibles.insert(moves_possibles.end(), case3.begin(), case3.end());
     }
 
+    std::cout << "1 :" << i << "\n";
+    std::cout << "2 :" << j << "\n";
+    std::cout << "3 :" << k << "\n";
 }
+
+bool Araignee::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::ARAIGNEE, [](Team team) {
+    return std::make_unique<Araignee>(team);
+});

@@ -74,7 +74,7 @@ public:
 
     // getter pour si la case a un pion
     bool possede_pion() const { return pion != nullptr; }
-    class Insecte* get_pion() const { return pion; }
+    class Insecte* get_pion() const { return pion.get(); }
 
     // getter pour la position de la case
     QPoint get_position() const { return position; }
@@ -101,11 +101,7 @@ private:
     class Case* bas_gauche = nullptr;
 
     // Pion qui occupe la case
-    class Insecte* pion = nullptr;
-
-    // Fonction récusrive qui renvoie la liste des cases créées en mémoire
-    // void get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_visiter);
-    // Pour plus tard si on en a besoin
+    std::unique_ptr<Insecte> pion;
 
     // Position (coordonnées) de la case
     QPoint position;

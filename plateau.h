@@ -21,7 +21,7 @@ public:
 
     void deplacer_insecte(class Case* case_depart, class Case* case_fin);
 
-    bool placer_insecte(class Case* c, class Insecte* insecte, Team team, bool bypass_check = false);
+    bool placer_insecte(class Case* c, std::unique_ptr<Insecte> insecte, class Joueur& joueur, bool bypass_check = false);
 
     /*
      * Fonction qui potentiellement supprime une case si elle n'a plus aucun voisin avec un insecte.

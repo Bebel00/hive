@@ -1,15 +1,13 @@
 #include "plateau.h"
 #include "case.h"
 #include "insecte.h"
+#include "joueur.h"
+
 #include <iostream>
 #include <array>    // pour std::array une liste
 #include <cstdlib>  // pour abs() la valeur absolue
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <stdexcept>
-#include <QPainterPath>
-#include <QPainter>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
 
 #include "graphicsplateau.h"
 
@@ -36,12 +34,12 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
 {
     if (case_fin)
     {
-        Insecte* pion = case_depart->pion;
-        pion->bouger(case_fin);
-        case_fin->pion = pion;
+        std::unique_ptr<Insecte> pion = std::move(case_depart->pion);
 
-        case_depart->pion = pion->get_en_dessous();
-        case_fin->pion = pion;
+        pion->bouger(case_fin);
+        case_fin->pion = std::move(pion);
+        creer_alentours(case_fin);
+
         if (case_depart->pion == nullptr)
         {
             for (auto i_direction : Case::DIRECTIONS_ALL)
@@ -52,16 +50,18 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
     }
 }
 
-bool Plateau::placer_insecte(Case *c, Insecte *insecte, Team team, bool bypass_check)
+bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& joueur, bool bypass_check)
 {
-    if (Insecte::verifier_placement(c, team) || bypass_check)
+    if (Insecte::verifier_placement(c, joueur.get_team()) || bypass_check)
     {
-        c->pion = insecte;
+        c->pion = std::move(insecte);
         creer_alentours(c);
-        insecte->placer(c);
+        c->pion->placer(c);
+
+        joueur.utiliser(c->pion->get_type());
 
         if (graphics && c->graphics)
-            graphics->placer_insecte(c->graphics.get(), team);
+            graphics->placer_insecte(c->graphics.get(), joueur.get_team());
 
         return true;
     }
@@ -172,6 +172,7 @@ bool Plateau::creer_alentours(Case* c)
 
             // Si la création s'est bien passée on ajoute la case à la liste des cases
             add_case(nouvelle_case);
+            adjacence[case_base_pos.y() + increment_position.y()][case_base_pos.x() + increment_position.x()] = nouvelle_case;
 
             // Et là c'est de la magie noire
 
