@@ -2,13 +2,10 @@
 #define PLATEAU_H
 
 #include "case.h"
+#include "teams.h"
 
 #include <vector>
 #include <array>
-
-#include <QGraphicsScene>
-#include <QWidget>
-#include <QGridLayout>
 
 class Plateau
 {

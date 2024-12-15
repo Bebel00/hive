@@ -9,11 +9,6 @@
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <stdexcept>
 
-#include <QPainterPath>
-#include <QPainter>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-
 #include "graphicsplateau.h"
 
 Plateau::Plateau()
@@ -21,6 +16,8 @@ Plateau::Plateau()
     case_base = new Case(QPoint(0, 0), this);
 
     add_case(case_base);
+
+    creer_alentours(case_base);
 }
 
 Plateau::~Plateau()
@@ -175,6 +172,7 @@ bool Plateau::creer_alentours(Case* c)
 
             // Si la création s'est bien passée on ajoute la case à la liste des cases
             add_case(nouvelle_case);
+            adjacence[case_base_pos.y() + increment_position.y()][case_base_pos.x() + increment_position.x()] = nouvelle_case;
 
             // Et là c'est de la magie noire
 
@@ -250,7 +248,7 @@ bool Plateau::tenter_supprimer_case(Case *c)
             // Elle remplace le pointeur qui pointe vers la case actuelle par nullptr comme on va la supprimer
             // On utilise la direction opposé pour revenir à la case actuelle du coup
 
-            if (*case_adjacente)
+            if (case_adjacente)
                 *((*(case_adjacente))->case_ptr_from_direction(Case::DIRECTION_OPPOSE(i_direction))) = nullptr;
         }
 

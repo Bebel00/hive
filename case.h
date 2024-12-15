@@ -29,7 +29,7 @@ public:
     };
 
     static constexpr Direction DIRECTIONS_ALL[] =
-    { Direction::HAUT_DROIT, Direction::DROITE, Direction::BAS_DROIT, Direction::HAUT_GAUCHE, Direction::GAUCHE, Direction::BAS_GAUCHE };
+        { Direction::HAUT_DROIT, Direction::DROITE, Direction::BAS_DROIT, Direction::HAUT_GAUCHE, Direction::GAUCHE, Direction::BAS_GAUCHE };
 
     // Fonction qui renvoie la direction opposée à une direction
     static Direction DIRECTION_OPPOSE(Direction direction);
@@ -101,11 +101,7 @@ private:
     class Case* bas_gauche = nullptr;
 
     // Pion qui occupe la case
-    std::unique_ptr<class Insecte> pion;
-
-    // Fonction récusrive qui renvoie la liste des cases créées en mémoire
-    // void get_toutes_cases_recursif(std::vector<Case *> &cases, Case* case_a_visiter);
-    // Pour plus tard si on en a besoin
+    std::unique_ptr<Insecte> pion;
 
     // Position (coordonnées) de la case
     QPoint position;

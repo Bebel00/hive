@@ -189,9 +189,10 @@ void Partie::lire_prochain_token(std::string &cmd, std::string &token)
 
 void Partie::setup_test()
 {
-    ajouter_insecte(joueur1, plateau->get_case_base(), Type::Type::ABEILLE);
-    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT), Type::Type::ABEILLE);
-    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::HAUT_GAUCHE), Type::Type::SAUTERELLE);
+    ajouter_insecte(joueur1, plateau->get_case_base(), Type::Type::ABEILLE, true);
+    ajouter_insecte(joueur2, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_DROIT), Type::Type::ABEILLE, true);
+    ajouter_insecte(joueur1, plateau->get_case_base()->get_case_from_direction(Case::Direction::BAS_GAUCHE), Type::Type::ARAIGNEE, true);
+    ajouter_insecte(joueur2, plateau->get_case(QPoint(2, -2)), Type::Type::FOURMI, true);
 }
 
 std::string Partie::get_display_plateau() const

@@ -1,37 +1,57 @@
 #include "araignee.h"
-#include "case.h"
-#include "plateau.h"
+#include "teams.h"
 #include "usineinsecte.h"
+#include "insecte.h"
 
-#include <set>
+#include <iostream>
 
-Araignee::Araignee(Team team) : Insecte(team) { }
+void Araignee::get_moves_possibles(std::vector<Case*>& moves_possibles) const
+{
+    int i = 0;
+    int j  =0;
+    int k = 0;
 
-void Araignee::get_moves_possibles(std::vector<Case*>& move_possibles) const {
-    std::set<Case*> visited;
-    std::vector<Case*> path;
+    if (!move_casse_ruche(get_case()))
+    {
+        for (auto i_direction : Case::DIRECTIONS_ALL)
+        {
 
-    auto dfs = [&](Case* current_case, int depth, auto&& dfs_ref) -> void {
-        if (depth == 3) {
-            if (Case::is_empty(current_case) && !move_casse_ruche(get_case())) {
-                move_possibles.push_back(current_case);
+            Case* c1 = get_case()->get_case_from_direction(i_direction);
+            i++;
+
+            if (c1 != nullptr && Case::is_empty(c1)
+                && Insecte::est_un_glissement(get_case(), i_direction, get_case()))
+            {
+                for (auto j_direction : Case::DIRECTIONS_ALL){
+                    j++;
+                    Case* c2 = c1->get_case_from_direction(j_direction);
+
+                    if (c2!=nullptr && Case::is_empty(c2)
+                        && j_direction!=Case::DIRECTION_OPPOSE(i_direction)
+                        && Insecte::est_un_glissement(c1, j_direction, get_case()))
+                    {
+                        for(auto k_direction : Case::DIRECTIONS_ALL){
+                            k++;
+                            Case* c3 = c2->get_case_from_direction(k_direction);
+
+                            if (c3 !=nullptr
+                                && Case::is_empty(c3)
+                                && k_direction != Case::DIRECTION_OPPOSE(j_direction)
+                                && Insecte::est_un_glissement(c2, k_direction, get_case())
+                                && c3 != get_case())
+                            {
+                                moves_possibles.push_back(c3);
+                            }
+                        }
+                    }
+                }
             }
-            return;
         }
+    }
 
-        visited.insert(current_case);
-        for (auto direction : Case::DIRECTIONS_ALL) {
-            Case* next_case = current_case->get_case_from_direction(direction);
-            if (next_case && visited.find(next_case) == visited.end() && Case::is_empty(next_case)) {
-                path.push_back(next_case);
-                dfs_ref(next_case, depth + 1, dfs_ref);
-                path.pop_back();
-            }
-        }
-        visited.erase(current_case);
-    };
-
-    dfs(get_case(), 0, dfs);
+    std::cout << "1 :" << i << "\n";
+    std::cout << "2 :" << j << "\n";
+    std::cout << "3 :" << k << "\n";
 }
 
 bool Araignee::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::ARAIGNEE, [](Team team) {

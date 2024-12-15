@@ -3,8 +3,10 @@
 #include <vector>
 #include <stdexcept>
 #include "plateau.h"
+#include <set>
 
-Insecte::Insecte(Team team) : team(team)
+
+Insecte::Insecte(Team team) : team(team),position(nullptr)
 {
 
 }
@@ -124,13 +126,13 @@ bool Insecte::move_casse_ruche(Case * const case_depart)
     return true;
 }
 
-bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
+bool Insecte::move_trop_serre(const Case * const depart, Case::Direction d)
 {
     switch (d)
     {
     case(Case::Direction::HAUT_DROIT):
         return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE))
-                && !Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE));
+               && !Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE));
     case(Case::Direction::DROITE):
         return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT))
                && !Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_DROIT));
@@ -146,6 +148,38 @@ bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
     case(Case::Direction::HAUT_GAUCHE):
         return !Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT))
                && !Case::is_empty(depart->get_case_from_direction(Case::Direction::GAUCHE));
+    default:
+        return false;
+    }
+}
+/*
+ * Methode permettant de savoir si un déplacement selon un dépalcement à partir d'un case départ dans une direction j est un glissement.
+ * La variable case_interdite qui est par défaut à nullptr permet de ne pas glisser par rapport à cette case.
+ * En effet, nous avons besoin pour le d
+*/
+
+bool Insecte::est_un_glissement(const Case* depart, Case::Direction d, const Case* const case_interdite)
+{
+    switch (d)
+    {
+    case(Case::Direction::HAUT_DROIT):
+        return (!Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)) && depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=case_interdite)
+               || (!Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE)) && depart->get_case_from_direction(Case::Direction::DROITE)!=case_interdite);
+    case(Case::Direction::DROITE):
+        return (!Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT)) && depart->get_case_from_direction(Case::Direction::HAUT_DROIT)!=case_interdite)
+               || (!Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_DROIT))&& depart->get_case_from_direction(Case::Direction::BAS_DROIT)!=case_interdite);
+    case(Case::Direction::BAS_DROIT):
+        return (!Case::is_empty(depart->get_case_from_direction(Case::Direction::DROITE)) && depart->get_case_from_direction(Case::Direction::DROITE)!=case_interdite)
+               || (!Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_GAUCHE))&& depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)!=case_interdite);
+    case(Case::Direction::BAS_GAUCHE):
+        return (!Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_DROIT))&& depart->get_case_from_direction(Case::Direction::BAS_DROIT)!=case_interdite)
+               || (!Case::is_empty(depart->get_case_from_direction(Case::Direction::GAUCHE)) && depart->get_case_from_direction(Case::Direction::GAUCHE)!=case_interdite);
+    case(Case::Direction::GAUCHE):
+        return (!Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE))&& depart->get_case_from_direction(Case::Direction::HAUT_GAUCHE)!=case_interdite)
+               || (!Case::is_empty(depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)) && depart->get_case_from_direction(Case::Direction::BAS_GAUCHE)!=case_interdite);
+    case(Case::Direction::HAUT_GAUCHE):
+        return (!Case::is_empty(depart->get_case_from_direction(Case::Direction::HAUT_DROIT))&& depart->get_case_from_direction(Case::Direction::HAUT_DROIT)!=case_interdite)
+               ||(!Case::is_empty(depart->get_case_from_direction(Case::Direction::GAUCHE))&& depart->get_case_from_direction(Case::Direction::GAUCHE)!=case_interdite);
     default:
         return false;
     }

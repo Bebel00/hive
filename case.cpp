@@ -1,3 +1,4 @@
+
 #include "case.h"
 #include "insecte.h"
 #include "graphicscase.h"
@@ -157,4 +158,3 @@ Team Case::get_team() const
 }
 
 Case::~Case() = default;
-

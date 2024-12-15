@@ -6,7 +6,6 @@
 #include "case.h"
 #include "teams.h"
 #include "types.h"
-#include "plateau.h"
 
 class Insecte
 {
@@ -32,7 +31,6 @@ public:
 
     static bool verifier_placement(const Case* const c, const Team team);
 
-
     void placer(Case* const c);
     void bouger(Case* const c);
 
@@ -57,7 +55,8 @@ protected:
     static bool move_casse_ruche(Case* const case_depart);
     static void compter_nb_insecte_connecte(Case* const case_depart, unsigned int& nb_trouve);
 
-    static bool move_trop_serre(Case* depart, Case::Direction d);
+    static bool move_trop_serre(const Case* const depart, Case::Direction d);
+    static bool est_un_glissement(const Case* const depart, Case::Direction d, const Case* const case_interdite);
 };
 
 #endif // INSECTE_H
