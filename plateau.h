@@ -1,22 +1,23 @@
-
 #ifndef PLATEAU_H
 #define PLATEAU_H
 
 #include "case.h"
 #include "teams.h"
+
 #include <vector>
 #include <array>
-#include "QWidget"
-#include "QGridLayout"
+
+#include <QWidget>
+#include <QGridLayout>
 #include <QGraphicsScene>
 
-class Plateau : public QGraphicsScene
+class Plateau
 {
-    Q_OBJECT
-
 public:
     Plateau();
     ~Plateau();
+
+    friend class GraphicsPlateau;
 
     void deplacer_insecte(class Case* case_depart, class Case* case_fin);
 
@@ -42,11 +43,10 @@ public:
      */
     void explorer_adjacence_2(std::array<std::array<Case*, 9>, 5>& adjacence, Case* case_base);
 
-    Case* get_case_base  () const  { return case_base; }
+    Case* get_case_base() const  { return case_base; }
+    Case* get_case(QPoint p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
-
-    QGraphicsScene* get_scene() { return this; }
 
 private:
     Case* case_base;
@@ -54,22 +54,10 @@ private:
 
     bool tenter_supprimer_case(Case* c);
 
-    constexpr static float echelle_plateau = 20.0;
-
     void add_case(Case* c);
 
-    Case* case_selectionnee = nullptr;
-
-    void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
-
-protected:
-    //    void paintEvent(class QPaintEvent *);
-
-    //    QSize sizeHint() const;
-
-    //    QSize minimumSizeHint() const;
-
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+public:
+    std::unique_ptr<class GraphicsPlateau> graphics;
 
 };
 

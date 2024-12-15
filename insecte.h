@@ -1,4 +1,3 @@
-
 #ifndef INSECTE_H
 #define INSECTE_H
 
@@ -7,7 +6,7 @@
 #include "case.h"
 #include "teams.h"
 #include "types.h"
-#include"plateau.h"
+#include "plateau.h"
 #include "set"
 
 class Insecte
@@ -19,7 +18,7 @@ public:
     /*
      * Fonctions qui définissent l'identité d'un pion
      */
-    virtual Type get_type() const = 0;
+    virtual Type::Type get_type() const = 0;
     virtual std::string get_chemin_icone() const = 0;
 
     /*
@@ -39,8 +38,6 @@ public:
 
     static void get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles, const Case* case_interdite=nullptr);
     static void get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite=nullptr);
-
-
 
     void placer(Case* const c);
     void bouger(Case* const c);
@@ -63,7 +60,7 @@ private:
     Insecte* en_dessous;
 
 protected:
-    static bool move_casse_ruche(Case* const case_depart, const std::vector<Case*>& liste_cases);
+    static bool move_casse_ruche(Case* const case_depart);
     static void compter_nb_insecte_connecte(Case* const case_depart, unsigned int& nb_trouve);
 
     static bool move_trop_serre(Case* depart, Case::Direction d);

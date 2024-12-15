@@ -71,8 +71,10 @@ void Insecte::compter_nb_insecte_connecte(Case * const case_depart, unsigned int
  * Pour ça on vérifie qu'en enlevant le pion de la case passée en paramètre,
  * on peut toujours atteindre tous les pions de la ruche.
  */
-bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case *> &liste_cases)
+bool Insecte::move_casse_ruche(Case * const case_depart)
 {
+    const std::vector<Case*>& liste_cases = case_depart->get_plateau()->get_cases();
+
     if (Case::is_empty(case_depart))
         throw std::invalid_argument("Move casse ruche : impossible de bouger une case vide.");
 
@@ -168,12 +170,12 @@ bool Insecte::est_cerne() const
 //case_interdite est pas défaut à nullptr, il permet dans la fonction d'ajouter cette case dans le veteur.
 //On a besoin de cela notamment pour que l'areignée ne fasse pas de demi-tout pendant son déplacement
 void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case*>& glissements_possibles,const Case* case_interdite){
-    bool haut_droit=false;
-    bool haut_gauche=false;
-    bool droite=false;
-    bool gauche= false;
-    bool bas_gauche= false;
-    bool bas_droit= false;
+    bool haut_droit = false;
+    bool haut_gauche = false;
+    bool droite = false;
+    bool gauche = false;
+    bool bas_gauche = false;
+    bool bas_droit = false;
 
     // Si on a un pion en haut_droit alors on peut aller en haut_gauche ou à droite
     if (case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)->possede_pion() && case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)!=case_interdite){
@@ -232,12 +234,12 @@ void Insecte::get_glissements_possibles(const Case& case_depart,std::vector<Case
 }
 
 void Insecte::get_glissements_possibles(const Case& case_depart,std::set<Case*>& glissements_possibles, const Case* case_interdite){
-    bool haut_droit=false;
-    bool haut_gauche=false;
-    bool droite=false;
-    bool gauche= false;
-    bool bas_gauche= false;
-    bool bas_droit= false;
+    bool haut_droit = false;
+    bool haut_gauche = false;
+    bool droite = false;
+    bool gauche = false;
+    bool bas_gauche = false;
+    bool bas_droit = false;
 
     // Si on a un pion en haut_droit alors on peut aller en haut_gauche ou à droite
     if (case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)->possede_pion()  && case_depart.get_case_from_direction(Case::Direction::HAUT_DROIT)!=case_interdite){

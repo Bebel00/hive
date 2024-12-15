@@ -8,6 +8,9 @@ class Araignee : public Insecte
 public:
     Araignee(Team team);
     virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const override;
+
+private:
+    static bool enregistre;
 };
 
 #endif // ARAIGNEE_H

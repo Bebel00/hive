@@ -5,7 +5,6 @@
 #include "types.h"
 #include "joueur.h"
 
-#include <vector>
 #include <string>
 
 class Partie
@@ -14,11 +13,14 @@ public:
     Partie(std::string joueur1_pseudo, std::string joueur2_pseudo);
     ~Partie();
 
+    friend class GraphicsPartie;
+
     class Plateau* get_plateau() const { return plateau; }
-    class QGraphicsView* get_view() const { return view; }
+
     bool verifier_victoire();
 
     std::string jouer_tour_cli(std::string cmd);
+
 
 private:
     class Plateau* plateau;
@@ -29,8 +31,6 @@ private:
     unsigned int nb_tours = 0;
     Joueur* tour = &joueur1;
 
-    std::vector<class Insecte*> insectes;
-
     bool ajouter_insecte(Joueur& joueur, class Case* c, Type::Type type, bool bypass = false);
 
     std::string get_display_plateau() const;
@@ -40,9 +40,6 @@ private:
     void lire_prochain_token(std::string& cmd, std::string& token);
 
     void setup_test();
-
-    class QGraphicsView* view;
-
 };
 
 #endif // PARTIE_H

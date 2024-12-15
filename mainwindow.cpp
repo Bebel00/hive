@@ -1,12 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "partie.h"
-#include "QGridLayout"
+
+#include "graphicspartie.h"
+
+#include <QGridLayout>
 #include <QGraphicsView>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , partie(nullptr)
 {
     ui->setupUi(this);
     layout = new QGridLayout(centralWidget());
@@ -19,9 +22,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setPartie(Partie* const partie)
+void MainWindow::setPartie(GraphicsPartie* const partie)
 {
-    layout->addWidget(partie->get_view(), 1, 1, Qt::AlignCenter);
+    layout->addWidget(partie, 1, 1, Qt::AlignCenter);
     layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),0,0);
     layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),2,2);
     layout->setColumnStretch(0, 1);
@@ -31,4 +34,3 @@ void MainWindow::setPartie(Partie* const partie)
     layout->setRowStretch(2, 1);
     layout->setRowStretch(1, 9);
 }
-

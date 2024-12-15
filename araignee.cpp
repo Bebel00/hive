@@ -1,14 +1,11 @@
 #include "araignee.h"
 #include "insecte.h"
 #include "teams.h"
+#include "case.h"
+#include "plateau.h"
+#include "usineinsecte.h"
 
-Araignee::Araignee(Team team) : Insecte(team)
-{
-
-}
-
-
-
+#include <set>
 
 void Araignee::get_moves_possibles(std::vector<Case*>& moves_possibles) const
 {
@@ -44,9 +41,6 @@ void Araignee::get_moves_possibles(std::vector<Case*>& moves_possibles) const
         case3.erase(get_case());
         moves_possibles.clear();
         moves_possibles.insert(moves_possibles.end(), case3.begin(), case3.end());
-
-
-
     }
 
 }
