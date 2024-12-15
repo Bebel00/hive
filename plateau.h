@@ -7,10 +7,6 @@
 #include <vector>
 #include <array>
 
-#include <QWidget>
-#include <QGridLayout>
-#include <QGraphicsScene>
-
 class Plateau
 {
 public:
