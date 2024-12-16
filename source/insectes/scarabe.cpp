@@ -1,7 +1,8 @@
-#include "scarabe.h"
-#include "insecte.h"
-#include "case.h"
-#include "usineinsecte.h"
+#include "../../headers/insectes/insecte.h"
+#include "../../headers/insectes/scarabe.h"
+#include "../../headers/insectes/usineinsecte.h"
+
+#include "../../headers/teams.h"
 
 Scarabe::Scarabe(Team team) : Insecte(team)
 {

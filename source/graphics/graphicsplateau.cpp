@@ -1,13 +1,12 @@
-#include "graphicsplateau.h"
+#include "../../headers/plateau.h"
+#include "../../headers/insecte.h"
+#include "../../headers/joueur.h"
+
+#include "../../headers/graphics/graphicsplateau.h"
+#include "../../headers/graphics/graphicscase.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-
-#include "plateau.h"
-#include "insecte.h"
-#include "joueur.h"
-
-#include "graphicscase.h"
 
 GraphicsPlateau::GraphicsPlateau(Plateau* plateau, QObject *parent)
     : QGraphicsScene{parent}, plateau(plateau)

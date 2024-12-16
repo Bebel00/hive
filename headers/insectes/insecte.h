@@ -3,9 +3,10 @@
 
 #include <string>
 #include <vector>
-#include "case.h"
-#include "teams.h"
-#include "types.h"
+
+#include "../case.h"
+#include "../teams.h"
+#include "../types.h"
 
 class Insecte
 {

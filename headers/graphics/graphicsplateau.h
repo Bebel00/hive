@@ -3,8 +3,6 @@
 
 #include <QGraphicsScene>
 
-#include "plateau.h"
-
 class GraphicsPlateau : public QGraphicsScene
 {
     Q_OBJECT
@@ -13,7 +11,7 @@ public:
 
     QGraphicsScene* get_scene() { return this; }
 
-    Plateau* plateau;
+    class Plateau* plateau;
 
     void placer_insecte(GraphicsCase* c, Team team);
 

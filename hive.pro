@@ -9,47 +9,14 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    abeille.cpp \
-    araignee.cpp \
-    case.cpp \
-    coccinelle.cpp \
-    fourmi.cpp \
-    graphicscase.cpp \
-    graphicspartie.cpp \
-    graphicsplateau.cpp \
-    insecte.cpp \
-    joueur.cpp \
     main.cpp \
-    mainwindow.cpp \
-    moustique.cpp \
-    partie.cpp \
-    plateau.cpp \
-    sauterelle.cpp \
-    scarabe.cpp
+	source/*
 
-HEADERS += \
-    abeille.h \
-    araignee.h \
-    case.h \
-    coccinelle.h \
-    fourmi.h \
-    graphicscase.h \
-    graphicspartie.h \
-    graphicsplateau.h \
-    insecte.h \
-    joueur.h \
-    mainwindow.h \
-    moustique.h \
-    partie.h \
-    plateau.h \
-    sauterelle.h \
-    scarabe.h \
-    teams.h \
-    types.h \
-    usineinsecte.h
+HEADERS +=
+    headers/*
 
 FORMS += \
-    mainwindow.ui
+    source/mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

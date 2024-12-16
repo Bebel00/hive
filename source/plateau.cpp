@@ -1,7 +1,7 @@
-#include "plateau.h"
-#include "case.h"
-#include "insecte.h"
-#include "joueur.h"
+#include "../headers/plateau.h"
+#include "../headers/case.h"
+#include "../headers/insectes/insecte.h"
+#include "../headers/joueur.h"
 
 #include <iostream>
 #include <array>    // pour std::array une liste
@@ -9,7 +9,7 @@
 #include <algorithm> // pour std::find trouver un élément dans une liste
 #include <stdexcept>
 
-#include "graphicsplateau.h"
+#include "../headers/graphics/graphicsplateau.h"
 
 Plateau::Plateau()
 {

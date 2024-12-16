@@ -1,6 +1,8 @@
-#include "sauterelle.h"
-#include "insecte.h"
-#include "usineinsecte.h"
+#include "../../headers/insectes/insecte.h"
+#include "../../headers/insectes/sauterelle.h"
+#include "../../headers/insectes/usineinsecte.h"
+
+#include "../../headers/teams.h"
 
 #include <vector>
 #include <stdexcept>

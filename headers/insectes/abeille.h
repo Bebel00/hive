@@ -2,7 +2,7 @@
 #define ABEILLE_H
 
 #include "insecte.h"
-#include "types.h"
+#include "../types.h"
 
 #include <vector>
 

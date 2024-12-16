@@ -1,8 +1,8 @@
-#include "graphicspartie.h"
+#include "../../headers/graphics/graphicspartie.h"
+#include "../..//headers/graphics/graphicsplateau.h"
 
-#include "partie.h"
-#include "plateau.h"
-#include "graphicsplateau.h"
+#include "../../headers/partie.h"
+#include "../../headers/plateau.h"
 
 #include <QScrollBar>
 #include <QGraphicsView>

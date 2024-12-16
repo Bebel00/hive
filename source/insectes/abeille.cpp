@@ -1,7 +1,8 @@
-#include "abeille.h"
-#include "insecte.h"
-#include "teams.h"
-#include "usineinsecte.h"
+#include "../../headers/insectes/insecte.h"
+#include "../../headers/insectes/abeille.h"
+#include "../../headers/insectes/usineinsecte.h"
+
+#include "../../headers/teams.h"
 
 Abeille::Abeille(Team team) : Insecte(team)
 {

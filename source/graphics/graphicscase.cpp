@@ -1,12 +1,12 @@
-#include "graphicscase.h"
+#include "../../headers/graphics/graphicscase.h"
+
+#include "../../headers/case.h"
 
 #include <QFont>
 #include <QGraphicsTextItem>
 #include <QGraphicsPolygonItem>
 #include <QVector>
 #include <QPen>
-
-#include "case.h"
 
 GraphicsCase::GraphicsCase(Case* case_, QGraphicsItem* parent)
     : QGraphicsPolygonItem(parent), case_logique(case_)

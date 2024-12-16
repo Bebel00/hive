@@ -1,5 +1,5 @@
-#include "joueur.h"
-#include "teams.h"
+#include "../headers/joueur.h"
+#include "../headers/teams.h"
 #include <string>
 #include <stdexcept>
 #include <iostream>

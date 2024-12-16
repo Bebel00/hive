@@ -1,6 +1,6 @@
-#include "mainwindow.h"
-#include "partie.h"
-#include "graphicspartie.h"
+#include "headers/mainwindow.h"
+#include "headers/partie.h"
+#include "headers/graphics/graphicspartie.h"
 
 #include <QApplication>
 #include <iostream>

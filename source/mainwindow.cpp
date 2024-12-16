@@ -1,7 +1,7 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "../headers/mainwindow.h"
+#include "../ui_mainwindow.h"
 
-#include "graphicspartie.h"
+#include "../headers/graphics/graphicspartie.h"
 
 #include <QGridLayout>
 #include <QGraphicsView>

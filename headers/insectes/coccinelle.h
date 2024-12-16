@@ -2,7 +2,7 @@
 #define COCCINELLE_H
 
 #include "insecte.h"
-#include "types.h"
+#include "../types.h"
 
 class Coccinelle : public Insecte
 {

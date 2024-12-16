@@ -1,7 +1,8 @@
-#include "araignee.h"
-#include "teams.h"
-#include "usineinsecte.h"
-#include "insecte.h"
+#include "../../headers/insectes/insecte.h"
+#include "../../headers/insectes/araignee.h"
+#include "../../headers/insectes/usineinsecte.h"
+
+#include "../../headers/teams.h"
 
 #include <iostream>
 

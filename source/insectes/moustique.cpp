@@ -1,6 +1,8 @@
-#include "moustique.h"
-#include "usineinsecte.h"
-#include "insecte.h"
+#include "../../headers/insectes/insecte.h"
+#include "../../headers/insectes/moustique.h"
+#include "../../headers/insectes/usineinsecte.h"
+
+#include "../../headers/teams.h"
 
 Moustique::Moustique(Team team) : Insecte(team)
 {

@@ -1,6 +1,8 @@
-#include "fourmi.h"
-#include "teams.h"
-#include "usineinsecte.h"
+#include "../../headers/insectes/insecte.h"
+#include "../../headers/insectes/fourmi.h"
+#include "../../headers/insectes/usineinsecte.h"
+
+#include "../../headers/teams.h"
 
 Fourmi::Fourmi(Team team) : Insecte(team)
 {

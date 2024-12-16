@@ -1,13 +1,10 @@
-#include "partie.h"
-#include "teams.h"
-#include "plateau.h"
-#include "mainwindow.h"
+#include "../headers/partie.h"
+#include "../headers/teams.h"
+#include "../headers/plateau.h"
+#include "../headers/mainwindow.h"
 
-#include "insecte.h"
-#include "usineinsecte.h"
-
-#include <QGraphicsView>
-#include <QScrollBar>
+#include "../headers/insectes/insecte.h"
+#include "../headers/insectes/usineinsecte.h"
 
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
     : joueur1(Team::BLANC, joueur1_pseudo), joueur2(Team::NOIR, joueur2_pseudo)

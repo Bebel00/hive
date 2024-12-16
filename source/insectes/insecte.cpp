@@ -1,10 +1,11 @@
-#include "insecte.h"
-#include "case.h"
+#include "../../headers/insectes/insecte.h"
+
+#include "../../headers/teams.h"
+#include "../../headers/plateau.h"
+#include "../../headers/case.h"
+
 #include <vector>
 #include <stdexcept>
-#include "plateau.h"
-#include <set>
-
 
 Insecte::Insecte(Team team) : team(team),position(nullptr)
 {
