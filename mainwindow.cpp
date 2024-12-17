@@ -9,12 +9,13 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , partie(nullptr)
+    
 {
     ui->setupUi(this);
     layout = new QGridLayout(centralWidget());
     centralWidget()->setLayout(layout);
 
-
+    // Boutons pour afficher et fermer le menu pendant le jeu
     QPushButton* boutonMenu = new QPushButton("Afficher Menu", this);
     layout->addWidget(boutonMenu, 0, 0, Qt::AlignTop);
 
@@ -55,7 +56,9 @@ void MainWindow::setupConnections()
     // connexions internes
     connect(this, &MainWindow::menuFerme, this, &MainWindow::confirmerQuitterApplication);
     connect(this, &MainWindow::nouvellePartieDemandee, this, &MainWindow::recommencerPartie);
+   
 }
+
 
 
 
