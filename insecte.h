@@ -44,6 +44,8 @@ public:
     const std::unique_ptr<Insecte>& get_en_dessous() const { return en_dessous; }
 
     bool est_cerne() const;
+    //nombre jetons max
+    static int get_jetons_max(Type::Type type);
 
 private:
     // BLANC ou NOIR
