@@ -34,6 +34,15 @@ MainWindow::~MainWindow()
 {
     delete layout;
     delete ui;
+    if (partie) {
+        delete partie;
+    }
+}
+
+void MainWindow::setupConnections()
+{
+    connect(this, &MainWindow::menuFerme, this, &MainWindow::confirmerQuitterApplication);
+    connect(this, &MainWindow::nouvellePartieDemandee, this, &MainWindow::recommencerPartie);
 }
 
 void MainWindow::setPartie(Partie* const nouvellePartie)
@@ -97,5 +106,33 @@ void MainWindow::fermerMenu()
 
 void MainWindow::recommencerPartie()
 {
+    if (partie) {
+        delete partie;
+        partie = nullptr;
+    }
+
+    QString joueur1 = QInputDialog::getText(this, "Joueur 1", "Entrez le nom du joueur 1 :");
+    QString joueur2 = QInputDialog::getText(this, "Joueur 2", "Entrez le nom du joueur 2 :");
+
+    if (joueur1.isEmpty() || joueur2.isEmpty()) {
+        QMessageBox::warning(this, "Erreur", "Les noms des joueurs ne peuvent pas être vides !");
+        return;
+    }
+
+    partie = new Partie(joueur1.toStdString(), joueur2.toStdString());
+    setPartie(partie);
+}
+
+
+void MainWindow::confirmerQuitterApplication()
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Quitter",
+                                                              "Êtes-vous sûr de vouloir quitter ?",
+                                                              QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        qApp->quit();
+    }
+}
+
     emit nouvellePartieDemandee();
 }
