@@ -83,11 +83,3 @@ int main(int argc, char *argv[]) {
     menu.show();
     return a.exec();
 }
-    // Boucle CLI pour tester les commandes (désactivée en mode GUI)
-    /*
-    while (partie) {
-        std::string cmd;
-        std::getline(std::cin, cmd);
-        std::cout << partie->jouer_tour_cli(cmd) << std::endl;
-    }
-    */
