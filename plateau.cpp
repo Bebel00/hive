@@ -13,12 +13,13 @@
 
 #include "graphicsplateau.h"
 
-Plateau::Plateau(size_t nb)
+Plateau::Plateau(size_t nb, Partie* partie)
     // La taille des vecteurs est égale à 2 * nb_retour_possible car lorsqu'on supprime un déplacement, on supprime aussi le déplacement de l'adveraire suivant celui-ci
-    : dernier_deplacement_debut(nb*2),
+    : dernier_deplacement_pion(nb*2),
+    dernier_deplacement_debut(nb*2),
     dernier_deplacement_fin(nb*2),
-    dernier_deplacement_pion(nb*2),
-    nb_retour_possible(nb)
+    nb_retour_possible(nb),
+    partie(partie)
 {
     for (unsigned int i{ 0 }; i < nb * 2; i++)
     {
@@ -60,10 +61,10 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
         pion->bouger(case_fin);
         Insecte* i =pion.get();
 
+        case_fin->pion=std::move(pion);
+
         if (graphics && case_depart->graphics && case_fin->graphics)
             graphics->deplacer_insecte(case_depart->graphics.get(), case_fin->graphics.get());
-
-        case_fin->pion=std::move(pion);
 
         creer_alentours(case_fin);
 
@@ -108,7 +109,7 @@ void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin, bool undo)
 
 bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& joueur, bool bypass_check)
 {
-    if (Insecte::verifier_placement(c, joueur.get_team()) || bypass_check )
+    if (Insecte::verifier_placement(c, &joueur) || bypass_check )
     {
         c->pion = std::move(insecte);
         creer_alentours(c);
@@ -117,7 +118,7 @@ bool Plateau::placer_insecte(Case *c, std::unique_ptr<Insecte> insecte, Joueur& 
         joueur.utiliser(c->pion->get_type());
 
         if (graphics && c->graphics)
-            graphics->placer_insecte(c->graphics.get(), joueur.get_team());
+            graphics->placer_insecte(c->graphics.get(), &joueur);
 
         return true;
     }

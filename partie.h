@@ -26,7 +26,7 @@ public:
 
     void jouer_tour();
 
-    Team get_tour_team() const { return tour->get_team(); }
+    Joueur* get_tour_joueur() const { return tour; }
 
     unsigned int nb_retours_possibles;
 

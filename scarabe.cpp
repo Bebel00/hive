@@ -3,7 +3,7 @@
 #include "case.h"
 #include "usineinsecte.h"
 
-Scarabe::Scarabe(Team team) : Insecte(team)
+Scarabe::Scarabe(class Joueur* joueur) : Insecte(joueur)
 {
 
 }
@@ -41,6 +41,6 @@ void Scarabe::get_moves_possibles(std::vector<Case *> &move_possibles) const
     }
 }
 
-bool Scarabe::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::SCARABE, [](Team team) {
-    return std::make_unique<Scarabe>(team);
+bool Scarabe::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::SCARABE, [](Joueur* joueur) {
+    return std::make_unique<Scarabe>(joueur);
 });

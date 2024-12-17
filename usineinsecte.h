@@ -46,19 +46,19 @@
 
 class UsineInsecte
 {
-    using Fabrique = std::function<std::unique_ptr<Insecte>(Team)>;
+    using Fabrique = std::function<std::unique_ptr<Insecte>(Joueur*)>;
 
 public:
     static UsineInsecte& get_usine() { static UsineInsecte usine; return usine; }
 
     bool enregistrer_type(Type::Type t, Fabrique f) { map[t] = f; return true; }
 
-    std::unique_ptr<Insecte> fabriquer(Type::Type type, Team team) const
+    std::unique_ptr<Insecte> fabriquer(Type::Type type, Joueur* joueur) const
     {
         auto i = map.find(type);
 
         if (i != map.end())
-            return (i->second)(team);
+            return (i->second)(joueur);
 
         return nullptr;
     }

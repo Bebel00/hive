@@ -120,6 +120,11 @@ Case* Case::get_case_from_direction(Direction direction) const
 
 }
 
+class Joueur* Case::get_joueur() const
+{
+    return get_pion() ? pion->get_joueur() : nullptr;
+}
+
 Case** Case::case_ptr_from_direction(Direction direction)
 {
     Case** case_cherchee = nullptr;
@@ -150,11 +155,6 @@ Case** Case::case_ptr_from_direction(Direction direction)
 
     return case_cherchee;
 
-}
-
-Team Case::get_team() const
-{
-    if (pion) return pion->get_team(); else return Team::NONE;
 }
 
 Case::~Case() = default;

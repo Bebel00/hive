@@ -44,7 +44,6 @@ HEADERS += \
     plateau.h \
     sauterelle.h \
     scarabe.h \
-    teams.h \
     types.h \
     usineinsecte.h
 

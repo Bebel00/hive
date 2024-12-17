@@ -4,12 +4,11 @@
 #include "case.h"
 #include <vector>
 #include <array>
-#include "types.h"
 
 class Plateau
 {
 public:
-    Plateau(size_t nb_retour_possible=0);
+    Plateau(size_t nb_retour_possible, class Partie* partie);
     ~Plateau();
 
     friend class GraphicsPlateau;
@@ -47,12 +46,13 @@ public:
     void annuler_deplacement();
     void retirer_piece_sur_case(Case* c);
 
+    Partie* get_partie() { return partie; }
+
 private:
     Case* case_base;
     std::vector<Case*> liste_cases;
 
     bool tenter_supprimer_case(Case* c);
-
     void add_case(Case* c);
 
     //On stocke le dernier déplacement afin de pouvoir retourner en arrière
@@ -62,6 +62,8 @@ private:
     size_t nb_retour_possible;
 
     void retirer_insecte(Case* c);
+
+    Partie* partie;
 
 public:
     std::unique_ptr<class GraphicsPlateau> graphics;

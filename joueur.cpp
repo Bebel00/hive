@@ -1,10 +1,9 @@
 #include "joueur.h"
-#include "teams.h"
 #include <string>
 #include <stdexcept>
 #include <iostream>
 
-Joueur::Joueur(Team team, std::string pseudo) : team(team), pseudo(std::move(pseudo))
+Joueur::Joueur(QColor color, std::string pseudo) : color(color), pseudo(std::move(pseudo))
 {
     // Initialisation des jetons
     jetons[Type::Type::ABEILLE] = 1;

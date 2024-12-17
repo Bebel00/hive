@@ -6,7 +6,7 @@
 class Sauterelle : public Insecte
 {
 public:
-    Sauterelle(Team team);
+    Sauterelle(class Joueur* joueur);
     virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const override;
 
     virtual Type::Type get_type() const override { return Type::Type::SAUTERELLE; }

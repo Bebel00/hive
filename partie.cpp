@@ -1,5 +1,4 @@
 #include "partie.h"
-#include "teams.h"
 #include "plateau.h"
 
 #include "insecte.h"
@@ -11,10 +10,10 @@
 
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo, size_t retour)
     : nb_retours_possibles(retour),
-    joueur1(Team::BLANC, joueur1_pseudo),
-    joueur2(Team::NOIR, joueur2_pseudo)
+    joueur1(Qt::red, joueur1_pseudo),
+    joueur2(Qt::yellow, joueur2_pseudo)
 {
-    plateau = new Plateau(retour);
+    plateau = new Plateau(retour, this);
 
     // setup_test();
 }
@@ -125,7 +124,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
                             Case* c2 = plateau->get_case(p2);
                             if (c2)
                             {
-                                if (c->get_pion()->get_team() == tour->get_team())
+                                if (c->get_joueur() == tour)
                                 {
                                     std::vector<Case*> move_possibles;
                                     c->get_pion()->get_moves_possibles(move_possibles);
@@ -280,7 +279,7 @@ std::string Partie::jouer_tour_cli(std::string cmd)
 
 bool Partie::ajouter_insecte(Joueur& joueur, Case* c, Type::Type type, bool bypass)
 {
-    std::unique_ptr<Insecte> insecte = UsineInsecte::get_usine().fabriquer(type, joueur.get_team());
+    std::unique_ptr<Insecte> insecte = UsineInsecte::get_usine().fabriquer(type, &joueur);
 
     return (joueur.peut_utiliser(type) && plateau->placer_insecte(c, std::move(insecte), joueur, bypass)) || bypass;
 }
@@ -376,7 +375,7 @@ bool Partie::verifier_victoire_joueur(const Joueur& joueur)
     Case* abeille_joueur = nullptr;
     for (auto c : plateau->get_cases())
     {
-        if (c->get_pion()->get_type() == Type::Type::ABEILLE && c->get_pion()->get_team() == joueur.get_team())
+        if (c->get_pion()->get_type() == Type::Type::ABEILLE && c->get_joueur() == &joueur)
         {
             abeille_joueur = c;
             break;

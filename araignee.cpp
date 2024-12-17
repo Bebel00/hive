@@ -5,7 +5,7 @@
 
 #include <set>
 
-Araignee::Araignee(Team team) : Insecte(team) { }
+Araignee::Araignee(class Joueur* joueur) : Insecte(joueur) { }
 
 void Araignee::get_moves_possibles(std::vector<Case*>& move_possibles) const {
     std::set<Case*> visited;
@@ -34,6 +34,6 @@ void Araignee::get_moves_possibles(std::vector<Case*>& move_possibles) const {
     dfs(get_case(), 0, dfs);
 }
 
-bool Araignee::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::ARAIGNEE, [](Team team) {
-    return std::make_unique<Araignee>(team);
+bool Araignee::enregistre = UsineInsecte::get_usine().enregistrer_type(Type::Type::ARAIGNEE, [](Joueur* joueur) {
+    return std::make_unique<Araignee>(joueur);
 });

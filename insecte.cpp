@@ -1,23 +1,23 @@
 #include "insecte.h"
 #include "case.h"
 #include "plateau.h"
+#include "joueur.h"
 
 #include <vector>
 #include <stdexcept>
 
-Insecte::Insecte(Team team) : team(team)
+Insecte::Insecte(Joueur *joueur) : joueur(joueur)
 {
-
 }
 
-void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team)
+void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Joueur* joueur)
 {
     for (auto i_case : liste_cases)
-        if (Insecte::verifier_placement(i_case, team))
+        if (Insecte::verifier_placement(i_case, joueur))
             placements_possibles.push_back(i_case);
 }
 
-bool Insecte::verifier_placement(const Case * const c, const Team team)
+bool Insecte::verifier_placement(const Case * const c, const Joueur* joueur)
 {
     if (c->get_plateau()->get_cases().size() == 1 && c == c->get_plateau()->get_case_base())
         return true;
@@ -41,7 +41,7 @@ bool Insecte::verifier_placement(const Case * const c, const Team team)
         // Si la case n'est pas vide on regarde son contenu
         if (!is_empty)
         {
-            if (c_direction->get_team() == team)
+            if (c_direction->get_joueur() == joueur)
                 // il y a un allié
                 a_allie = true;
 

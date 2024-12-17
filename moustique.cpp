@@ -2,7 +2,7 @@
 #include "usineinsecte.h"
 #include "insecte.h"
 
-Moustique::Moustique(Team team) : Insecte(team)
+Moustique::Moustique(Joueur* joueur) : Insecte(joueur)
 {
 
 }
@@ -17,7 +17,7 @@ void Moustique::get_moves_possibles(std::vector<Case *> &move_possibles) const
 
             if (!Case::is_empty(c))
             {
-                std::unique_ptr<Insecte> i = UsineInsecte::get_usine().fabriquer(c->get_pion()->get_type(), get_team());
+                std::unique_ptr<Insecte> i = UsineInsecte::get_usine().fabriquer(c->get_pion()->get_type(), get_joueur());
                 i->placer(get_case());
                 i->get_moves_possibles(move_possibles);
             }

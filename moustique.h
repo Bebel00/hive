@@ -6,7 +6,7 @@
 class Moustique : public Insecte
 {
 public:
-    Moustique(Team team);
+    Moustique(Joueur* joueur);
 
     virtual Type::Type get_type() const override { return Type::Type::ABEILLE; }
     virtual std::string get_chemin_icone() const override { return ""; }

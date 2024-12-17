@@ -6,7 +6,7 @@
 class Scarabe : public Insecte
 {
 public:
-    Scarabe(Team team);
+    Scarabe(class Joueur* joueur);
 
     virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const override;
 

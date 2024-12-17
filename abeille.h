@@ -9,7 +9,7 @@
 class Abeille : public Insecte
 {
 public:
-    Abeille(Team team);
+    Abeille(class Joueur* joueur);
     /*
      * Fonctions qui définissent l'identité d'un pion
      */

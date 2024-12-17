@@ -1,16 +1,17 @@
 #ifndef JOUEUR_H
 #define JOUEUR_H
 
-#include "teams.h"
 #include "types.h"
 
 #include <string>
 #include <unordered_map>
 
+#include <QColor>
+
 class Joueur
 {
 public:
-    Joueur(Team team, std::string pseudo);
+    Joueur(QColor color, std::string pseudo);
 
     void utiliser(Type::Type type);
     void remettre(Type::Type type);
@@ -19,12 +20,12 @@ public:
     bool est_abeille_placee() const;
 
     std::string get_pseudo() const { return pseudo; }
-    Team get_team() const { return team; }
+    QColor get_color() const { return color; }
 
     void afficher_jetons() const;
 
 private:
-    Team team;
+    QColor color;
 
     std::unordered_map<Type::Type, unsigned int> jetons;
 

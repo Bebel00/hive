@@ -15,7 +15,7 @@ public:
 
     Plateau* plateau;
 
-    void placer_insecte(GraphicsCase* c, Team team);
+    void placer_insecte(GraphicsCase* c, Joueur* joueur);
     void deplacer_insecte(GraphicsCase* depart, GraphicsCase* arrivee);
     void retirer_insecte(GraphicsCase* c);
     void add_case(Case* c);
@@ -28,6 +28,7 @@ private:
 
     void surbriller_cases(std::vector<Case*>& cases, QColor color, qreal zvalue);
 
+    std::vector<Case*> move_possibles;
 
 };
 

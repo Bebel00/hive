@@ -1,8 +1,6 @@
 #ifndef CASE_H
 #define CASE_H
 
-#include "teams.h"
-
 #include <memory>
 #include <QPoint>
 
@@ -70,7 +68,7 @@ public:
     Case* get_case_from_direction(Direction direction) const;
 
     // getter pour l'équipe de la case
-    Team get_team() const;
+    class Joueur* get_joueur() const;
 
     // getter pour si la case a un pion
     bool possede_pion() const { return pion != nullptr; }

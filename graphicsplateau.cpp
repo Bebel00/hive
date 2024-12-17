@@ -6,8 +6,11 @@
 #include "plateau.h"
 #include "insecte.h"
 #include "joueur.h"
+#include "partie.h"
 
 #include "graphicscase.h"
+
+#include <string>
 
 GraphicsPlateau::GraphicsPlateau(Plateau* plateau, QObject *parent)
     : QGraphicsScene{parent}, plateau(plateau)
@@ -16,11 +19,11 @@ GraphicsPlateau::GraphicsPlateau(Plateau* plateau, QObject *parent)
     {
         add_case(i_case);
         if (i_case->possede_pion())
-            placer_insecte(i_case->graphics.get(), i_case->get_team());
+            placer_insecte(i_case->graphics.get(), i_case->get_joueur());
     }
 }
 
-void GraphicsPlateau::placer_insecte(GraphicsCase* c, Team team)
+void GraphicsPlateau::placer_insecte(GraphicsCase* c, Joueur *joueur)
 {
     QBrush brush;
     brush.setColor(Qt::darkCyan);
@@ -31,11 +34,7 @@ void GraphicsPlateau::placer_insecte(GraphicsCase* c, Team team)
     // La première lettre du type
     c->textItem->setPlainText(QString(type_to_str(c->case_logique->pion->get_type())[0]));
 
-    if (team == Team::BLANC)
-        c->textItem->setDefaultTextColor(Qt::white);
-
-    else
-        c->textItem->setDefaultTextColor(Qt::black);
+    c->textItem->setDefaultTextColor(joueur->get_color());
 }
 
 void GraphicsPlateau::deplacer_insecte(GraphicsCase* depart, GraphicsCase* arrivee)
@@ -44,11 +43,7 @@ void GraphicsPlateau::deplacer_insecte(GraphicsCase* depart, GraphicsCase* arriv
     {
         depart->textItem->setPlainText(QString(type_to_str(depart->case_logique->pion->get_type())[0]));
 
-        if (depart->case_logique->get_pion()->get_team() == Team::BLANC)
-            depart->textItem->setDefaultTextColor(Qt::white);
-
-        else
-            depart->textItem->setDefaultTextColor(Qt::black);
+        depart->textItem->setDefaultTextColor(depart->case_logique->get_joueur()->get_color());
     }
     else
     {
@@ -59,7 +54,7 @@ void GraphicsPlateau::deplacer_insecte(GraphicsCase* depart, GraphicsCase* arriv
     }
 
     if (arrivee)
-        placer_insecte(arrivee, arrivee->case_logique->get_pion()->get_team());
+        placer_insecte(arrivee, arrivee->case_logique->get_pion()->get_joueur());
 }
 
 void GraphicsPlateau::retirer_insecte(GraphicsCase *c)
@@ -91,7 +86,21 @@ void GraphicsPlateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         {
             if (case_cliquee != case_selectionnee)
             {
+                if (std::find(move_possibles.begin(), move_possibles.end(), case_cliquee->case_logique) != move_possibles.end())
+                {
+                    std::string command = "move " + std::to_string(int(case_selectionnee->case_logique->position.x())) + " "
+                                          + std::to_string(int(case_selectionnee->case_logique->position.y())) + " "
+                                          + std::to_string(int(case_cliquee->case_logique->position.x())) + " "
+                                          + std::to_string(int(case_cliquee->case_logique->position.y()));
+                    plateau->partie->jouer_tour_cli(command);
 
+                    // Reset la surbrillance
+                    surbriller_cases(plateau->liste_cases, Qt::red, 0);
+
+                    case_selectionnee = nullptr;
+
+                    return;
+                }
                 // Reset la surbrillance
                 surbriller_cases(plateau->liste_cases, Qt::red, 0);
 
@@ -99,9 +108,10 @@ void GraphicsPlateau::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 case_selectionnee->setPen(QPen(Qt::cyan));
                 case_selectionnee->setZValue(1);
 
-                if (case_selectionnee->case_logique->possede_pion())
+                if (case_selectionnee->case_logique->possede_pion()
+                    && case_selectionnee->case_logique->get_pion()->get_joueur() == plateau->get_partie()->get_tour_joueur())
                 {
-                    std::vector<Case*> move_possibles;
+                    move_possibles.clear();
                     case_selectionnee->case_logique->get_pion()->get_moves_possibles(move_possibles);
                     surbriller_cases(move_possibles, Qt::yellow, 0.5);
                 }

@@ -4,13 +4,12 @@
 #include <string>
 #include <vector>
 #include "case.h"
-#include "teams.h"
 #include "types.h"
 
 class Insecte
 {
 public:
-    Insecte(Team team);
+    Insecte(class Joueur* joueur);
     virtual ~Insecte() {}
 
     /*
@@ -27,9 +26,9 @@ public:
     virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const=0 ;
 
     // Fonction qui met la liste des placements possibles dans "placements_possibles" (la valeur de retour)
-    static void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team);
+    static void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Joueur* joueur);
 
-    static bool verifier_placement(const Case* const c, const Team team);
+    static bool verifier_placement(const Case* const c, const Joueur* joueur);
 
     void placer(Case* const c);
     void bouger(Case* const c);
@@ -37,15 +36,14 @@ public:
     // Getter pour la case
     Case* get_case() const { return position; }
 
-    Team get_team() const { return team; }
+    class Joueur* get_joueur() const { return joueur; }
 
     const std::unique_ptr<Insecte>& get_en_dessous() const { return en_dessous; }
 
     bool est_cerne() const;
 
 private:
-    // BLANC ou NOIR
-    Team team;
+    Joueur* joueur;
 
     Case* position;
 

@@ -70,4 +70,7 @@ void GraphicsCase::setBrush(const QBrush &brush)
 
     if (!hovered)
         QGraphicsPolygonItem::setBrush(brush);
+
+    else
+        remplissage = brush;
 }

@@ -7,7 +7,7 @@
 class Coccinelle : public Insecte
 {
 public:
-    Coccinelle(Team team);
+    Coccinelle(class Joueur* joueur);
 
 
     virtual Type::Type get_type() const override { return Type::Type::COCCINELLE; }
