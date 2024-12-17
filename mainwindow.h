@@ -21,9 +21,9 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    class Partie* partie;
+    class Partie* partie=nullptr;
 
-    class QGridLayout* layout;
+    class QGridLayout* layout=nullptr;
 
     void afficherMenu();
     void fermerMenu();
