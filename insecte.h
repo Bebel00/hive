@@ -45,7 +45,8 @@ public:
 
     bool est_cerne() const;
     //nombre jetons max
-    static int get_jetons_max(Type::Type type);
+    virtual int get_jetons_max() const = 0;
+
 
 private:
     // BLANC ou NOIR
