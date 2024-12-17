@@ -5,15 +5,15 @@
 #include <iostream>
 
 Joueur::Joueur(Team team, std::string pseudo) : team(team), pseudo(std::move(pseudo)) {
-    // Initialisation des jetons
-    jetons[Type::Type::ABEILLE] = 1;
-    jetons[Type::Type::ARAIGNEE] = 2;
-    jetons[Type::Type::COCCINELLE] = 1;
-    jetons[Type::Type::FOURMI] = 3;
-    jetons[Type::Type::SCARABE] = 2;
-    jetons[Type::Type::SAUTERELLE] = 2;
+    // récupère le type de l'insecte et le nombre de jetons max associé 
+    
+    jetons[Type::Type::ABEILLE] = UsineInsecte::get_usine().get_jetons_max(Type::Type::ABEILLE);
+    jetons[Type::Type::ARAIGNEE] = UsineInsecte::get_usine().get_jetons_max(Type::Type::ARAIGNEE);
+    jetons[Type::Type::COCCINELLE] = UsineInsecte::get_usine().get_jetons_max(Type::Type::COCCINELLE);
+    jetons[Type::Type::FOURMI] = UsineInsecte::get_usine().get_jetons_max(Type::Type::FOURMI);
+    jetons[Type::Type::SCARABE] = UsineInsecte::get_usine().get_jetons_max(Type::Type::SCARABE);
+    jetons[Type::Type::SAUTERELLE] = UsineInsecte::get_usine().get_jetons_max(Type::Type::SAUTERELLE);
 }
-
 void Joueur::utiliser(Type::Type type) {
     if (type == Type::Type::NONE) {
         throw std::invalid_argument("Type d'insecte invalide.");
@@ -54,22 +54,7 @@ void Joueur::remettre(Type::Type type) {
 }
 
 int Joueur::getJetonsMax(Type::Type type) const {
-    switch (type) {
-    case Type::Type::ABEILLE:
-        return 1;
-    case Type::Type::ARAIGNEE:
-        return 2;
-    case Type::Type::COCCINELLE:
-        return 1;
-    case Type::Type::FOURMI:
-        return 3;
-    case Type::Type::SCARABE:
-        return 2;
-    case Type::Type::SAUTERELLE:
-        return 2;
-    default:
-        throw std::invalid_argument("Type d'insecte invalide.");
-    }
+    return UsineInsecte::get_usine().get_jetons_max(type);
 }
 
 bool Joueur::peutUtiliser(Type::Type type) const {
