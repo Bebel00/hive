@@ -10,13 +10,13 @@
 
 MainMenu::MainMenu(QWidget* parent) : QGraphicsView(parent) {
     mainMenuScene = new QGraphicsScene(this);
-    newGameScene = new QGraphicsScene(this);
-    settingsScene = new QGraphicsScene(this);
+    settingsWindow = new Settings(this);
+    newGameWindow = new NewGame(this);
 
     settingsWindow = new Settings(this);
 
     setupMainMenu();
-    setupNewGameScene();
+    
     
     setScene(mainMenuScene);
     connect(settingsWindow, &Settings::saveSettings, this, &MainMenu::appliquerSettings);
