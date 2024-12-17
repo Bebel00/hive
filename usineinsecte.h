@@ -27,6 +27,13 @@ public:
         return nullptr;
     }
 
+     int get_jetons_max(Type::Type type) const {
+        auto insecte_temp = fabriquer(type, Team::BLANC);
+        if (insecte_temp) {
+            return insecte_temp->get_jetons_max();
+        }
+        return 0;
+    }
 private:
     std::unordered_map<Type::Type, Fabrique> map;
 
