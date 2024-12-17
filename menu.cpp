@@ -1,12 +1,10 @@
 #include "mainmenu.h"
+#include "settings.h"
 #include <QGraphicsTextItem>
 #include <QFont>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
 #include <QApplication>
-#include <QLineEdit>
-#include <QRadioButton>
-#include <QButtonGroup>
 #include <QMessageBox>
 
 MainMenu::MainMenu(QWidget* parent) : QGraphicsView(parent) {
@@ -14,10 +12,13 @@ MainMenu::MainMenu(QWidget* parent) : QGraphicsView(parent) {
     newGameScene = new QGraphicsScene(this);
     settingsScene = new QGraphicsScene(this);
 
+    settingsWindow = new Settings(this);
+
     setupMainMenu();
     setupNewGameScene();
     
     setScene(mainMenuScene);
+    connect(settingsWindow, &Settings::saveSettings, this, &MainMenu::appliquerSettings);
 }
 
 void MainMenu::setupMainMenu() {
@@ -78,70 +79,29 @@ void MainMenu::setupNewGameScene() {
     });
 }
 
-void MainMenu::setupSettingsScene() {
-    QGraphicsTextItem* settingsTitle = new QGraphicsTextItem("Paramètres du Jeu");
-    settingsTitle->setFont(QFont("Arial", 24));
-    settingsTitle->setPos(100, 50);
-    settingsScene->addItem(settingsTitle);
-
-    QGraphicsTextItem* player1Label = new QGraphicsTextItem("Nom du Joueur 1:");
-    player1Label->setPos(100, 120);
-    settingsScene->addItem(player1Label);
-
-    QLineEdit* player1Input = new QLineEdit();
-    QGraphicsProxyWidget* player1InputProxy = settingsScene->addWidget(player1Input);
-    player1InputProxy->setPos(250, 120);
-
-    QGraphicsTextItem* opponentLabel = new QGraphicsTextItem("Choisissez l'adversaire:");
-    opponentLabel->setPos(100, 180);
-    settingsScene->addItem(opponentLabel);
-
-    QRadioButton* vsPlayerButton = new QRadioButton("Contre un autre joueur");
-    QRadioButton* vsIAButton = new QRadioButton("Contre l'IA");
-    QGraphicsProxyWidget* vsPlayerButtonProxy = settingsScene->addWidget(vsPlayerButton);
-    QGraphicsProxyWidget* vsIAButtonProxy = settingsScene->addWidget(vsIAButton);
-    vsPlayerButtonProxy->setPos(250, 200);
-    vsIAButtonProxy->setPos(250, 230);
-
-    QButtonGroup* opponentGroup = new QButtonGroup(this);
-    opponentGroup->addButton(vsPlayerButton);
-    opponentGroup->addButton(vsIAButton);
-
-    QPushButton* backButton = new QPushButton("Retour");
-    QGraphicsProxyWidget* backButtonProxy = settingsScene->addWidget(backButton);
-    backButtonProxy->setPos(100, 300);
-
-    connect(backButton, &QPushButton::clicked, [=]() {
-        setScene(mainMenuScene);
-    });
-
-   
-    QPushButton* saveButton = new QPushButton("Sauvegarder");
-    QGraphicsProxyWidget* saveButtonProxy = settingsScene->addWidget(saveButton);
-    saveButtonProxy->setPos(250, 300);
-
-    connect(saveButton, &QPushButton::clicked, [=]() {
-        if (player1Input->text().isEmpty()) {
-            QMessageBox::warning(this, "Erreur", "Veuillez entrer le nom du Joueur 1.");
-            return;
-        }
-
-        QString joueur1 = player1Input->text();
-        QString joueur2 = (vsPlayerButton->isChecked()) ? "Joueur 2" : "IA";
-        bool contreIA = vsIAButton->isChecked();
-
-        emit nouvellePartieDemandee(joueur1, joueur2, contreIA);
-        setScene(mainMenuScene);
-    });
-}
 
 void MainMenu::goToNewGame() {
-    emit nouvellePartieDemandee(); 
+    setScene(newGameScene);
 }
 
 void MainMenu::goToSettings() {
-    setScene(settingsScene);
+    settingsWindow->show();  // Affiche la fenêtre Settings
 }
+
 void MainMenu::quitApplication() {
-    emit quitapplication(); 
+    emit quitApplication();
 }
+
+void MainMenu::appliquerSettings(QString joueur1, QString joueur2, bool contreIA, QSet<QString> extensions, int nbUndo) {
+    QMessageBox::information(this, "Paramètres Appliqués", 
+                             QString("Joueur 1 : %1\nJoueur 2 : %2\nIA : %3\nExtensions : %4\nTours annulables : %5")
+                             .arg(joueur1)
+                             .arg(joueur2)
+                             .arg(contreIA ? "Oui" : "Non")
+                             .arg(extensions.join(", "))
+                             .arg(nbUndo));
+
+    setScene(mainMenuScene);
+}
+   
+ 
