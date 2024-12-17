@@ -23,9 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
     layout->addWidget(boutonFermerMenu, 0, 1, Qt::AlignTop);
 
 
-    connect(boutonMenu, &QPushButton::clicked, this, &MainWindow::afficherMenu);
-    connect(boutonFermerMenu, &QPushButton::clicked, this, &MainWindow::fermerMenu);
-
     
     boutonFermerMenu->setEnabled(false);
     // Configuration des connexions
@@ -43,12 +40,28 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupConnections()
 {
+    QPushButton* boutonMenu = qobject_cast<QPushButton*>(layout->itemAtPosition(0, 0)->widget());
+    QPushButton* boutonFermerMenu = qobject_cast<QPushButton*>(layout->itemAtPosition(0, 1)->widget());
+    
+   // connexions des boutons
+    if (boutonMenu) {
+        connect(boutonMenu, &QPushButton::clicked, this, &MainWindow::afficherMenu);
+    }
+
+    if (boutonFermerMenu) {
+        connect(boutonFermerMenu, &QPushButton::clicked, this, &MainWindow::fermerMenu);
+    }
+
+    // connexions internes
     connect(this, &MainWindow::menuFerme, this, &MainWindow::confirmerQuitterApplication);
     connect(this, &MainWindow::nouvellePartieDemandee, this, &MainWindow::recommencerPartie);
 }
 
+
+
 void MainWindow::setPartie(Partie* const nouvellePartie)
 {
+    
     // Supprime l'ancienne partie si elle existe
     if (partie)
     {
@@ -123,6 +136,10 @@ void MainWindow::recommencerPartie()
 
     partie = new Partie(joueur1.toStdString(), joueur2.toStdString());
     setPartie(partie);
+
+    //le signal pour notifier qu'une nouvelle partie demandée
+    emit nouvellePartieDemandee();
+    
 }
 
 
@@ -136,5 +153,5 @@ void MainWindow::confirmerQuitterApplication()
     }
 }
 
-    emit nouvellePartieDemandee();
-}
+    
+
