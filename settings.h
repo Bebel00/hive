@@ -15,7 +15,7 @@ signals:
     void backToMainMenu(); // Signal pour retourner au menu principal
 
 private:
-    QGraphicsScene* settingsScene;
+    QGraphicsScene* settingsScene=nullptr;
 
     void setupSettingsScene(); // Configure la scène des paramètres
 };
