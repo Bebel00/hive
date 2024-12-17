@@ -22,8 +22,8 @@ int main(int argc, char *argv[]) {
     // connecte le menu pour quitter l'application
     QObject::connect(&menu, &MainMenu::quitApplication, &a, &QApplication::quit);
 
-    // affiche le menu principal
-    menu.show();
+    // affiche le menu principal dans le mainwindow
+    mainWindow.setView(&menu);
 
     return a.exec();
 }
