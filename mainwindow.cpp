@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     
     boutonFermerMenu->setEnabled(false);
+    // Configuration des connexions
+    setupConnections();
 }
 
 MainWindow::~MainWindow()
