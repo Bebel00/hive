@@ -16,9 +16,9 @@ signals:
     void quitApplication();
 
 private:
-    QGraphicsScene* mainMenuScene;
-    QGraphicsScene* newGameScene;
-    QGraphicsScene* settingsScene;
+    QGraphicsScene* mainMenuScene=nullptr;
+    QGraphicsScene* newGameScene=nullptr;
+    QGraphicsScene* settingsScene=nullptr;
 
     void setupMainMenu();
     void setupNewGameScene();
