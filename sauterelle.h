@@ -11,6 +11,7 @@ public:
 
     virtual Type::Type get_type() const override { return Type::Type::SAUTERELLE; }
     virtual std::string get_chemin_icone() const override { return ""; }
+    virtual int get_jetons_max() const override { return 2; }
 
 private:
     Case* get_case_au_bout_direction(Case::Direction direction) const;
