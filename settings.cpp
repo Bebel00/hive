@@ -43,13 +43,44 @@ void Settings::setupSettingsScene() {
     opponentGroup->addButton(vsPlayerButton);
     opponentGroup->addButton(vsIAButton);
 
+    // cocher les extensions 
+    QGraphicsTextItem* extensionsLabel = new QGraphicsTextItem("Extensions disponibles:");
+    extensionsLabel->setPos(100, 260);
+    settingsScene->addItem(extensionsLabel);  
+
+    QCheckBox* moustiqueBox = new QCheckBox("Moustique");
+    QCheckBox* coccinelleBox = new QCheckBox("Coccinelle");
+    QCheckBox* cloporteBox = new QCheckBox("Cloporte");
+
+    QGraphicsProxyWidget* moustiqueProxy = settingsScene->addWidget(moustiqueBox);
+    QGraphicsProxyWidget* coccinelleProxy = settingsScene->addWidget(coccinelleBox);
+    QGraphicsProxyWidget* cloporteProxy = settingsScene->addWidget(cloporteBox);
+
+    moustiqueProxy->setPos(250, 300);
+    coccinelleProxy->setPos(250, 330);
+    cloporteProxy->setPos(250, 360);
+
+
+    // Boîte de sélection pour le nombre de tours annulables (undo)
+    QGraphicsTextItem* undoLabel = new QGraphicsTextItem("Nombre de tours annulables :");
+    undoLabel->setPos(100, 390);
+    settingsScene->addItem(undoLabel);
+
+    QSpinBox* undoSpinBox = new QSpinBox();
+    undoSpinBox->setRange(0, 10);  // limite entre 0 et 10 tours
+    undoSpinBox->setValue(3);      // valeur par défaut
+    QGraphicsProxyWidget* undoProxy = settingsScene->addWidget(undoSpinBox);
+    undoProxy->setPos(250, 390);
+
+
+    // boutons de retour et sauvegarde
     QPushButton* backButton = new QPushButton("Retour");
     QGraphicsProxyWidget* backButtonProxy = settingsScene->addWidget(backButton);
-    backButtonProxy->setPos(100, 300);
+    backButtonProxy->setPos(100, 450);
 
     QPushButton* saveButton = new QPushButton("Sauvegarder");
     QGraphicsProxyWidget* saveButtonProxy = settingsScene->addWidget(saveButton);
-    saveButtonProxy->setPos(250, 300);
+    saveButtonProxy->setPos(250, 450);
 
     connect(backButton, &QPushButton::clicked, this, &Settings::backToMainMenu);
 
@@ -58,8 +89,20 @@ void Settings::setupSettingsScene() {
             QMessageBox::warning(this, "Erreur", "Veuillez entrer le nom du Joueur 1.");
             return;
         }
+        //collecter les infos des joueurs 
         QString joueur1 = player1Input->text();
         QString joueur2 = vsPlayerButton->isChecked() ? "Joueur 2" : "IA";
-        emit saveSettings(joueur1, joueur2, vsIAButton->isChecked());
+
+        // collecter les extensions sélectionnées
+        QSet<QString> extensions;
+        if (moustiqueBox->isChecked()) extensions.insert("Moustique");
+        if (coccinelleBox->isChecked()) extensions.insert("Coccinelle");
+        if (cloporteBox->isChecked()) extensions.insert("Cloporte");
+
+        // récupère le nombre de tours d'annulation
+        int nbUndo = undoSpinBox->value();  
+
+        
+        emit saveSettings(joueur1, joueur2, vsIAButton->isChecked(),, extensions, nbUndo);
     });
 }
