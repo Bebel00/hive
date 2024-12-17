@@ -1,5 +1,6 @@
 #include "mainmenu.h"
 #include "settings.h"
+#include "newgame.h"
 #include <QGraphicsTextItem>
 #include <QFont>
 #include <QPushButton>
@@ -19,6 +20,8 @@ MainMenu::MainMenu(QWidget* parent) : QGraphicsView(parent) {
     
     setScene(mainMenuScene);
     connect(settingsWindow, &Settings::saveSettings, this, &MainMenu::appliquerSettings);
+    connect(newGameWindow, &NewGame::startGame, this, &MainMenu::nouvellePartieDemandee);
+    connect(newGameWindow, &NewGame::backToMainMenu, [=]() { setScene(mainMenuScene); });
 }
 
 void MainMenu::setupMainMenu() {
@@ -48,40 +51,9 @@ void MainMenu::setupMainMenu() {
     connect(quitButton, &QPushButton::clicked, this, &MainMenu::quitApplication);
 }
 
-void MainMenu::setupNewGameScene() {
-    
-    QGraphicsTextItem* newGameTitle = new QGraphicsTextItem("Nouvelle Partie");
-    newGameTitle->setFont(QFont("Arial", 24));
-    newGameTitle->setPos(100, 50);
-    newGameScene->addItem(newGameTitle);
-    
-     // affiche les paramètres du jeu 
-    QGraphicsTextItem* playerInfo = new QGraphicsTextItem("Joueur 1: [Nom]\nJoueur 2: [Nom ou IA]");
-    playerInfo->setFont(QFont("Arial", 16));
-    playerInfo->setPos(100, 120);
-    newGameScene->addItem(playerInfo);
-
-    QPushButton* startButton = new QPushButton("Démarrer");
-    QGraphicsProxyWidget* startButtonProxy = newGameScene->addWidget(startButton);
-    startButtonProxy->setPos(100, 200);
-    
-    connect(startButton, &QPushButton::clicked, [=]() {
-        emit nouvellePartieDemandee();  
-    });
-    
-    QPushButton* backButton = new QPushButton("Retour");
-    QGraphicsProxyWidget* backButtonProxy = newGameScene->addWidget(backButton);
-    backButtonProxy->setPos(100, 250);
-
-    
-    connect(backButton, &QPushButton::clicked, [=]() {
-        setScene(mainMenuScene);
-    });
-}
-
 
 void MainMenu::goToNewGame() {
-    setScene(newGameScene);
+    newGameWindow->show(); 
 }
 
 void MainMenu::goToSettings() {
