@@ -8,6 +8,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+class Partie;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -24,11 +25,13 @@ private:
     class Partie* partie=nullptr;
 
     class QGridLayout* layout=nullptr;
-
+     void setupConnections();
     void afficherMenu();
     void fermerMenu();
-
     void recommencerPartie();
+    void confirmerQuitterApplication();
+    
+
 
 signals:
     void menuFerme();
