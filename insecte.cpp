@@ -122,6 +122,15 @@ bool Insecte::move_casse_ruche(Case * const case_depart, const std::vector<Case 
     return true;
 }
 
+static int get_jetons_max(Type::Type type) {
+        auto& usine = UsineInsecte::get_usine();
+        auto insecte = usine.fabriquer(type, Team::BLANC); // Peu importe l'équipe ici parce que création temporaire
+        if (insecte) {
+            return insecte->get_jetons_max();
+        }
+        return 0; // Par défaut si non trouvé
+    }
+
 bool Insecte::move_trop_serre(Case* depart, Case::Direction d)
 {
     switch (d)
