@@ -2,6 +2,8 @@
 #define PLATEAU_H
 
 #include "case.h"
+#include "insecte.h"
+#include "joueur.h"
 
 #include <vector>
 #include <array>
@@ -42,8 +44,8 @@ public:
      */
     void explorer_adjacence_2(std::array<std::array<Case*, 9>, 5>& adjacence, Case* case_base);
 
-    Case* get_case_base() const  { return case_base; }
-    Case* get_case(Position p) const { for (auto c : liste_cases) if (p == c->get_position()) return c; return nullptr; }
+    Case* get_case_base() const;
+    Case* get_case(Position p) const;
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
 
@@ -52,6 +54,7 @@ public:
 private:
     Case* case_base;
     std::vector<Case*> liste_cases;
+
 
     bool tenter_supprimer_case(Case* c);
 
