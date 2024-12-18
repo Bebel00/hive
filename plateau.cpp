@@ -13,6 +13,8 @@
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QScrollBar>
 
 Plateau::Plateau() : QGraphicsScene()
 {
@@ -29,6 +31,24 @@ Plateau::~Plateau()
         delete c;
     }
 
+}
+Case* Plateau::get_case(const Position& position) const {
+    for (auto c : liste_cases) {
+        if (c->get_position() == position) {
+            return c;
+        }
+    }
+    return nullptr;
+}
+
+// Récupérer toutes les cases
+const std::vector<Case*>& Plateau::get_cases() const {
+    return liste_cases;
+}
+
+// ibtenir la case de base
+Case* Plateau::get_case_base() const {
+    return case_base;
 }
 
 void Plateau::deplacer_insecte(Case *case_depart, Case *case_fin)
