@@ -140,5 +140,5 @@ void Settings::setupButtons() {
 {
     emit backToMainMenu();  // signal pour revenir au menu principal
 }
-    });
+    };
 }
