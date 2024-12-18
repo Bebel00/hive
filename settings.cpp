@@ -9,10 +9,11 @@
 #include <QMessageBox>
 #include <QSpinBox>
 
-Settings::Settings(QWidget* parent) : QGraphicsView(parent)
+Settings::Settings(QWidget* parent) : QGraphicsView(parent), settingsScene(new QGraphicsScene(this))
 {
-    settingsScene = new QGraphicsScene(this);
+    // configuration initiale
     setupSettingsScene();
+    //associe la scène
     setScene(settingsScene);
 }
 
