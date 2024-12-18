@@ -110,8 +110,10 @@ void Settings::setupButtons() {
     // Connexion des boutons
     connect(backButton, &QPushButton::clicked, this, &Settings::backToMainMenu);
 
-    connect(saveButton, &QPushButton::clicked, [=]() {
-        if (player1Input->text().isEmpty()) {
+    connect(saveButton, &QPushButton::clicked, [=]() 
+    {
+        if (player1Input->text().isEmpty()) 
+        {
             QMessageBox::warning(this, "Erreur", "Veuillez entrer le nom du Joueur 1.");
             return;
         }
@@ -127,7 +129,15 @@ void Settings::setupButtons() {
 
         int nbUndo = undoSpinBox->value();
 
-        // Émission du signal avec les paramètres
+        // signal avec les paramètres
+        
         emit saveSettings(joueur1, joueur2, vsIAButton->isChecked(), extensions, nbUndo);
+
+    }
+
+        void Settings::backToMainMenu() 
+{
+    emit backToMainMenu();  // signal pour revenir au menu principal
+}
     });
 }
