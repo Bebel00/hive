@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void setView(QWidget* view);  // méthode pour changer de vue
+    
 
     void setPartie(class Partie* const partie);
 
