@@ -2,11 +2,13 @@
 #include "settings.h"
 #include "newgame.h"
 #include <QGraphicsTextItem>
+#include <QGraphicsScene> 
 #include <QFont>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
 #include <QApplication>
 #include <QMessageBox>
+#include <QGraphicsView> 
 
 MainMenu::MainMenu(QWidget* parent) : QGraphicsView(parent) {
     mainMenuScene = new QGraphicsScene(this);
