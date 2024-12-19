@@ -9,6 +9,12 @@
 #include <QGraphicsView>
 #include <QScrollBar>
 #include <iostream>
+#include <memory>  
+#include <vector> 
+#include <string> 
+#include <stdexcept>
+#include <algorithm> 
+#include <utility> 
 
 Partie::Partie(std::string joueur1_pseudo, std::string joueur2_pseudo)
     : joueur1(Team::BLANC, joueur1_pseudo), joueur2(Team::NOIR, joueur2_pseudo)
