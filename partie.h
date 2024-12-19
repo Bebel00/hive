@@ -29,6 +29,8 @@ public:
     Joueur* get_tour_joueur() const { return tour; }
 
     unsigned int nb_retours_possibles;
+    int const get_gagnant() ;
+    void annuler_deplacement();
 
 
 private:
@@ -52,7 +54,6 @@ private:
 
     bool abeille_place(Joueur* joueur);
 
-    void annuler_deplacement();
 };
 
 #endif // PARTIE_H

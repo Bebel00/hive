@@ -375,7 +375,7 @@ bool Partie::verifier_victoire_joueur(const Joueur& joueur)
     Case* abeille_joueur = nullptr;
     for (auto c : plateau->get_cases())
     {
-        if (c->get_pion()->get_type() == Type::Type::ABEILLE && c->get_joueur() == &joueur)
+        if (c->get_pion()!= nullptr && c->get_pion()->get_type() == Type::Type::ABEILLE && c->get_joueur() == &joueur)
         {
             abeille_joueur = c;
             break;
@@ -411,4 +411,11 @@ void Partie::jouer_tour()
     }
 }
 
-
+int const Partie::get_gagnant() {
+    if(verifier_victoire_joueur(joueur1)){
+        return 1;
+    }else if(verifier_victoire_joueur(joueur2)){
+        return 2;
+    }
+    return 0;
+}

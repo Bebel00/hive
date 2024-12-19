@@ -18,7 +18,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setPartie(class GraphicsPartie* const partie);
+    void setPartie(class GraphicsPartie* const p);
 
 private slots:
     void onButtonAnnulerClicked();
@@ -31,6 +31,7 @@ private:
     class QGridLayout* layout;
     QPushButton *button;
     QLabel *annuler;
+    QWidget *banner;
 
 };
 #endif // MAINWINDOW_H

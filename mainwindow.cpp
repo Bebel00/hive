@@ -8,6 +8,12 @@
 #include <QGridLayout>
 #include <QGraphicsView>
 #include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+
+#include <QApplication>
+
+
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -27,8 +33,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setPartie(GraphicsPartie* const partie)
+void MainWindow::setPartie(GraphicsPartie* const p)
 {
+    partie=p;
     layout->addWidget(partie, 1, 1, Qt::AlignCenter);
 
     layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),0,0);
@@ -39,6 +46,7 @@ void MainWindow::setPartie(GraphicsPartie* const partie)
     layout->setRowStretch(0, 1);
     layout->setRowStretch(2, 1);
     layout->setRowStretch(1, 9);
+
 
     if (partie->partie->nb_retours_possibles > 0)
     {
@@ -55,6 +63,8 @@ void MainWindow::setPartie(GraphicsPartie* const partie)
         // Connecter le clic du bouton à une méthode
         connect(button, &QPushButton::clicked, this, &MainWindow::onButtonAnnulerClicked);
     }
+
+
 }
 
 void MainWindow::onButtonAnnulerClicked()
@@ -66,7 +76,10 @@ void MainWindow::onButtonAnnulerClicked()
         annuler->setText("Vous ne pouvez pas annuler le premier tour");
 
     else
-        partie->partie->get_plateau()->annuler_deplacement();
+        partie->partie->annuler_deplacement();
 
-    annuler->setText("Annuler");
+
 }
+
+
+
