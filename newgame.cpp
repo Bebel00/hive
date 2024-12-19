@@ -3,6 +3,7 @@
 #include <QFont>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
+#include <QGraphicsScene>
 
 NewGame::NewGame(QWidget* parent) : QGraphicsView(parent) {
     newGameScene = new QGraphicsScene(this);
