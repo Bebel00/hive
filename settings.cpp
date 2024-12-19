@@ -1,5 +1,6 @@
 #include "settings.h"
 #include <QGraphicsTextItem>
+#include <QGraphicsScene>
 #include <QFont>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
@@ -8,6 +9,7 @@
 #include <QButtonGroup>
 #include <QMessageBox>
 #include <QSpinBox>
+#include <QCheckBox> 
 
 Settings::Settings(QWidget* parent) : QGraphicsView(parent), settingsScene(new QGraphicsScene(this))
 {
