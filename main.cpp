@@ -6,6 +6,7 @@
 #include <QInputDialog>
 #include <iostream>
 #include <string>
+#include <QSet> 
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
