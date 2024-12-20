@@ -20,6 +20,7 @@ public:
 
     std::string get_pseudo() const { return pseudo; }
     Team get_team() const { return team; }
+    std::unordered_map<Type::Type, unsigned int> get_jetons() const { return jetons; }
 
     void afficher_jetons() const;
 

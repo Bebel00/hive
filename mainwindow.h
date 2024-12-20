@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGridLayout>
+#include "graphicsPartie.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,7 +17,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setPartie(class GraphicsPartie* const partie);
+    void setPartie(class GraphicsPartie* const graphicpartie);
 
 private:
     Ui::MainWindow *ui;

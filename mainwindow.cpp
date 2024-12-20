@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "graphicspartie.h"
+#include "menuplacerinsecte.h"
 
 #include <QGridLayout>
 #include <QGraphicsView>
@@ -22,15 +23,21 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setPartie(GraphicsPartie* const partie)
+void MainWindow::setPartie(GraphicsPartie* const graphicpartie)
 {
-    layout->addWidget(partie, 1, 1, Qt::AlignCenter);
+    MenuPlacerInsecte * menuPI = new MenuPlacerInsecte(graphicpartie);
+    layout->addWidget(menuPI, 1, 3, Qt::AlignCenter);
+    layout->addWidget(graphicpartie, 1, 1, Qt::AlignCenter);
     layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),0,0);
-    layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),2,2);
+    layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),0,2);
+    layout->addItem(new QSpacerItem(0,0, QSizePolicy::Expanding, QSizePolicy::Expanding),0,4);
     layout->setColumnStretch(0, 1);
-    layout->setColumnStretch(1, 16);
+    layout->setColumnStretch(1, 20);
     layout->setColumnStretch(2, 1);
+    layout->setColumnStretch(3, 10);
+    layout->setColumnStretch(4, 1);
     layout->setRowStretch(0, 1);
-    layout->setRowStretch(2, 1);
     layout->setRowStretch(1, 9);
+    layout->setRowStretch(2, 1);
+
 }

@@ -21,6 +21,9 @@ public:
 
     std::string jouer_tour_cli(std::string cmd);
 
+    Joueur get_joueur1() {return joueur1;}
+    Joueur get_joueur2() {return joueur2;}
+
 
 private:
     class Plateau* plateau;

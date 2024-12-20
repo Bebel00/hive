@@ -21,6 +21,7 @@ SOURCES += \
     joueur.cpp \
     main.cpp \
     mainwindow.cpp \
+    menuplacerinsecte.cpp \
     moustique.cpp \
     partie.cpp \
     plateau.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     insecte.h \
     joueur.h \
     mainwindow.h \
+    menuplacerinsecte.h \
     moustique.h \
     partie.h \
     plateau.h \
