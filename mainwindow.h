@@ -17,7 +17,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setPartie(class GraphicsPartie* const graphicpartie);
+    void setPartie(class GraphicsPartie* graphicpartie);
 
 private:
     Ui::MainWindow *ui;

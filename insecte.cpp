@@ -11,7 +11,7 @@ Insecte::Insecte(Team team) : team(team),position(nullptr)
 
 }
 
-void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team)
+void Insecte::get_placements_possibles(const std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team)
 {
     for (auto i_case : liste_cases)
         if (Insecte::verifier_placement(i_case, team))

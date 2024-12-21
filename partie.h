@@ -23,7 +23,7 @@ public:
 
     Joueur get_joueur1() {return joueur1;}
     Joueur get_joueur2() {return joueur2;}
-
+    Joueur* get_tour() {return tour;}
 
 private:
     class Plateau* plateau;

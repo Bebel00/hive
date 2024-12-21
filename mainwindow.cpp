@@ -23,7 +23,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setPartie(GraphicsPartie* const graphicpartie)
+void MainWindow::setPartie(GraphicsPartie* graphicpartie)
 {
     MenuPlacerInsecte * menuPI = new MenuPlacerInsecte(graphicpartie);
     layout->addWidget(menuPI, 1, 3, Qt::AlignCenter);

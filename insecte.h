@@ -27,7 +27,7 @@ public:
     virtual void get_moves_possibles(std::vector<Case*>& move_possibles) const = 0;
 
     // Fonction qui met la liste des placements possibles dans "placements_possibles" (la valeur de retour)
-    static void get_placements_possibles(std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team);
+    static void get_placements_possibles(const std::vector<Case*>& liste_cases, std::vector<Case*>& placements_possibles, const Team team);
 
     static bool verifier_placement(const Case* const c, const Team team);
 

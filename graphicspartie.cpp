@@ -4,6 +4,7 @@
 #include "plateau.h"
 #include "graphicsplateau.h"
 
+#include <iostream>
 #include <QScrollBar>
 #include <QGraphicsView>
 
@@ -19,4 +20,5 @@ GraphicsPartie::GraphicsPartie(Partie* partie, QWidget* parent) : QGraphicsView(
 
     horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
     verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
+    std::cout<< partie->plateau->graphics.get()->height();
 }
