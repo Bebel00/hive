@@ -27,7 +27,6 @@ private:
     std::vector<QPushButton *> boutons;
     class GraphicsPartie* graphicpartie;
     QGraphicsScene* menuPIScene=nullptr;
-    std::unique_ptr<Insecte> insecteAPlacer;
 
 private slots:
     void selectionner_insecte();

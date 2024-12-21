@@ -78,9 +78,9 @@ void MenuPlacerInsecte::selectionner_insecte(){
     BoutonPlacementInsecte* btn = qobject_cast<BoutonPlacementInsecte*>(sender());
     if(graphicpartie->partie->get_tour()->get_team()== btn->get_team()){
         std::vector<Case*> placements_possibles;
-        insecteAPlacer = std::move(UsineInsecte::get_usine().fabriquer(btn->get_type(), btn->get_team()));
-        insecteAPlacer->get_placements_possibles(graphicpartie->partie->get_plateau()->get_cases(),placements_possibles,btn->get_team());
-        graphicpartie->partie->get_plateau()->graphics->surbriller_cases(graphicpartie->partie->get_plateau()->get_cases(), Qt::red, 0);
+
+        Insecte::get_placements_possibles(graphicpartie->partie->get_plateau()->get_cases(),placements_possibles,btn->get_team());
+        graphicpartie->partie->get_plateau()->graphics->surbriller_cases(graphicpartie->partie->get_plateau()->get_cases_non_const(), Qt::red, 0);
         graphicpartie->partie->get_plateau()->graphics->surbriller_cases(placements_possibles, Qt::yellow, 0.5 );
     }
 }

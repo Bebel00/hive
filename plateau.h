@@ -44,6 +44,8 @@ public:
 
     const std::vector<Case*>& get_cases() const { return liste_cases; }
 
+     std::vector<Case*>& get_cases_non_const()  { return liste_cases; }
+
 private:
     Case* case_base;
     std::vector<Case*> liste_cases;
