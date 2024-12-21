@@ -1,6 +1,5 @@
-
 #include "../headers/case.h"
-#include "../headers/insecte.h"
+#include "../headers/insectes/insecte.h"
 #include "../headers/graphics/graphicscase.h"
 
 #include <iostream>

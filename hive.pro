@@ -10,10 +10,10 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-	source/*
+    $$files($$PWD/source/*.cpp, true)
 
-HEADERS +=
-    headers/*
+HEADERS += \
+    $$files($$PWD/headers/*.h, true)
 
 FORMS += \
     source/mainwindow.ui

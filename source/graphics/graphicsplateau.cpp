@@ -1,5 +1,5 @@
 #include "../../headers/plateau.h"
-#include "../../headers/insecte.h"
+#include "../../headers/insectes/insecte.h"
 #include "../../headers/joueur.h"
 
 #include "../../headers/graphics/graphicsplateau.h"
